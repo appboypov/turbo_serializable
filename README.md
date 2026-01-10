@@ -5,7 +5,7 @@ A serialization abstraction for the turbo ecosystem with optional multi-format s
 ## Features
 
 - **Optional serialization methods**: All methods return null by default, implement only what you need
-- **Multi-format support**: JSON, YAML, and Markdown serialization
+- **Multi-format support**: JSON, YAML, Markdown, and XML serialization
 - **Validation integration**: Built-in validation using TurboResponse
 - **Typed identifiers**: TurboSerializableId provides type-safe ID management
 - **Local state tracking**: Track whether instances are local defaults or synced to remote
@@ -149,6 +149,7 @@ All serialization methods are optional and return null by default. You only impl
 - `toJson()` / `fromJson()` - JSON serialization
 - `toYaml()` / `fromYaml()` - YAML serialization
 - `toMarkdown()` / `fromMarkdown()` - Markdown serialization
+- `toXml()` / `fromXml()` - XML serialization
 - `metaData` - Optional typed metadata (set via constructor)
 
 ## Turbo Ecosystem Integration
