@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <user>
+    <name>Jane Smith</name>
+    <age>25</age>
+    <email>jane@example.com</email>
+    <active>false</active>
+  </user>
+  <roles>viewer</roles>
+  <roles>commenter</roles>
+  <settings>
+    <theme>light</theme>
+    <notifications>false</notifications>
+    <language>es</language>
+  </settings>
+</root>

@@ -1,0 +1,22 @@
+---
+title: User Data
+generated: 2026-01-10
+---
+
+{
+  "user": {
+    "name": "John Doe",
+    "age": 30,
+    "email": "john@example.com",
+    "active": true
+  },
+  "roles": [
+    "admin",
+    "editor"
+  ],
+  "settings": {
+    "theme": "dark",
+    "notifications": true,
+    "language": "en"
+  }
+}

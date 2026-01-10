@@ -2,65 +2,33 @@ import 'package:test/test.dart';
 import 'package:turbo_response/turbo_response.dart';
 import 'package:turbo_serializable/turbo_serializable.dart';
 
-// Test concrete implementations - use Object? when no typed metadata needed
+// Test concrete implementations
 class TestModel extends TurboSerializable<Object?> {
   final String name;
 
   TestModel(this.name, {super.metaData});
 
   @override
-  Map<String, dynamic>? toJson() => {'name': name};
+  Map<String, dynamic>? toJsonImpl() => {'name': name};
 
   @override
-  String? toYaml() => 'name: $name';
+  String? toYamlImpl() => 'name: $name';
 
   @override
-  String? toMarkdown() => '# $name';
+  String? toMarkdownImpl() => '# $name';
 
   @override
-  T? fromJson<T>(Map<String, dynamic> json) {
-    if (T == TestModel) {
-      return TestModel(json['name'] as String) as T;
-    }
-    return null;
-  }
-
-  @override
-  T? fromYaml<T>(String yaml) {
-    if (T == TestModel) {
-      final name = yaml.replaceFirst('name: ', '');
-      return TestModel(name) as T;
-    }
-    return null;
-  }
-
-  @override
-  T? fromMarkdown<T>(String markdown) {
-    if (T == TestModel) {
-      final name = markdown.replaceFirst('# ', '');
-      return TestModel(name) as T;
-    }
-    return null;
-  }
-
-  @override
-  String? toXml() => '<name>$name</name>';
-
-  @override
-  T? fromXml<T>(String xml) {
-    if (T == TestModel) {
-      final name = xml.replaceAll('<name>', '').replaceAll('</name>', '');
-      return TestModel(name) as T;
-    }
-    return null;
-  }
+  String? toXmlImpl({
+    String? rootElementName,
+    bool includeNulls = false,
+    bool prettyPrint = true,
+  }) =>
+      '<name>$name</name>';
 
   @override
   TurboResponse<T>? validate<T>() {
     if (name.isEmpty) {
-      return TurboResponse.fail(
-        error: 'Name cannot be empty',
-      );
+      return TurboResponse.fail(error: 'Name cannot be empty');
     }
     return null;
   }
@@ -81,26 +49,24 @@ class TestModelWithId extends TurboSerializableId<String, Object?> {
   String get id => _id;
 
   @override
-  Map<String, dynamic>? toJson() => {'id': id, 'name': name};
+  Map<String, dynamic>? toJsonImpl() => {'id': id, 'name': name};
 
   @override
   TurboResponse<T>? validate<T>() {
     if (id.isEmpty) {
-      return TurboResponse.fail(
-        error: 'ID cannot be empty',
-      );
+      return TurboResponse.fail(error: 'ID cannot be empty');
     }
     if (name.isEmpty) {
-      return TurboResponse.fail(
-        error: 'Name cannot be empty',
-      );
+      return TurboResponse.fail(error: 'Name cannot be empty');
     }
     return null;
   }
 }
 
 // Minimal implementation that doesn't override anything
-class MinimalModel extends TurboSerializable<Object?> {}
+class MinimalModel extends TurboSerializable<Object?> {
+  MinimalModel({super.metaData});
+}
 
 // Test model with typed metadata
 class FrontmatterMeta {
@@ -121,13 +87,14 @@ class DocumentModel extends TurboSerializable<FrontmatterMeta> {
   DocumentModel({
     required this.content,
     super.metaData,
+    super.primaryFormat = SerializationFormat.markdown,
   });
 
   @override
-  Map<String, dynamic>? toJson() => {'content': content};
+  Map<String, dynamic>? toJsonImpl() => {'content': content};
 
   @override
-  String? toMarkdown() => content;
+  String? toMarkdownImpl() => content;
 }
 
 class DocumentWithId extends TurboSerializableId<String, FrontmatterMeta> {
@@ -145,7 +112,7 @@ class DocumentWithId extends TurboSerializableId<String, FrontmatterMeta> {
   String get id => _id;
 
   @override
-  Map<String, dynamic>? toJson() => {'id': id, 'content': content};
+  Map<String, dynamic>? toJsonImpl() => {'id': id, 'content': content};
 }
 
 void main() {
@@ -165,32 +132,16 @@ void main() {
         expect(model.toJson(), isNull);
       });
 
-      test('fromJson returns null by default', () {
-        expect(model.fromJson<MinimalModel>({'test': 'data'}), isNull);
-      });
-
       test('toYaml returns null by default', () {
         expect(model.toYaml(), isNull);
-      });
-
-      test('fromYaml returns null by default', () {
-        expect(model.fromYaml<MinimalModel>('test: data'), isNull);
       });
 
       test('toMarkdown returns null by default', () {
         expect(model.toMarkdown(), isNull);
       });
 
-      test('fromMarkdown returns null by default', () {
-        expect(model.fromMarkdown<MinimalModel>('# Test'), isNull);
-      });
-
       test('toXml returns null by default', () {
         expect(model.toXml(), isNull);
-      });
-
-      test('fromXml returns null by default', () {
-        expect(model.fromXml<MinimalModel>('<test>data</test>'), isNull);
       });
 
       test('metaData is null by default', () {
@@ -242,35 +193,9 @@ void main() {
         expect(model.toJson(), equals({'name': 'John'}));
       });
 
-      test('can override fromJson', () {
-        final model = TestModel('');
-        final result = model.fromJson<TestModel>({'name': 'Jane'});
-        expect(result, isNotNull);
-        expect(result!.name, equals('Jane'));
-      });
-
-      test('fromJson returns null for wrong type', () {
-        final model = TestModel('');
-        final result = model.fromJson<MinimalModel>({'name': 'Jane'});
-        expect(result, isNull);
-      });
-
       test('can override toYaml', () {
         final model = TestModel('John');
         expect(model.toYaml(), equals('name: John'));
-      });
-
-      test('can override fromYaml', () {
-        final model = TestModel('');
-        final result = model.fromYaml<TestModel>('name: Jane');
-        expect(result, isNotNull);
-        expect(result!.name, equals('Jane'));
-      });
-
-      test('fromYaml returns null for wrong type', () {
-        final model = TestModel('');
-        final result = model.fromYaml<MinimalModel>('name: Jane');
-        expect(result, isNull);
       });
 
       test('can override toMarkdown', () {
@@ -278,35 +203,84 @@ void main() {
         expect(model.toMarkdown(), equals('# John'));
       });
 
-      test('can override fromMarkdown', () {
-        final model = TestModel('');
-        final result = model.fromMarkdown<TestModel>('# Jane');
-        expect(result, isNotNull);
-        expect(result!.name, equals('Jane'));
-      });
-
-      test('fromMarkdown returns null for wrong type', () {
-        final model = TestModel('');
-        final result = model.fromMarkdown<MinimalModel>('# Jane');
-        expect(result, isNull);
-      });
-
       test('can override toXml', () {
         final model = TestModel('John');
         expect(model.toXml(), equals('<name>John</name>'));
+        expect(model.toXml(rootElementName: 'Custom'), equals('<name>John</name>'));
       });
 
-      test('can override fromXml', () {
-        final model = TestModel('');
-        final result = model.fromXml<TestModel>('<name>Jane</name>');
-        expect(result, isNotNull);
-        expect(result!.name, equals('Jane'));
+      test('default toXml uses toJson conversion', () {
+        final minimal = MinimalModel();
+        expect(minimal.toXml(), isNull);
+
+        final jsonModel = _JsonOnlyModel(name: 'Test', age: 25);
+        final xml = jsonModel.toXml();
+        expect(xml, isNotNull);
+        expect(xml, contains('<_JsonOnlyModel>'));
+        expect(xml, contains('<name>Test</name>'));
+        expect(xml, contains('<age>25</age>'));
       });
 
-      test('fromXml returns null for wrong type', () {
-        final model = TestModel('');
-        final result = model.fromXml<MinimalModel>('<name>Jane</name>');
-        expect(result, isNull);
+      test('toXml handles nested objects', () {
+        final model = _NestedModel(
+          name: 'Parent',
+          child: _JsonOnlyModel(name: 'Child', age: 10),
+        );
+        final xml = model.toXml();
+        expect(xml, isNotNull);
+        expect(xml, contains('<_NestedModel>'));
+        expect(xml, contains('<name>Parent</name>'));
+        expect(xml, contains('<child>'));
+        expect(xml, contains('<name>Child</name>'));
+        expect(xml, contains('<age>10</age>'));
+      });
+
+      test('toXml handles lists', () {
+        final model = _ListModel(items: ['item1', 'item2', 'item3']);
+        final xml = model.toXml();
+        expect(xml, isNotNull);
+        expect(xml, contains('<_ListModel>'));
+        final itemCount = RegExp(r'<items>').allMatches(xml!).length;
+        expect(itemCount, equals(3));
+      });
+
+      test('toXml handles null values', () {
+        final model = _NullableModel(name: 'Test', value: null);
+        final xmlWithoutNulls = model.toXml(includeNulls: false);
+        expect(xmlWithoutNulls, isNotNull);
+        expect(xmlWithoutNulls, contains('<name>Test</name>'));
+        expect(xmlWithoutNulls, isNot(contains('<value>')));
+
+        final xmlWithNulls = model.toXml(includeNulls: true);
+        expect(xmlWithNulls, isNotNull);
+        expect(xmlWithNulls, contains('<value></value>'));
+      });
+
+      test('toXml handles special characters', () {
+        final model = _JsonOnlyModel(
+          name: 'Test & <example> "quoted"',
+          age: 25,
+        );
+        final xml = model.toXml();
+        expect(xml, isNotNull);
+        expect(xml, contains('&amp;'));
+        expect(xml, contains('&lt;'));
+      });
+
+      test('toXml with custom root element name', () {
+        final model = _JsonOnlyModel(name: 'Test', age: 25);
+        final xml = model.toXml(rootElementName: 'CustomRoot');
+        expect(xml, isNotNull);
+        expect(xml, contains('<CustomRoot>'));
+      });
+
+      test('toXml prettyPrint option', () {
+        final model = _JsonOnlyModel(name: 'Test', age: 25);
+        final prettyXml = model.toXml(prettyPrint: true);
+        final compactXml = model.toXml(prettyPrint: false);
+        expect(prettyXml, isNotNull);
+        expect(compactXml, isNotNull);
+        expect(prettyXml, contains('\n'));
       });
 
       test('can override validate to return null for valid state', () {
@@ -351,12 +325,10 @@ void main() {
       });
 
       test('supports different id types', () {
-        // Test with int id type
         final intIdModel = _TestIntIdModel(id: 42, name: 'Test');
         expect(intIdModel.id, equals(42));
         expect(intIdModel.id, isA<int>());
 
-        // Test with String id type (already tested above)
         final stringIdModel = TestModelWithId(id: 'abc', name: 'Test');
         expect(stringIdModel.id, equals('abc'));
         expect(stringIdModel.id, isA<String>());
@@ -395,7 +367,6 @@ void main() {
           content: 'Content',
           metaData: meta,
         );
-        // Verify metadata is accessible through TurboSerializable type
         final TurboSerializable<FrontmatterMeta> asBase = doc;
         expect(asBase.metaData, isNotNull);
         expect(asBase.metaData!.title, equals('Test'));
@@ -442,28 +413,574 @@ void main() {
 
     group('type safety', () {
       test('enforces id type constraint', () {
-        // This test verifies that the generic type parameter works correctly
         final stringModel = TestModelWithId(id: 'abc', name: 'Test');
         expect(stringModel.id, isA<String>());
 
         final intModel = _TestIntIdModel(id: 123, name: 'Test');
         expect(intModel.id, isA<int>());
 
-        // Verify they are both TurboSerializableId but with different types
         expect(stringModel, isA<TurboSerializableId<String, Object?>>());
         expect(intModel, isA<TurboSerializableId<int, Object?>>());
       });
     });
   });
+
+  group('Primary Format and Conversions', () {
+    group('JSON as primary format', () {
+      test('toJson returns actual implementation', () {
+        final model = _JsonOnlyModel(name: 'Test', age: 25);
+        expect(model.toJson(), equals({'name': 'Test', 'age': 25}));
+      });
+
+      test('toYaml converts from JSON', () {
+        final model = _JsonOnlyModel(name: 'Test', age: 25);
+        final yaml = model.toYaml();
+        expect(yaml, isNotNull);
+        expect(yaml, contains('name: Test'));
+        expect(yaml, contains('age: 25'));
+      });
+
+      test('toMarkdown converts from JSON', () {
+        final model = _JsonOnlyModel(name: 'Test', age: 25);
+        final markdown = model.toMarkdown();
+        expect(markdown, isNotNull);
+        expect(markdown, contains('"name": "Test"'));
+        expect(markdown, contains('"age": 25'));
+      });
+
+      test('toXml converts from JSON', () {
+        final model = _JsonOnlyModel(name: 'Test', age: 25);
+        final xml = model.toXml();
+        expect(xml, isNotNull);
+        expect(xml, contains('<name>Test</name>'));
+        expect(xml, contains('<age>25</age>'));
+      });
+    });
+
+    group('YAML as primary format', () {
+      test('toYaml returns actual implementation', () {
+        final model = _YamlOnlyModel(name: 'Test', age: 25);
+        final yaml = model.toYaml();
+        expect(yaml, isNotNull);
+        expect(yaml, contains('name: Test'));
+        expect(yaml, contains('age: 25'));
+      });
+
+      test('toJson converts from YAML', () {
+        final model = _YamlOnlyModel(name: 'Test', age: 25);
+        final json = model.toJson();
+        expect(json, isNotNull);
+        expect(json!['name'], equals('Test'));
+        expect(json['age'], equals(25));
+      });
+
+      test('toXml converts from YAML', () {
+        final model = _YamlOnlyModel(name: 'Test', age: 25);
+        final xml = model.toXml();
+        expect(xml, isNotNull);
+        expect(xml, contains('<name>Test</name>'));
+        expect(xml, contains('<age>25</age>'));
+      });
+    });
+
+    group('Markdown as primary format', () {
+      test('toMarkdown returns actual implementation', () {
+        final model = _MarkdownOnlyModel(content: '# Test\n\nThis is a test.');
+        final markdown = model.toMarkdown();
+        expect(markdown, isNotNull);
+        expect(markdown, contains('# Test'));
+        expect(markdown, contains('This is a test'));
+      });
+
+      test('toJson converts from Markdown with frontmatter', () {
+        final model = _MarkdownWithFrontmatterModel(
+          title: 'My Title',
+          description: 'A description',
+          body: '{"key": "value"}',
+        );
+        final json = model.toJson();
+        expect(json, isNotNull);
+        expect(json!['title'], equals('My Title'));
+        expect(json['description'], equals('A description'));
+        expect(json['body'], isA<Map<String, dynamic>>());
+        expect(json['body']['key'], equals('value'));
+      });
+    });
+
+    group('XML as primary format', () {
+      test('toXml returns actual implementation', () {
+        final model = _XmlOnlyModel(name: 'Test', age: 25);
+        final xml = model.toXml();
+        expect(xml, isNotNull);
+        expect(xml, contains('<name>Test</name>'));
+        expect(xml, contains('<age>25</age>'));
+      });
+
+      test('toJson converts from XML', () {
+        final model = _XmlOnlyModel(name: 'Test', age: 25);
+        final json = model.toJson();
+        expect(json, isNotNull);
+        expect(json!['name'], equals('Test'));
+        expect(json['age'], equals(25));
+      });
+
+      test('toYaml converts from XML', () {
+        final model = _XmlOnlyModel(name: 'Test', age: 25);
+        final yaml = model.toYaml();
+        expect(yaml, isNotNull);
+        expect(yaml, contains('name: Test'));
+        expect(yaml, contains('age: 25'));
+      });
+    });
+
+    group('edge cases', () {
+      test('null primary format returns null for all conversions', () {
+        final model = MinimalModel();
+        expect(model.toJson(), isNull);
+        expect(model.toYaml(), isNull);
+        expect(model.toMarkdown(), isNull);
+        expect(model.toXml(), isNull);
+      });
+
+      test('nested objects convert correctly', () {
+        final model = _NestedModel(
+          name: 'Parent',
+          child: _JsonOnlyModel(name: 'Child', age: 10),
+        );
+        final yaml = model.toYaml();
+        expect(yaml, isNotNull);
+        expect(yaml, contains('Parent'));
+        expect(yaml, contains('Child'));
+      });
+
+      test('lists convert correctly', () {
+        final model = _ListModel(items: ['a', 'b', 'c']);
+        final yaml = model.toYaml();
+        expect(yaml, isNotNull);
+        expect(yaml, contains('items:'));
+      });
+    });
+  });
+
+  group('Format Converters', () {
+    group('jsonToYaml', () {
+      test('converts simple map', () {
+        final yaml = jsonToYaml({'name': 'Test', 'age': 25});
+        expect(yaml, contains('name: Test'));
+        expect(yaml, contains('age: 25'));
+      });
+
+      test('converts nested map', () {
+        final yaml = jsonToYaml({
+          'user': {'name': 'Test', 'age': 25}
+        });
+        expect(yaml, contains('user:'));
+        expect(yaml, contains('name: Test'));
+      });
+
+      test('converts list', () {
+        final yaml = jsonToYaml({
+          'items': ['a', 'b', 'c']
+        });
+        expect(yaml, contains('items:'));
+        expect(yaml, contains('- a'));
+        expect(yaml, contains('- b'));
+        expect(yaml, contains('- c'));
+      });
+
+      test('handles null values', () {
+        final yaml = jsonToYaml({'name': 'Test', 'value': null});
+        expect(yaml, contains('value: null'));
+      });
+
+      test('escapes special characters in strings', () {
+        final yaml = jsonToYaml({'text': 'value: with colon'});
+        expect(yaml, contains('"value: with colon"'));
+      });
+    });
+
+    group('yamlToJson', () {
+      test('parses simple YAML', () {
+        final json = yamlToJson('name: Test\nage: 25');
+        expect(json['name'], equals('Test'));
+        expect(json['age'], equals(25));
+      });
+
+      test('parses nested YAML', () {
+        final json = yamlToJson('user:\n  name: Test\n  age: 25');
+        expect(json['user'], isA<Map<String, dynamic>>());
+        expect(json['user']['name'], equals('Test'));
+      });
+
+      test('parses list YAML', () {
+        final json = yamlToJson('items:\n  - a\n  - b\n  - c');
+        expect(json['items'], isA<List>());
+        expect(json['items'], equals(['a', 'b', 'c']));
+      });
+
+      test('throws on invalid YAML', () {
+        expect(
+          () => yamlToJson('invalid: yaml: content:'),
+          throwsA(isA<FormatException>()),
+        );
+      });
+    });
+
+    group('jsonToMarkdown', () {
+      test('converts JSON to markdown with frontmatter', () {
+        final markdown = jsonToMarkdown(
+          {'key': 'value'},
+          metaData: {'title': 'Test'},
+        );
+        expect(markdown, contains('---'));
+        expect(markdown, contains('title: Test'));
+        expect(markdown, contains('"key": "value"'));
+      });
+
+      test('converts JSON without frontmatter', () {
+        final markdown = jsonToMarkdown({'key': 'value'});
+        expect(markdown, isNot(contains('---')));
+        expect(markdown, contains('"key": "value"'));
+      });
+
+      test('formats nested JSON', () {
+        final markdown = jsonToMarkdown({
+          'user': {'name': 'Test', 'age': 25}
+        });
+        expect(markdown, contains('"user"'));
+        expect(markdown, contains('"name": "Test"'));
+      });
+    });
+
+    group('markdownToJson', () {
+      test('parses frontmatter and JSON body', () {
+        final json = markdownToJson('''
+---
+title: My Title
+description: A description
+---
+{"key": "value"}
+''');
+        expect(json['title'], equals('My Title'));
+        expect(json['description'], equals('A description'));
+        expect(json['body'], isA<Map<String, dynamic>>());
+        expect(json['body']['key'], equals('value'));
+      });
+
+      test('parses frontmatter only', () {
+        final json = markdownToJson('''
+---
+title: My Title
+---
+''');
+        expect(json['title'], equals('My Title'));
+      });
+
+      test('parses body without frontmatter', () {
+        final json = markdownToJson('{"key": "value"}');
+        expect(json['body'], isA<Map<String, dynamic>>());
+        expect(json['body']['key'], equals('value'));
+      });
+
+      test('stores non-JSON body as string', () {
+        final json = markdownToJson('''
+---
+title: My Title
+---
+Some regular markdown content
+''');
+        expect(json['title'], equals('My Title'));
+        expect(json['body'], equals('Some regular markdown content'));
+      });
+
+      test('handles empty content', () {
+        final json = markdownToJson('');
+        expect(json, isEmpty);
+      });
+    });
+
+    group('XML converters', () {
+      test('mapToXml converts simple map', () {
+        final xml = mapToXml({'name': 'Test', 'age': 25}, rootElementName: 'root');
+        expect(xml, contains('<root>'));
+        expect(xml, contains('<name>Test</name>'));
+        expect(xml, contains('<age>25</age>'));
+      });
+
+      test('xmlToMap parses simple XML', () {
+        final map = xmlToMap('<root><name>Test</name><age>25</age></root>');
+        expect(map['name'], equals('Test'));
+        expect(map['age'], equals(25));
+      });
+
+      test('xmlToJson is alias for xmlToMap', () {
+        final json = xmlToJson('<root><name>Test</name></root>');
+        expect(json['name'], equals('Test'));
+      });
+
+      test('handles special characters', () {
+        final xml = mapToXml({'text': 'a & b < c'}, rootElementName: 'root');
+        expect(xml, contains('&amp;'));
+        expect(xml, contains('&lt;'));
+      });
+    });
+  });
+
+  group('Edge Cases and Error Handling', () {
+    test('handles empty strings', () {
+      final model = _JsonOnlyModel(name: '', age: 0);
+      expect(model.toJson(), equals({'name': '', 'age': 0}));
+      expect(model.toYaml(), isNotNull);
+      expect(model.toXml(), isNotNull);
+    });
+
+    test('handles unicode content', () {
+      final model = _JsonOnlyModel(name: '日本語テスト 🎉', age: 25);
+      final json = model.toJson();
+      expect(json!['name'], equals('日本語テスト 🎉'));
+
+      final yaml = model.toYaml();
+      expect(yaml, contains('日本語テスト'));
+
+      final xml = model.toXml();
+      expect(xml, contains('日本語テスト'));
+    });
+
+    test('handles deeply nested structures', () {
+      final model = _DeeplyNestedModel();
+      final yaml = model.toYaml();
+      expect(yaml, isNotNull);
+      expect(yaml, contains('level1'));
+      expect(yaml, contains('level2'));
+      expect(yaml, contains('level3'));
+    });
+
+    test('handles empty collections', () {
+      final model = _EmptyCollectionsModel();
+      final json = model.toJson();
+      expect(json!['emptyList'], equals([]));
+      expect(json['emptyMap'], equals({}));
+
+      final yaml = model.toYaml();
+      expect(yaml, isNotNull);
+
+      final xml = model.toXml();
+      expect(xml, isNotNull);
+    });
+
+    test('handles boolean values', () {
+      final model = _BooleanModel(active: true, deleted: false);
+      final json = model.toJson();
+      expect(json!['active'], isTrue);
+      expect(json['deleted'], isFalse);
+
+      final yaml = model.toYaml();
+      expect(yaml, contains('active: true'));
+      expect(yaml, contains('deleted: false'));
+    });
+
+    test('handles numeric types', () {
+      final model = _NumericModel(
+        intValue: 42,
+        doubleValue: 3.14159,
+        negativeValue: -100,
+      );
+      final json = model.toJson();
+      expect(json!['intValue'], equals(42));
+      expect(json['doubleValue'], equals(3.14159));
+      expect(json['negativeValue'], equals(-100));
+    });
+
+    test('xmlToMap throws on invalid XML', () {
+      expect(
+        () => xmlToMap('invalid xml <unclosed'),
+        throwsA(isA<FormatException>()),
+      );
+    });
+  });
 }
 
-// Helper class for testing different id types
+// Helper classes for testing
+
+class _YamlOnlyModel extends TurboSerializable<Object?> {
+  final String name;
+  final int age;
+
+  _YamlOnlyModel({
+    required this.name,
+    required this.age,
+  }) : super(primaryFormat: SerializationFormat.yaml);
+
+  @override
+  String? toYamlImpl() => 'name: $name\nage: $age\n';
+}
+
+class _MarkdownOnlyModel extends TurboSerializable<Object?> {
+  final String content;
+
+  _MarkdownOnlyModel({
+    required this.content,
+  }) : super(primaryFormat: SerializationFormat.markdown);
+
+  @override
+  String? toMarkdownImpl() => content;
+}
+
+class _MarkdownWithFrontmatterModel extends TurboSerializable<Object?> {
+  final String title;
+  final String description;
+  final String body;
+
+  _MarkdownWithFrontmatterModel({
+    required this.title,
+    required this.description,
+    required this.body,
+  }) : super(primaryFormat: SerializationFormat.markdown);
+
+  @override
+  String? toMarkdownImpl() => '''
+---
+title: $title
+description: $description
+---
+$body
+''';
+}
+
+class _XmlOnlyModel extends TurboSerializable<Object?> {
+  final String name;
+  final int age;
+
+  _XmlOnlyModel({
+    required this.name,
+    required this.age,
+  }) : super(primaryFormat: SerializationFormat.xml);
+
+  @override
+  String? toXmlImpl({
+    String? rootElementName,
+    bool includeNulls = false,
+    bool prettyPrint = true,
+  }) {
+    final elementName = rootElementName ?? 'XmlOnlyModel';
+    return '<?xml version="1.0" encoding="UTF-8"?>\n<$elementName>\n  <name>$name</name>\n  <age>$age</age>\n</$elementName>';
+  }
+}
+
 class _TestIntIdModel extends TurboSerializableId<int, Object?> {
   final int _id;
   final String name;
 
-  _TestIntIdModel({required int id, required this.name}) : _id = id;
+  _TestIntIdModel({
+    required int id,
+    required this.name,
+  }) : _id = id;
 
   @override
   int get id => _id;
+}
+
+class _JsonOnlyModel extends TurboSerializable<Object?> {
+  final String name;
+  final int age;
+
+  _JsonOnlyModel({
+    required this.name,
+    required this.age,
+  });
+
+  @override
+  Map<String, dynamic>? toJsonImpl() => {'name': name, 'age': age};
+}
+
+class _NestedModel extends TurboSerializable<Object?> {
+  final String name;
+  final _JsonOnlyModel? child;
+
+  _NestedModel({
+    required this.name,
+    this.child,
+  });
+
+  @override
+  Map<String, dynamic>? toJsonImpl() => {
+        'name': name,
+        if (child != null) 'child': child!.toJson(),
+      };
+}
+
+class _ListModel extends TurboSerializable<Object?> {
+  final List<String> items;
+
+  _ListModel({required this.items});
+
+  @override
+  Map<String, dynamic>? toJsonImpl() => {'items': items};
+}
+
+class _NullableModel extends TurboSerializable<Object?> {
+  final String name;
+  final String? value;
+
+  _NullableModel({
+    required this.name,
+    this.value,
+  });
+
+  @override
+  Map<String, dynamic>? toJsonImpl() => {
+        'name': name,
+        'value': value,
+      };
+}
+
+class _DeeplyNestedModel extends TurboSerializable<Object?> {
+  @override
+  Map<String, dynamic>? toJsonImpl() => {
+        'level1': {
+          'level2': {
+            'level3': {'value': 'deep'}
+          }
+        }
+      };
+}
+
+class _EmptyCollectionsModel extends TurboSerializable<Object?> {
+  @override
+  Map<String, dynamic>? toJsonImpl() => {
+        'emptyList': <String>[],
+        'emptyMap': <String, dynamic>{},
+      };
+}
+
+class _BooleanModel extends TurboSerializable<Object?> {
+  final bool active;
+  final bool deleted;
+
+  _BooleanModel({required this.active, required this.deleted});
+
+  @override
+  Map<String, dynamic>? toJsonImpl() => {
+        'active': active,
+        'deleted': deleted,
+      };
+}
+
+class _NumericModel extends TurboSerializable<Object?> {
+  final int intValue;
+  final double doubleValue;
+  final int negativeValue;
+
+  _NumericModel({
+    required this.intValue,
+    required this.doubleValue,
+    required this.negativeValue,
+  });
+
+  @override
+  Map<String, dynamic>? toJsonImpl() => {
+        'intValue': intValue,
+        'doubleValue': doubleValue,
+        'negativeValue': negativeValue,
+      };
 }

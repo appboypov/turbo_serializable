@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <title>Sample Document</title>
+  <author>Test Author</author>
+  <tags>example</tags>
+  <tags>test</tags>
+  <date>2026-01-10</date>
+  <body>
+    <content>This is the main content</content>
+    <version>1</version>
+  </body>
+</root>

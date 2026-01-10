@@ -7,13 +7,16 @@ class TestSerializable extends TurboSerializable<Object?> {
   TestSerializable(this.name);
 
   @override
-  Map<String, dynamic>? toJson() => {'name': name};
+  Map<String, dynamic>? toJsonImpl() => {'name': name};
 }
 
 class TestSerializableId extends TurboSerializableId<String, Object?> {
   final String testId;
 
-  TestSerializableId(this.testId, {super.isLocalDefault});
+  TestSerializableId(
+    this.testId, {
+    super.isLocalDefault,
+  });
 
   @override
   String get id => testId;
@@ -24,11 +27,13 @@ void main() {
     final obj = TestSerializable('test');
     expect(obj.toJson(), {'name': 'test'});
     expect(obj.validate(), isNull);
-    expect(obj.fromJson({}), isNull);
-    expect(obj.toYaml(), isNull);
-    expect(obj.fromYaml(''), isNull);
-    expect(obj.toMarkdown(), isNull);
-    expect(obj.fromMarkdown(''), isNull);
+    // toYaml converts from JSON when toJsonImpl is implemented
+    expect(obj.toYaml(), isNotNull);
+    expect(obj.toYaml(), contains('name: test'));
+    // toMarkdown converts from JSON
+    expect(obj.toMarkdown(), isNotNull);
+    // toXml converts from JSON
+    expect(obj.toXml(), isNotNull);
     expect(obj.metaData, isNull);
   });
 

@@ -1,0 +1,14 @@
+{
+  "product": {
+    "name": "Widget",
+    "price": 29.99,
+    "inStock": true
+  },
+  "category": "Electronics",
+  "tags": {
+    "tag": [
+      "sale",
+      "popular"
+    ]
+  }
+}

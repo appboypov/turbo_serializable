@@ -7,7 +7,10 @@ class FullModel extends TurboSerializable<Object?> {
   final String name;
   final int age;
 
-  FullModel({required this.name, required this.age});
+  FullModel({
+    required this.name,
+    required this.age,
+  });
 
   @override
   TurboResponse<T>? validate<T>() {
@@ -21,13 +24,13 @@ class FullModel extends TurboSerializable<Object?> {
   }
 
   @override
-  Map<String, dynamic>? toJson() => {'name': name, 'age': age};
+  Map<String, dynamic>? toJsonImpl() => {'name': name, 'age': age};
 
   @override
-  String? toYaml() => 'name: $name\nage: $age';
+  String? toYamlImpl() => 'name: $name\nage: $age';
 
   @override
-  String? toMarkdown() => '# $name\n\nAge: $age';
+  String? toMarkdownImpl() => '# $name\n\nAge: $age';
 }
 
 /// Partial implementation with only toJson
@@ -37,24 +40,30 @@ class PartialModel extends TurboSerializable<Object?> {
   PartialModel(this.name);
 
   @override
-  Map<String, dynamic>? toJson() => {'name': name};
+  Map<String, dynamic>? toJsonImpl() => {'name': name};
 }
 
 /// Empty implementation - all methods return null
-class EmptyModel extends TurboSerializable<Object?> {}
+class EmptyModel extends TurboSerializable<Object?> {
+  EmptyModel({super.metaData});
+}
 
 /// Full implementation with ID
 class FullModelWithId extends TurboSerializableId<String, Object?> {
   final String _id;
   final String name;
 
-  FullModelWithId({required String id, required this.name, super.isLocalDefault}) : _id = id;
+  FullModelWithId({
+    required String id,
+    required this.name,
+    super.isLocalDefault,
+  }) : _id = id;
 
   @override
   String get id => _id;
 
   @override
-  Map<String, dynamic>? toJson() => {'id': id, 'name': name};
+  Map<String, dynamic>? toJsonImpl() => {'id': id, 'name': name};
 }
 
 /// Custom ID type implementation
@@ -93,13 +102,17 @@ class Frontmatter {
 class Document extends TurboSerializable<Frontmatter> {
   final String content;
 
-  Document({required this.content, super.metaData});
+  Document({
+    required this.content,
+    super.metaData,
+    super.primaryFormat = SerializationFormat.markdown,
+  });
 
   @override
-  Map<String, dynamic>? toJson() => {'content': content};
+  Map<String, dynamic>? toJsonImpl() => {'content': content};
 
   @override
-  String? toMarkdown() => content;
+  String? toMarkdownImpl() => content;
 }
 
 /// Document with ID and frontmatter metadata
@@ -118,7 +131,7 @@ class DocumentWithId extends TurboSerializableId<String, Frontmatter> {
   String get id => _id;
 
   @override
-  Map<String, dynamic>? toJson() => {'id': id, 'content': content};
+  Map<String, dynamic>? toJsonImpl() => {'id': id, 'content': content};
 }
 
 void main() {
@@ -140,14 +153,16 @@ void main() {
   assert(invalid.validate() is Fail, 'Invalid model should fail validation');
   print('  ✓ Validation correctly rejects empty name');
 
-  // Test 3: Partial implementation
-  print('\nTest 3: Partial implementation (only toJson)');
+  // Test 3: Partial implementation with auto-conversion
+  print('\nTest 3: Partial implementation with auto-conversion');
   final partial = PartialModel('Bob');
   assert(partial.validate() == null, 'Default validate returns null');
   assert(partial.toJson() != null, 'toJson should work');
-  assert(partial.toYaml() == null, 'Unimplemented toYaml returns null');
-  assert(partial.toMarkdown() == null, 'Unimplemented toMarkdown returns null');
-  print('  ✓ Partial implementation works correctly');
+  // Auto-conversion from JSON to other formats
+  assert(partial.toYaml() != null, 'toYaml converts from JSON');
+  assert(partial.toMarkdown() != null, 'toMarkdown converts from JSON');
+  assert(partial.toXml() != null, 'toXml converts from JSON');
+  print('  ✓ Partial implementation auto-converts to other formats');
 
   // Test 4: Empty implementation
   print('\nTest 4: Empty implementation (all null)');
@@ -156,9 +171,6 @@ void main() {
   assert(empty.toJson() == null, 'Default toJson returns null');
   assert(empty.toYaml() == null, 'Default toYaml returns null');
   assert(empty.toMarkdown() == null, 'Default toMarkdown returns null');
-  assert(empty.fromJson({}) == null, 'Default fromJson returns null');
-  assert(empty.fromYaml('') == null, 'Default fromYaml returns null');
-  assert(empty.fromMarkdown('') == null, 'Default fromMarkdown returns null');
   assert(empty.metaData == null, 'Default metaData is null');
   print('  ✓ Empty implementation returns null for all methods');
 
@@ -184,8 +196,6 @@ void main() {
 
   // Test 8: Type inheritance verification
   print('\nTest 8: Type inheritance verification');
-  // Inheritance is verified by successful compilation - FullModel extends TurboSerializable,
-  // FullModelWithId extends TurboSerializableId<String> which extends TurboSerializable
   assert(full.toJson() != null, 'FullModel inherits TurboSerializable methods');
   assert(withId.toJson() != null, 'TurboSerializableId inherits TurboSerializable methods');
   assert(withId.id.isNotEmpty, 'TurboSerializableId provides typed id getter');
@@ -231,6 +241,27 @@ void main() {
   assert(docNoMeta.metaData == null, 'metaData should be null when not provided');
   assert(docNoMeta.toJson() != null, 'toJson should still work');
   print('  ✓ Null metadata is handled correctly');
+
+  // Test 12: Format converters
+  print('\nTest 12: Format converters');
+  final yaml = jsonToYaml({'name': 'Test', 'age': 25});
+  assert(yaml.contains('name: Test'), 'YAML should contain name');
+  final json = yamlToJson('name: Test\nage: 25');
+  assert(json['name'] == 'Test', 'JSON should contain name');
+  print('  ✓ Format converters work correctly');
+
+  // Test 13: Markdown with frontmatter
+  print('\nTest 13: Markdown with frontmatter');
+  final mdWithFrontmatter = jsonToMarkdown(
+    {'content': 'Hello'},
+    metaData: {'title': 'Test', 'author': 'Me'},
+  );
+  assert(mdWithFrontmatter.contains('---'), 'Should have frontmatter delimiters');
+  assert(mdWithFrontmatter.contains('title: Test'), 'Should have frontmatter content');
+  final parsedMd = markdownToJson('---\ntitle: Test\n---\n{"key": "value"}');
+  assert(parsedMd['title'] == 'Test', 'Should parse frontmatter');
+  assert(parsedMd['body']['key'] == 'value', 'Should parse JSON body');
+  print('  ✓ Markdown frontmatter works correctly');
 
   print('\n=== All validations passed! ===');
 }

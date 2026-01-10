@@ -7,10 +7,13 @@ import 'turbo_serializable.dart';
 /// Type parameters:
 /// - [T]: The type of the identifier (e.g., String, int)
 /// - [M]: The type of optional metadata (e.g., frontmatter). Defaults to [dynamic].
-abstract class TurboSerializableId<T extends Object, M>
-    extends TurboSerializable<M> {
+abstract class TurboSerializableId<T extends Object, M> extends TurboSerializable<M> {
   /// Creates a [TurboSerializableId] instance.
-  TurboSerializableId({this.isLocalDefault = false, super.metaData});
+  TurboSerializableId({
+    super.primaryFormat,
+    this.isLocalDefault = false,
+    super.metaData,
+  });
 
   /// The unique identifier for this object.
   T get id;
