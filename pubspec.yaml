@@ -1,0 +1,25 @@
+name: turbo_serializable
+description: A serialization abstraction for the turbo ecosystem with optional multi-format support (JSON, YAML, Markdown).
+version: 0.0.1
+repository: https://github.com/appboypov/turbo_serializable
+homepage: https://github.com/appboypov/turbo_serializable
+issue_tracker: https://github.com/appboypov/turbo_serializable/issues
+
+topics:
+  - serialization
+  - json
+  - yaml
+  - markdown
+  - dart
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  turbo_response: ^1.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  test: ^1.24.0
+  lints: ^3.0.0
