@@ -8,10 +8,10 @@ A serialization abstraction for the turbo ecosystem with multi-format support (J
 
 ## Features
 
-- **Primary format specification** - Implement one format, get automatic conversion to all others
+- **Primary format specification** - Provide callbacks for one format, get automatic conversion to all others
 - **Multi-format support** - JSON, YAML, Markdown, and XML serialization
 - **Standalone converters** - 12 format conversion functions for direct use
-- **Typed metadata** - Generic `M` parameter for frontmatter and auxiliary data
+- **Typed metadata** - Generic `M` parameter for frontmatter and auxiliary data (implements `HasToJson` for serialization)
 - **Typed identifiers** - `TurboSerializableId<T, M>` for objects with unique IDs
 - **Local state tracking** - Track whether instances are synced to remote
 - **Validation integration** - Built-in validation using TurboResponse
@@ -32,10 +32,14 @@ class User extends TurboSerializable<void> {
   final String name;
   final int age;
 
-  User({required this.name, required this.age});
-
-  @override
-  Map<String, dynamic>? toJsonImpl() => {'name': name, 'age': age};
+  User({required this.name, required this.age})
+      : super(
+            config: TurboSerializableConfig(
+          toJsonCallback: (instance) {
+            final self = instance as User;
+            return {'name': self.name, 'age': self.age};
+          },
+        ));
 }
 
 void main() {
@@ -56,6 +60,8 @@ void main() {
 |-----------------------------|-------------------------------------------------------------------------------|
 | `TurboSerializable<M>`      | Base class for serializable objects with optional metadata type `M`           |
 | `TurboSerializableId<T, M>` | Extends TurboSerializable with typed identifier `T` and `isLocalDefault` flag |
+| `TurboSerializableConfig`  | Configuration class with callbacks for serialization methods                   |
+| `HasToJson`                 | Interface for metadata types that can be serialized to JSON                   |
 | `SerializationFormat`       | Enum: `json`, `yaml`, `markdown`, `xml`                                       |
 
 ### TurboSerializable Methods
@@ -100,27 +106,34 @@ class Product extends TurboSerializableId<String, void> {
     required this.name,
     required this.price,
     super.isLocalDefault = false,
-  });
+  })
+      : super(
+            config: TurboSerializableConfig(
+          toJsonCallback: (instance) {
+            final self = instance as Product;
+            return {
+              'id': self.id,
+              'name': self.name,
+              'price': self.price,
+            };
+          },
+        ));
 
   @override
   String get id => productId;
-
-  @override
-  Map<String, dynamic>? toJsonImpl() => {
-    'id': id,
-    'name': name,
-    'price': price,
-  };
 }
 ```
 
 ### With Typed Metadata
 
 ```dart
-class Frontmatter {
+class Frontmatter implements HasToJson {
   final String title;
   final List<String> tags;
   Frontmatter({required this.title, required this.tags});
+
+  @override
+  Map<String, dynamic> toJson() => {'title': title, 'tags': tags};
 }
 
 class Document extends TurboSerializable<Frontmatter> {
@@ -129,11 +142,18 @@ class Document extends TurboSerializable<Frontmatter> {
   Document({
     required this.content,
     super.metaData,
-    super.primaryFormat = SerializationFormat.markdown,
-  });
-
-  @override
-  String? toMarkdownImpl() => content;
+  })
+      : super(
+            config: TurboSerializableConfig(
+          toJsonCallback: (instance) {
+            final self = instance as Document;
+            return {'content': self.content};
+          },
+          toMarkdownCallback: (instance) {
+            final self = instance as Document;
+            return self.content;
+          },
+        ));
 }
 
 final doc = Document(
@@ -150,7 +170,14 @@ class User extends TurboSerializable<void> {
   final String name;
   final int age;
 
-  User({required this.name, required this.age});
+  User({required this.name, required this.age})
+      : super(
+            config: TurboSerializableConfig(
+          toJsonCallback: (instance) {
+            final self = instance as User;
+            return {'name': self.name, 'age': self.age};
+          },
+        ));
 
   @override
   TurboResponse<T>? validate<T>() {
@@ -158,11 +185,7 @@ class User extends TurboSerializable<void> {
     if (age < 0) return TurboResponse.fail(error: 'Invalid age');
     return null;
   }
-
-  @override
-  Map<String, dynamic>? toJsonImpl() => {'name': name, 'age': age};
 }
-```
 
 ### Standalone Converters
 

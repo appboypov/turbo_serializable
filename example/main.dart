@@ -10,7 +10,22 @@ class FullModel extends TurboSerializable<Object?> {
   FullModel({
     required this.name,
     required this.age,
-  });
+  })
+      : super(
+            config: TurboSerializableConfig(
+          toJsonMap: (instance) {
+            final self = instance as FullModel;
+            return {'name': self.name, 'age': self.age};
+          },
+          toYamlString: (instance) {
+            final self = instance as FullModel;
+            return 'name: ${self.name}\nage: ${self.age}';
+          },
+          toMarkdownString: (instance) {
+            final self = instance as FullModel;
+            return '# ${self.name}\n\nAge: ${self.age}';
+          },
+        ));
 
   @override
   TurboResponse<T>? validate<T>() {
@@ -22,30 +37,29 @@ class FullModel extends TurboSerializable<Object?> {
     }
     return null;
   }
-
-  @override
-  Map<String, dynamic>? toJsonImpl() => {'name': name, 'age': age};
-
-  @override
-  String? toYamlImpl() => 'name: $name\nage: $age';
-
-  @override
-  String? toMarkdownImpl() => '# $name\n\nAge: $age';
 }
 
 /// Partial implementation with only toJson
 class PartialModel extends TurboSerializable<Object?> {
   final String name;
 
-  PartialModel(this.name);
-
-  @override
-  Map<String, dynamic>? toJsonImpl() => {'name': name};
+  PartialModel(this.name)
+      : super(
+            config: TurboSerializableConfig(
+          toJsonMap: (instance) {
+            final self = instance as PartialModel;
+            return {'name': self.name};
+          },
+        ));
 }
 
 /// Empty implementation - all methods return null
 class EmptyModel extends TurboSerializable<Object?> {
-  EmptyModel({super.metaData});
+  EmptyModel({super.metaData})
+      : super(
+            config: TurboSerializableConfig(
+          toJsonMap: (_) => null,
+        ));
 }
 
 /// Full implementation with ID
@@ -57,13 +71,17 @@ class FullModelWithId extends TurboSerializableId<String, Object?> {
     required String id,
     required this.name,
     super.isLocalDefault,
-  }) : _id = id;
+  })  : _id = id,
+        super(
+            config: TurboSerializableConfig(
+          toJsonMap: (instance) {
+            final self = instance as FullModelWithId;
+            return {'id': self.id, 'name': self.name};
+          },
+        ));
 
   @override
   String get id => _id;
-
-  @override
-  Map<String, dynamic>? toJsonImpl() => {'id': id, 'name': name};
 }
 
 /// Custom ID type implementation
@@ -77,7 +95,12 @@ class CustomId {
 class CustomIdModel extends TurboSerializableId<CustomId, Object?> {
   final CustomId _id;
 
-  CustomIdModel(int idValue) : _id = CustomId(idValue);
+  CustomIdModel(int idValue)
+      : _id = CustomId(idValue),
+        super(
+            config: TurboSerializableConfig(
+          toJsonMap: (_) => null,
+        ));
 
   @override
   CustomId get id => _id;
@@ -105,15 +128,18 @@ class Document extends TurboSerializable<Frontmatter> {
   Document({
     required this.content,
     super.metaData,
-    super.primaryFormat = SerializationFormat.markdown,
-  });
-
-  @override
-  Map<String, dynamic>? toJsonImpl() => {'content': content};
-
-  @override
-  String? toMarkdownImpl() => content;
-}
+  })
+      : super(
+            config: TurboSerializableConfig(
+          toJsonMap: (instance) {
+            final self = instance as Document;
+            return {'content': self.content};
+          },
+          toMarkdownString: (instance) {
+            final self = instance as Document;
+            return self.content;
+          },
+        ));
 
 /// Document with ID and frontmatter metadata
 class DocumentWithId extends TurboSerializableId<String, Frontmatter> {
@@ -125,13 +151,17 @@ class DocumentWithId extends TurboSerializableId<String, Frontmatter> {
     required this.content,
     super.metaData,
     super.isLocalDefault,
-  }) : _id = id;
+  })  : _id = id,
+        super(
+            config: TurboSerializableConfig(
+          toJsonMap: (instance) {
+            final self = instance as DocumentWithId;
+            return {'id': self.id, 'content': self.content};
+          },
+        ));
 
   @override
   String get id => _id;
-
-  @override
-  Map<String, dynamic>? toJsonImpl() => {'id': id, 'content': content};
 }
 
 void main() {
