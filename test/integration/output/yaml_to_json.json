@@ -1,17 +1,6 @@
 {
-  "user": {
-    "name": "Jane Smith",
-    "age": 25,
-    "email": "jane@example.com",
-    "active": false
-  },
-  "roles": [
-    "viewer",
-    "commenter"
-  ],
-  "settings": {
-    "theme": "light",
-    "notifications": false,
-    "language": "es"
-  }
+  "firstName": "John",
+  "lastName": "Doe",
+  "age": 30,
+  "active": true
 }

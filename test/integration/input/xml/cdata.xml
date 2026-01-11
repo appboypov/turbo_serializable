@@ -1,0 +1,8 @@
+<root>
+  <script><![CDATA[
+    function test() {
+      return x < 5 && y > 3;
+    }
+  ]]></script>
+  <html><![CDATA[<div class="test">Hello</div>]]></html>
+</root>

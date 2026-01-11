@@ -1,3 +1,4 @@
+import 'package:meta/meta.dart';
 import 'package:turbo_response/turbo_response.dart';
 
 import 'format_converters.dart';
@@ -42,17 +43,52 @@ abstract class TurboSerializable<M> {
   /// Returns null if valid, or a [TurboResponse.fail] if invalid.
   TurboResponse<T>? validate<T>() => null;
 
+  /// Converts metadata to a JSON map.
+  ///
+  /// The metadata object must have a `toJson()` method that returns
+  /// `Map<String, dynamic>`. Returns null if metadata is null or
+  /// doesn't have a toJson method.
+  @visibleForTesting
+  Map<String, dynamic>? metaDataToJson() {
+    final meta = metaData;
+    if (meta == null) return null;
+
+    // Try to call toJson() on the metadata object
+    try {
+      // ignore: avoid_dynamic_calls
+      final result = (meta as dynamic).toJson();
+      if (result is Map<String, dynamic>) {
+        return result;
+      }
+    } catch (_) {
+      // Metadata doesn't have toJson() method
+    }
+    return null;
+  }
+
   /// Converts this object to a JSON map.
   ///
   /// If [primaryFormat] is [SerializationFormat.json], returns the
   /// overridden implementation. Otherwise, converts from the primary format.
   ///
+  /// [includeMetaData] - Whether to include metadata under `_meta` key
+  ///
   /// Returns null if the primary format method is not implemented.
-  Map<String, dynamic>? toJson() {
+  Map<String, dynamic>? toJson({bool includeMetaData = false}) {
+    Map<String, dynamic>? result;
     if (primaryFormat == SerializationFormat.json) {
-      return toJsonImpl();
+      result = toJsonImpl();
+    } else {
+      result = convertToJson();
     }
-    return _convertToJson();
+
+    if (result != null && includeMetaData) {
+      final meta = metaDataToJson();
+      if (meta != null) {
+        return {'_meta': meta, ...result};
+      }
+    }
+    return result;
   }
 
   /// Internal implementation of toJson for subclasses to override.
@@ -67,8 +103,10 @@ abstract class TurboSerializable<M> {
   /// Otherwise, if [primaryFormat] is [SerializationFormat.yaml], returns the
   /// overridden implementation. Otherwise, converts from the primary format.
   ///
+  /// [includeMetaData] - Whether to include metadata under `_meta` key
+  ///
   /// Returns null if the primary format method is not implemented.
-  String? toYaml() {
+  String? toYaml({bool includeMetaData = false}) {
     // Check if toYamlImpl() is overridden (returns non-null)
     final yamlImpl = toYamlImpl();
     if (yamlImpl != null) {
@@ -78,7 +116,7 @@ abstract class TurboSerializable<M> {
     if (primaryFormat == SerializationFormat.yaml) {
       return null; // Already checked above
     }
-    return _convertToYaml();
+    return convertToYaml(includeMetaData: includeMetaData);
   }
 
   /// Internal implementation of toYaml for subclasses to override.
@@ -87,14 +125,18 @@ abstract class TurboSerializable<M> {
   /// when [primaryFormat] is [SerializationFormat.yaml].
   String? toYamlImpl() => null;
 
-  /// Converts this object to a Markdown string.
+  /// Converts this object to a Markdown string with headers for keys.
   ///
   /// If [toMarkdownImpl()] is overridden and returns non-null, uses that implementation.
   /// Otherwise, if [primaryFormat] is [SerializationFormat.markdown], returns the
   /// overridden implementation. Otherwise, converts from the primary format.
   ///
+  /// [includeMetaData] - Whether to include metadata as YAML frontmatter
+  ///
   /// Returns null if the primary format method is not implemented.
-  String? toMarkdown() {
+  String? toMarkdown({
+    bool includeMetaData = false,
+  }) {
     // Check if toMarkdownImpl() is overridden (returns non-null)
     final markdownImpl = toMarkdownImpl();
     if (markdownImpl != null) {
@@ -104,7 +146,9 @@ abstract class TurboSerializable<M> {
     if (primaryFormat == SerializationFormat.markdown) {
       return null; // Already checked above
     }
-    return _convertToMarkdown();
+    return convertToMarkdown(
+      includeMetaData: includeMetaData,
+    );
   }
 
   /// Internal implementation of toMarkdown for subclasses to override.
@@ -122,11 +166,16 @@ abstract class TurboSerializable<M> {
   /// The root element name defaults to the class name (runtimeType).
   /// Override [toXmlImpl] for custom XML serialization behavior.
   ///
+  /// [includeMetaData] - Whether to include metadata as `_meta` element
+  /// [usePascalCase] - Whether to convert element names to PascalCase
+  ///
   /// Returns null if the primary format method is not implemented.
   String? toXml({
     String? rootElementName,
     bool includeNulls = false,
     bool prettyPrint = true,
+    bool includeMetaData = false,
+    bool usePascalCase = false,
   }) {
     // Check if toXmlImpl() is overridden (returns non-null)
     final xmlImpl = toXmlImpl(
@@ -141,10 +190,12 @@ abstract class TurboSerializable<M> {
     if (primaryFormat == SerializationFormat.xml) {
       return null; // Already checked above
     }
-    return _convertToXml(
+    return convertToXml(
       rootElementName: rootElementName,
       includeNulls: includeNulls,
       prettyPrint: prettyPrint,
+      includeMetaData: includeMetaData,
+      usePascalCase: usePascalCase,
     );
   }
 
@@ -172,10 +223,11 @@ abstract class TurboSerializable<M> {
     );
   }
 
-  // Private conversion helper methods
+  // Conversion helper methods exposed for testing
 
   /// Converts from primary format to JSON.
-  Map<String, dynamic>? _convertToJson() {
+  @visibleForTesting
+  Map<String, dynamic>? convertToJson() {
     switch (primaryFormat) {
       case SerializationFormat.json:
         return toJsonImpl();
@@ -207,12 +259,14 @@ abstract class TurboSerializable<M> {
   }
 
   /// Converts from primary format to YAML.
-  String? _convertToYaml() {
+  @visibleForTesting
+  String? convertToYaml({bool includeMetaData = false}) {
+    final meta = includeMetaData ? metaDataToJson() : null;
     switch (primaryFormat) {
       case SerializationFormat.json:
         final json = toJsonImpl();
         if (json == null) return null;
-        return jsonToYaml(json);
+        return jsonToYaml(json, metaData: meta);
       case SerializationFormat.yaml:
         return toYamlImpl();
       case SerializationFormat.markdown:
@@ -222,36 +276,44 @@ abstract class TurboSerializable<M> {
       case SerializationFormat.xml:
         final xml = toXmlImpl();
         if (xml == null) return null;
-        return xmlToYaml(xml);
+        return xmlToYaml(xml, metaData: meta);
     }
   }
 
   /// Converts from primary format to Markdown.
-  String? _convertToMarkdown() {
+  @visibleForTesting
+  String? convertToMarkdown({
+    bool includeMetaData = false,
+  }) {
+    final meta = includeMetaData ? metaDataToJson() : null;
     switch (primaryFormat) {
       case SerializationFormat.json:
         final json = toJsonImpl();
         if (json == null) return null;
-        return jsonToMarkdown(json);
+        return jsonToMarkdown(json, metaData: meta);
       case SerializationFormat.yaml:
         final yaml = toYamlImpl();
         if (yaml == null) return null;
-        return yamlToMarkdown(yaml);
+        return yamlToMarkdown(yaml, metaData: meta);
       case SerializationFormat.markdown:
         return toMarkdownImpl();
       case SerializationFormat.xml:
         final xml = toXmlImpl();
         if (xml == null) return null;
-        return xmlToMarkdown(xml);
+        return xmlToMarkdown(xml, metaData: meta);
     }
   }
 
   /// Converts from primary format to XML.
-  String? _convertToXml({
+  @visibleForTesting
+  String? convertToXml({
     String? rootElementName,
     bool includeNulls = false,
     bool prettyPrint = true,
+    bool includeMetaData = false,
+    bool usePascalCase = false,
   }) {
+    final meta = includeMetaData ? metaDataToJson() : null;
     switch (primaryFormat) {
       case SerializationFormat.json:
         final json = toJsonImpl();
@@ -263,6 +325,8 @@ abstract class TurboSerializable<M> {
           rootElementName: elementName,
           includeNulls: includeNulls,
           prettyPrint: prettyPrint,
+          usePascalCase: usePascalCase,
+          metaData: meta,
         );
       case SerializationFormat.yaml:
         final yaml = toYamlImpl();
@@ -274,6 +338,8 @@ abstract class TurboSerializable<M> {
           rootElementName: elementName,
           includeNulls: includeNulls,
           prettyPrint: prettyPrint,
+          usePascalCase: usePascalCase,
+          metaData: meta,
         );
       case SerializationFormat.markdown:
         final markdown = toMarkdownImpl();
@@ -285,6 +351,7 @@ abstract class TurboSerializable<M> {
           rootElementName: elementName,
           includeNulls: includeNulls,
           prettyPrint: prettyPrint,
+          usePascalCase: usePascalCase,
         );
       case SerializationFormat.xml:
         return toXmlImpl(

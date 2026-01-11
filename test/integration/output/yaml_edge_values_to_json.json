@@ -1,0 +1,12 @@
+{
+  "anchor": {
+    "shared": "value"
+  },
+  "alias": {
+    "shared": "value"
+  },
+  "colonInValue": "key: value",
+  "hashInValue": "use #hashtag",
+  "quotedNumber": "123",
+  "unquotedNumber": 123
+}

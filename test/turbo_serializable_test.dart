@@ -444,8 +444,10 @@ void main() {
         final model = _JsonOnlyModel(name: 'Test', age: 25);
         final markdown = model.toMarkdown();
         expect(markdown, isNotNull);
-        expect(markdown, contains('"name": "Test"'));
-        expect(markdown, contains('"age": 25'));
+        expect(markdown, contains('## Name'));
+        expect(markdown, contains('Test'));
+        expect(markdown, contains('## Age'));
+        expect(markdown, contains('25'));
       });
 
       test('toXml converts from JSON', () {
@@ -634,21 +636,24 @@ void main() {
         );
         expect(markdown, contains('---'));
         expect(markdown, contains('title: Test'));
-        expect(markdown, contains('"key": "value"'));
+        expect(markdown, contains('## Key'));
+        expect(markdown, contains('value'));
       });
 
       test('converts JSON without frontmatter', () {
         final markdown = jsonToMarkdown({'key': 'value'});
         expect(markdown, isNot(contains('---')));
-        expect(markdown, contains('"key": "value"'));
+        expect(markdown, contains('## Key'));
+        expect(markdown, contains('value'));
       });
 
-      test('formats nested JSON', () {
+      test('formats nested JSON with headers', () {
         final markdown = jsonToMarkdown({
           'user': {'name': 'Test', 'age': 25}
         });
-        expect(markdown, contains('"user"'));
-        expect(markdown, contains('"name": "Test"'));
+        expect(markdown, contains('## User'));
+        expect(markdown, contains('### Name'));
+        expect(markdown, contains('Test'));
       });
     });
 
@@ -796,6 +801,204 @@ Some regular markdown content
         () => xmlToMap('invalid xml <unclosed'),
         throwsA(isA<FormatException>()),
       );
+    });
+  });
+
+  group('Exposed Internal Methods', () {
+    group('metaDataToJson', () {
+      test('returns null when metadata is null', () {
+        final model = _JsonOnlyModel(name: 'Test', age: 25);
+        expect(model.metaDataToJson(), isNull);
+      });
+
+      test('returns JSON map when metadata has toJson()', () {
+        final meta = _MetaWithToJson(title: 'Test Doc', version: 1);
+        final model = _ModelWithMeta(content: 'Hello', metaData: meta);
+        final result = model.metaDataToJson();
+        expect(result, isNotNull);
+        expect(result!['title'], 'Test Doc');
+        expect(result['version'], 1);
+      });
+
+      test('returns null when metadata lacks toJson()', () {
+        final meta = _MetaWithoutToJson(title: 'Test');
+        final model = _ModelWithBadMeta(content: 'Hello', metaData: meta);
+        expect(model.metaDataToJson(), isNull);
+      });
+    });
+
+    group('convertToJson', () {
+      test('from JSON primary returns toJsonImpl result', () {
+        final model = _JsonOnlyModel(name: 'Test', age: 25);
+        final result = model.convertToJson();
+        expect(result, equals({'name': 'Test', 'age': 25}));
+      });
+
+      test('from YAML primary converts YAML to JSON', () {
+        final model = _YamlOnlyModel(name: 'Test', age: 25);
+        final result = model.convertToJson();
+        expect(result, isNotNull);
+        expect(result!['name'], 'Test');
+        expect(result['age'], 25);
+      });
+
+      test('from Markdown primary converts Markdown to JSON', () {
+        final model = _MarkdownWithFrontmatterModel(
+          title: 'My Title',
+          description: 'Desc',
+          body: '{"key": "value"}',
+        );
+        final result = model.convertToJson();
+        expect(result, isNotNull);
+        expect(result!['title'], 'My Title');
+      });
+
+      test('from XML primary converts XML to JSON', () {
+        final model = _XmlOnlyModel(name: 'Test', age: 25);
+        final result = model.convertToJson();
+        expect(result, isNotNull);
+        expect(result!['name'], 'Test');
+        expect(result['age'], 25);
+      });
+
+      test('returns null when primary impl returns null', () {
+        final model = MinimalModel();
+        expect(model.convertToJson(), isNull);
+      });
+    });
+
+    group('convertToYaml', () {
+      test('from JSON primary converts to YAML', () {
+        final model = _JsonOnlyModel(name: 'Test', age: 25);
+        final result = model.convertToYaml();
+        expect(result, isNotNull);
+        expect(result, contains('name: Test'));
+        expect(result, contains('age: 25'));
+      });
+
+      test('includes metadata when requested', () {
+        final meta = _MetaWithToJson(title: 'Doc Title', version: 2);
+        final model = _ModelWithMeta(content: 'Hello', metaData: meta);
+        final result = model.convertToYaml(includeMetaData: true);
+        expect(result, isNotNull);
+        expect(result, contains('_meta:'));
+        expect(result, contains('title: Doc Title'));
+      });
+
+      test('excludes metadata when not requested', () {
+        final meta = _MetaWithToJson(title: 'Doc Title', version: 2);
+        final model = _ModelWithMeta(content: 'Hello', metaData: meta);
+        final result = model.convertToYaml(includeMetaData: false);
+        expect(result, isNotNull);
+        expect(result, isNot(contains('_meta:')));
+      });
+
+      test('from YAML primary returns toYamlImpl result', () {
+        final model = _YamlOnlyModel(name: 'Test', age: 25);
+        final result = model.convertToYaml();
+        expect(result, contains('name: Test'));
+      });
+
+      test('returns null when primary impl returns null', () {
+        final model = MinimalModel();
+        expect(model.convertToYaml(), isNull);
+      });
+    });
+
+    group('convertToMarkdown', () {
+      test('from JSON primary converts to Markdown', () {
+        final model = _JsonOnlyModel(name: 'Test', age: 25);
+        final result = model.convertToMarkdown();
+        expect(result, isNotNull);
+        expect(result, contains('## Name'));
+        expect(result, contains('Test'));
+      });
+
+      test('includes metadata as frontmatter', () {
+        final meta = _MetaWithToJson(title: 'Doc', version: 1);
+        final model = _ModelWithMeta(content: 'Hello', metaData: meta);
+        final result = model.convertToMarkdown(includeMetaData: true);
+        expect(result, isNotNull);
+        expect(result, contains('---'));
+        expect(result, contains('title: Doc'));
+      });
+
+      test('generates markdown with headers', () {
+        final model = _JsonOnlyModel(name: 'Test', age: 25);
+        final result = model.convertToMarkdown();
+        expect(result, isNotNull);
+        expect(result, contains('## Name'));
+        expect(result, contains('Test'));
+      });
+
+      test('combines metadata and headers', () {
+        final meta = _MetaWithToJson(title: 'Doc', version: 1);
+        final model = _ModelWithMeta(content: 'Hello', metaData: meta);
+        final result = model.convertToMarkdown(
+          includeMetaData: true,
+        );
+        expect(result, isNotNull);
+        expect(result, contains('---'));
+        expect(result, contains('## Content'));
+      });
+
+      test('returns null when primary impl returns null', () {
+        final model = MinimalModel();
+        expect(model.convertToMarkdown(), isNull);
+      });
+    });
+
+    group('convertToXml', () {
+      test('from JSON primary converts to XML', () {
+        final model = _JsonOnlyModel(name: 'Test', age: 25);
+        final result = model.convertToXml();
+        expect(result, isNotNull);
+        expect(result, contains('<name>Test</name>'));
+        expect(result, contains('<age>25</age>'));
+      });
+
+      test('uses custom root element name', () {
+        final model = _JsonOnlyModel(name: 'Test', age: 25);
+        final result = model.convertToXml(rootElementName: 'CustomRoot');
+        expect(result, isNotNull);
+        expect(result, contains('<CustomRoot>'));
+      });
+
+      test('includes metadata when requested', () {
+        final meta = _MetaWithToJson(title: 'Doc', version: 1);
+        final model = _ModelWithMeta(content: 'Hello', metaData: meta);
+        final result = model.convertToXml(includeMetaData: true);
+        expect(result, isNotNull);
+        expect(result, contains('<_meta>'));
+        expect(result, contains('<title>Doc</title>'));
+      });
+
+      test('uses PascalCase when requested', () {
+        final model = _JsonOnlyModel(name: 'Test', age: 25);
+        final result = model.convertToXml(usePascalCase: true);
+        expect(result, isNotNull);
+        expect(result, contains('<Name>Test</Name>'));
+        expect(result, contains('<Age>25</Age>'));
+      });
+
+      test('includes null values when requested', () {
+        final model = _NullableModel(name: 'Test', value: null);
+        final result = model.convertToXml(includeNulls: true);
+        expect(result, isNotNull);
+        expect(result, contains('<value>'));
+      });
+
+      test('excludes null values by default', () {
+        final model = _NullableModel(name: 'Test', value: null);
+        final result = model.convertToXml(includeNulls: false);
+        expect(result, isNotNull);
+        expect(result, isNot(contains('<value>')));
+      });
+
+      test('returns null when primary impl returns null', () {
+        final model = MinimalModel();
+        expect(model.convertToXml(), isNull);
+      });
     });
   });
 }
@@ -983,4 +1186,37 @@ class _NumericModel extends TurboSerializable<Object?> {
         'doubleValue': doubleValue,
         'negativeValue': negativeValue,
       };
+}
+
+class _MetaWithToJson {
+  final String title;
+  final int version;
+
+  _MetaWithToJson({required this.title, required this.version});
+
+  Map<String, dynamic> toJson() => {'title': title, 'version': version};
+}
+
+class _MetaWithoutToJson {
+  final String title;
+
+  _MetaWithoutToJson({required this.title});
+}
+
+class _ModelWithMeta extends TurboSerializable<_MetaWithToJson> {
+  final String content;
+
+  _ModelWithMeta({required this.content, super.metaData});
+
+  @override
+  Map<String, dynamic>? toJsonImpl() => {'content': content};
+}
+
+class _ModelWithBadMeta extends TurboSerializable<_MetaWithoutToJson> {
+  final String content;
+
+  _ModelWithBadMeta({required this.content, super.metaData});
+
+  @override
+  Map<String, dynamic>? toJsonImpl() => {'content': content};
 }

@@ -1,0 +1,13 @@
+{
+  "nullValue": null,
+  "emptyString": "",
+  "emptyArray": [],
+  "emptyObject": {},
+  "unicode": "日本語 中文 العربية",
+  "emoji": "👍🎉🚀",
+  "specialChars": "quotes: \"hello\" backslash: \\ tab: \t",
+  "scientificNotation": 1.23e10,
+  "negativeNumber": -999.99,
+  "zero": 0,
+  "largeNumber": 9999999999999
+}

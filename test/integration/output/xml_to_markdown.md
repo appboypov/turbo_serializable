@@ -1,14 +1,11 @@
-{
-  "product": {
-    "name": "Widget",
-    "price": 29.99,
-    "inStock": true
-  },
-  "category": "Electronics",
-  "tags": {
-    "tag": [
-      "sale",
-      "popular"
-    ]
-  }
-}
+## First Name
+John
+
+## Last Name
+Doe
+
+## Age
+30
+
+## Active
+true

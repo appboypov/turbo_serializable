@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
+  <_meta>
+    <title>Test</title>
+    <version>1.0</version>
+  </_meta>
   <firstName>John</firstName>
   <lastName>Doe</lastName>
   <age>30</age>

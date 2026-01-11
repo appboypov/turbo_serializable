@@ -1,0 +1,14 @@
+literalBlock: |
+  Line 1
+  Line 2
+  Line 3
+foldedBlock: >
+  This is a long
+  paragraph that will
+  be folded into one line.
+preserveNewlines: |+
+  Keep trailing newlines
+
+
+stripNewlines: |-
+  No trailing newline

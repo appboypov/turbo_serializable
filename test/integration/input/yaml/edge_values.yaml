@@ -1,0 +1,8 @@
+# This is a comment (should be ignored)
+anchor: &myAnchor
+  shared: value
+alias: *myAnchor
+colonInValue: "key: value"
+hashInValue: "use #hashtag"
+quotedNumber: "123"
+unquotedNumber: 123

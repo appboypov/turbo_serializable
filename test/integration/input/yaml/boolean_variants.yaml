@@ -1,0 +1,10 @@
+bool1: true
+bool2: false
+bool3: yes
+bool4: no
+bool5: on
+bool6: off
+bool7: TRUE
+bool8: FALSE
+quotedTrue: "true"
+quotedYes: "yes"

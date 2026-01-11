@@ -1,0 +1,12 @@
+{
+  "primitiveArray": ["a", "b", "c"],
+  "numberArray": [1, 2, 3, 4.5],
+  "booleanArray": [true, false, true],
+  "objectArray": [
+    {"id": 1, "name": "First"},
+    {"id": 2, "name": "Second"}
+  ],
+  "mixedArray": [1, "two", true, null, {"nested": "object"}],
+  "nestedArray": [[1, 2], [3, 4], [5, 6]],
+  "emptyArray": []
+}

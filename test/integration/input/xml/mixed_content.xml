@@ -1,0 +1,4 @@
+<root>
+  <paragraph>This is <bold>mixed</bold> content with <em>inline</em> elements.</paragraph>
+  <note>Text before <child>nested</child> and after.</note>
+</root>

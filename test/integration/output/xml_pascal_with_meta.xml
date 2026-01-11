@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Root>
+  <_Meta>
+    <Title>Test</Title>
+  </_Meta>
+  <FirstName>John</FirstName>
+  <LastName>Doe</LastName>
+  <Age>30</Age>
+  <Active>true</Active>
+</Root>

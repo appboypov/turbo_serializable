@@ -1,17 +1,11 @@
-{
-  "user": {
-    "name": "John Doe",
-    "age": 30,
-    "email": "john@example.com",
-    "active": true
-  },
-  "roles": [
-    "admin",
-    "editor"
-  ],
-  "settings": {
-    "theme": "dark",
-    "notifications": true,
-    "language": "en"
-  }
-}
+## First Name
+John
+
+## Last Name
+Doe
+
+## Age
+30
+
+## Active
+true
