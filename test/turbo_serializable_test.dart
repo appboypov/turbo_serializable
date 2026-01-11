@@ -728,8 +728,12 @@ void main() {
       });
 
       test('handles null values', () {
-        final yaml = jsonToYaml({'name': 'Test', 'value': null});
+        final yaml = jsonToYaml({'name': 'Test', 'value': null}, includeNulls: true);
         expect(yaml, contains('value: null'));
+        
+        final yamlWithoutNulls = jsonToYaml({'name': 'Test', 'value': null}, includeNulls: false);
+        expect(yamlWithoutNulls, contains('name: Test'));
+        expect(yamlWithoutNulls, isNot(contains('value')));
       });
 
       test('escapes special characters in strings', () {

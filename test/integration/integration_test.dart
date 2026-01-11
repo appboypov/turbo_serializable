@@ -281,7 +281,7 @@ void main() {
     test('preserves edge values in YAML', () {
       final jsonFile = File('${inputDir.path}/json/edge_values.json');
       final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
-      final result = jsonToYaml(data);
+      final result = jsonToYaml(data, includeNulls: true);
 
       expect(result, contains('nullValue: null'));
       expect(result, contains('unicode:'));
@@ -829,8 +829,13 @@ void main() {
       final jsonFile = File('${inputDir.path}/json/edge_values.json');
       final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
 
-      final yaml = jsonToYaml(data);
+      // With includeNulls=true, null values are included in YAML
+      final yaml = jsonToYaml(data, includeNulls: true);
       expect(yaml, contains('nullValue: null'));
+
+      // By default (includeNulls=false), null values are skipped in YAML
+      final yamlWithoutNulls = jsonToYaml(data, includeNulls: false);
+      expect(yamlWithoutNulls, isNot(contains('nullValue')));
 
       // By default (includeNulls=false), null values are skipped in XML
       final xml = mapToXml(data);
@@ -840,8 +845,13 @@ void main() {
       final xmlWithNulls = mapToXml(data, includeNulls: true);
       expect(xmlWithNulls, contains('<nullValue>'));
 
-      final markdown = jsonToMarkdown(data);
+      // With includeNulls=true, null values are included in Markdown
+      final markdown = jsonToMarkdown(data, includeNulls: true);
       expect(markdown, contains('## Null Value'));
+      
+      // By default (includeNulls=false), null values are skipped in Markdown
+      final markdownWithoutNulls = jsonToMarkdown(data, includeNulls: false);
+      expect(markdownWithoutNulls, isNot(contains('Null Value')));
     });
 
     test('empty values become null in YAML round-trip', () {

@@ -65,22 +65,31 @@ abstract class TurboSerializable<M> {
   /// configured callback. Otherwise, converts from the primary format.
   ///
   /// [includeMetaData] - Whether to include metadata under `_meta` key
+  /// [includeNulls] - Whether to include null values (default: false)
   ///
   /// Returns null if the callback is not provided or returns null.
-  Map<String, dynamic>? toJson({bool includeMetaData = true}) {
+  Map<String, dynamic>? toJson({
+    bool includeMetaData = true,
+    bool includeNulls = false,
+  }) {
     Map<String, dynamic>? result;
     if (config.primaryFormat == SerializationFormat.json) {
       result = config.toJson?.call(this);
     } else {
-      result = convertToJson();
+      result = convertToJson(includeNulls: includeNulls);
     }
 
     if (result != null && includeMetaData) {
       final meta = metaDataToJsonMap();
       if (meta.isNotEmpty) {
-        return {TurboConstants.metaKey: meta, ...result};
+        result = {TurboConstants.metaKey: meta, ...result};
       }
     }
+    
+    if (result != null && !includeNulls) {
+      result = filterNullsFromMap(result);
+    }
+    
     return result;
   }
 
@@ -91,9 +100,15 @@ abstract class TurboSerializable<M> {
   /// Otherwise, converts from the primary format.
   ///
   /// [includeMetaData] - Whether to include metadata under `_meta` key
+  /// [includeNulls] - Whether to include null values (default: false)
+  /// [prettyPrint] - Whether to format YAML with indentation (default: true)
   ///
   /// Returns null if the callback is not provided or returns null.
-  String? toYaml({bool includeMetaData = true}) {
+  String? toYaml({
+    bool includeMetaData = true,
+    bool includeNulls = false,
+    bool prettyPrint = true,
+  }) {
     // Check if YAML callback is provided
     final yamlResult = config.toYaml?.call(this);
     if (yamlResult != null) {
@@ -103,7 +118,11 @@ abstract class TurboSerializable<M> {
     if (config.primaryFormat == SerializationFormat.yaml) {
       return null; // Already checked above
     }
-    return convertToYaml(includeMetaData: includeMetaData);
+    return convertToYaml(
+      includeMetaData: includeMetaData,
+      includeNulls: includeNulls,
+      prettyPrint: prettyPrint,
+    );
   }
 
   /// Converts this object to a Markdown string with headers for keys.
@@ -113,10 +132,14 @@ abstract class TurboSerializable<M> {
   /// Otherwise, converts from the primary format.
   ///
   /// [includeMetaData] - Whether to include metadata as YAML frontmatter
+  /// [includeNulls] - Whether to include null values (default: false)
+  /// [prettyPrint] - Whether to format Markdown with spacing (default: true)
   ///
   /// Returns null if the callback is not provided or returns null.
   String? toMarkdown({
     bool includeMetaData = true,
+    bool includeNulls = false,
+    bool prettyPrint = true,
   }) {
     // Check if Markdown callback is provided
     final markdownResult = config.toMarkdown?.call(this);
@@ -129,6 +152,8 @@ abstract class TurboSerializable<M> {
     }
     return convertToMarkdown(
       includeMetaData: includeMetaData,
+      includeNulls: includeNulls,
+      prettyPrint: prettyPrint,
     );
   }
 
@@ -180,26 +205,30 @@ abstract class TurboSerializable<M> {
 
   /// Converts from primary format to JSON.
   @visibleForTesting
-  Map<String, dynamic>? convertToJson() {
+  Map<String, dynamic>? convertToJson({bool includeNulls = false}) {
+    Map<String, dynamic>? result;
     switch (config.primaryFormat) {
       case SerializationFormat.json:
-        return config.toJson?.call(this);
+        result = config.toJson?.call(this);
+        break;
       case SerializationFormat.yaml:
         final yaml = config.toYaml?.call(this);
         if (yaml == null) return null;
         try {
-          return yamlToJson(yaml);
+          result = yamlToJson(yaml);
         } catch (e) {
           return null;
         }
+        break;
       case SerializationFormat.markdown:
         final markdown = config.toMarkdown?.call(this);
         if (markdown == null) return null;
         try {
-          return markdownToJson(markdown);
+          result = markdownToJson(markdown);
         } catch (e) {
           return null;
         }
+        break;
       case SerializationFormat.xml:
         final xml = config.toXml?.call(
           this,
@@ -211,22 +240,38 @@ abstract class TurboSerializable<M> {
         );
         if (xml == null) return null;
         try {
-          return xmlToJson(xml);
+          result = xmlToJson(xml);
         } catch (e) {
           return null;
         }
+        break;
     }
+    
+    if (result != null && !includeNulls) {
+      result = filterNullsFromMap(result);
+    }
+    
+    return result;
   }
 
   /// Converts from primary format to YAML.
   @visibleForTesting
-  String? convertToYaml({bool includeMetaData = true}) {
+  String? convertToYaml({
+    bool includeMetaData = true,
+    bool includeNulls = false,
+    bool prettyPrint = true,
+  }) {
     final meta = includeMetaData ? metaDataToJsonMap() : null;
     switch (config.primaryFormat) {
       case SerializationFormat.json:
         final json = config.toJson?.call(this);
         if (json == null) return null;
-        return jsonToYaml(json, metaData: meta);
+        return jsonToYaml(
+          json,
+          metaData: meta,
+          includeNulls: includeNulls,
+          prettyPrint: prettyPrint,
+        );
       case SerializationFormat.yaml:
         return config.toYaml?.call(this);
       case SerializationFormat.markdown:
@@ -243,7 +288,12 @@ abstract class TurboSerializable<M> {
           caseStyle: CaseStyle.none,
         );
         if (xml == null) return null;
-        return xmlToYaml(xml, metaData: meta);
+        return xmlToYaml(
+          xml,
+          metaData: meta,
+          includeNulls: includeNulls,
+          prettyPrint: prettyPrint,
+        );
     }
   }
 
@@ -251,17 +301,29 @@ abstract class TurboSerializable<M> {
   @visibleForTesting
   String? convertToMarkdown({
     bool includeMetaData = true,
+    bool includeNulls = false,
+    bool prettyPrint = true,
   }) {
     final meta = includeMetaData ? metaDataToJsonMap() : null;
     switch (config.primaryFormat) {
       case SerializationFormat.json:
         final json = config.toJson?.call(this);
         if (json == null) return null;
-        return jsonToMarkdown(json, metaData: meta);
+        return jsonToMarkdown(
+          json,
+          metaData: meta,
+          includeNulls: includeNulls,
+          prettyPrint: prettyPrint,
+        );
       case SerializationFormat.yaml:
         final yaml = config.toYaml?.call(this);
         if (yaml == null) return null;
-        return yamlToMarkdown(yaml, metaData: meta);
+        return yamlToMarkdown(
+          yaml,
+          metaData: meta,
+          includeNulls: includeNulls,
+          prettyPrint: prettyPrint,
+        );
       case SerializationFormat.markdown:
         return config.toMarkdown?.call(this);
       case SerializationFormat.xml:
@@ -274,7 +336,12 @@ abstract class TurboSerializable<M> {
           caseStyle: CaseStyle.none,
         );
         if (xml == null) return null;
-        return xmlToMarkdown(xml, metaData: meta);
+        return xmlToMarkdown(
+          xml,
+          metaData: meta,
+          includeNulls: includeNulls,
+          prettyPrint: prettyPrint,
+        );
     }
   }
 

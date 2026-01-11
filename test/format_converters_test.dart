@@ -173,6 +173,26 @@ void main() {
       final result = convertMapToYaml({'key': 'value'}, 2);
       expect(result, '    key: value\n');
     });
+
+    test('formats with indentation when prettyPrint is true', () {
+      final result = convertMapToYaml(
+        {'parent': {'child': 'value'}},
+        0,
+        prettyPrint: true,
+      );
+      expect(result, contains('parent:\n'));
+      expect(result, contains('  child: value'));
+    });
+
+    test('formats without indentation when prettyPrint is false', () {
+      final result = convertMapToYaml(
+        {'key': 'value'},
+        0,
+        prettyPrint: false,
+      );
+      expect(result, contains('key: value'));
+      // Should not have trailing newline when prettyPrint is false
+    });
   });
 
   group('convertValueToYamlString', () {
@@ -295,6 +315,65 @@ void main() {
       );
       expect(result, isNot(contains('_meta:')));
     });
+
+    test('excludes null values when includeNulls is false', () {
+      final result = jsonToYaml(
+        {'name': 'test', 'nullable': null, 'age': 30},
+        includeNulls: false,
+      );
+      expect(result, contains('name: test'));
+      expect(result, contains('age: 30'));
+      expect(result, isNot(contains('nullable')));
+    });
+
+    test('includes null values when includeNulls is true', () {
+      final result = jsonToYaml(
+        {'name': 'test', 'nullable': null},
+        includeNulls: true,
+      );
+      expect(result, contains('name: test'));
+      expect(result, contains('nullable: null'));
+    });
+
+    test('formats with indentation when prettyPrint is true', () {
+      final result = jsonToYaml(
+        {'parent': {'child': 'value'}},
+        prettyPrint: true,
+      );
+      expect(result, contains('parent:'));
+      expect(result, contains('  child: value'));
+    });
+
+    test('formats without indentation when prettyPrint is false', () {
+      final result = jsonToYaml(
+        {'name': 'test'},
+        prettyPrint: false,
+      );
+      // When prettyPrint is false, there should be no newlines/indentation
+      expect(result, contains('name: test'));
+    });
+
+    test('filters nulls recursively', () {
+      final result = jsonToYaml(
+        {
+          'parent': {
+            'child': 'value',
+            'nullable': null,
+            'nested': {
+              'deep': null,
+              'value': 'kept',
+            },
+          },
+          'topNull': null,
+        },
+        includeNulls: false,
+      );
+      expect(result, contains('child: value'));
+      expect(result, contains('value: kept'));
+      expect(result, isNot(contains('nullable')));
+      expect(result, isNot(contains('deep')));
+      expect(result, isNot(contains('topNull')));
+    });
   });
 
   group('jsonToMarkdown', () {
@@ -342,6 +421,66 @@ void main() {
       expect(result, contains('## User Name'));
       expect(result, contains('## First Name'));
       expect(result, contains('## Last Name'));
+    });
+
+    test('excludes null values when includeNulls is false', () {
+      final result = jsonToMarkdown(
+        {'name': 'test', 'nullable': null, 'age': 30},
+        includeNulls: false,
+      );
+      expect(result, contains('## Name'));
+      expect(result, contains('## Age'));
+      expect(result, isNot(contains('Nullable')));
+    });
+
+    test('includes null values when includeNulls is true', () {
+      final result = jsonToMarkdown(
+        {'name': 'test', 'nullable': null},
+        includeNulls: true,
+      );
+      expect(result, contains('## Name'));
+      expect(result, contains('## Nullable'));
+    });
+
+    test('adds spacing when prettyPrint is true', () {
+      final result = jsonToMarkdown(
+        {'key1': 'value1', 'key2': 'value2'},
+        prettyPrint: true,
+      );
+      // Should have blank lines between sections
+      expect(result, contains('## Key1\nvalue1\n\n## Key2'));
+    });
+
+    test('removes spacing when prettyPrint is false', () {
+      final result = jsonToMarkdown(
+        {'key1': 'value1', 'key2': 'value2'},
+        prettyPrint: false,
+      );
+      // Should have minimal spacing
+      expect(result, contains('## Key1\nvalue1\n## Key2'));
+    });
+
+    test('filters nulls recursively', () {
+      final result = jsonToMarkdown(
+        {
+          'parent': {
+            'child': 'value',
+            'nullable': null,
+            'nested': {
+              'deep': null,
+              'value': 'kept',
+            },
+          },
+          'topNull': null,
+        },
+        includeNulls: false,
+      );
+      expect(result, contains('## Parent'));
+      expect(result, contains('### Child'));
+      expect(result, contains('### Value'));
+      expect(result, isNot(contains('Nullable')));
+      expect(result, isNot(contains('Deep')));
+      expect(result, isNot(contains('Top Null')));
     });
   });
 
@@ -424,6 +563,25 @@ void main() {
       expect(result, contains('### Name'));
       expect(result, contains('Alice'));
       expect(result, contains('Bob'));
+    });
+
+    test('adds spacing when prettyPrint is true', () {
+      final result = convertMapToMarkdownHeaders(
+        {'key1': 'value1', 'key2': 'value2'},
+        2,
+        prettyPrint: true,
+      );
+      expect(result, contains('## Key1\nvalue1\n\n## Key2'));
+    });
+
+    test('removes spacing when prettyPrint is false', () {
+      final result = convertMapToMarkdownHeaders(
+        {'key1': 'value1', 'key2': 'value2'},
+        2,
+        prettyPrint: false,
+      );
+      expect(result, contains('## Key1\nvalue1\n## Key2'));
+      expect(result, isNot(contains('## Key1\nvalue1\n\n## Key2')));
     });
   });
 
@@ -654,6 +812,88 @@ void main() {
         () => xmlToJson('<invalid>'),
         throwsA(isA<FormatException>()),
       );
+    });
+  });
+
+  group('filterNullsFromMap', () {
+    test('removes top-level null values', () {
+      final result = filterNullsFromMap({
+        'name': 'test',
+        'nullable': null,
+        'age': 30,
+      });
+      expect(result, {'name': 'test', 'age': 30});
+      expect(result, isNot(contains('nullable')));
+    });
+
+    test('removes nested null values', () {
+      final result = filterNullsFromMap({
+        'parent': {
+          'child': 'value',
+          'nullable': null,
+        },
+      });
+      expect(result['parent'], {'child': 'value'});
+      expect(result['parent'], isNot(contains('nullable')));
+    });
+
+    test('removes null values from lists', () {
+      final result = filterNullsFromMap({
+        'items': ['a', null, 'b', null, 'c'],
+      });
+      expect(result['items'], ['a', 'b', 'c']);
+    });
+
+    test('preserves empty maps after filtering', () {
+      final result = filterNullsFromMap({
+        'parent': {
+          'nullable': null,
+        },
+      });
+      expect(result['parent'], isEmpty);
+      expect(result['parent'], isA<Map>());
+    });
+
+    test('preserves empty lists after filtering', () {
+      final result = filterNullsFromMap({
+        'items': [null, null],
+      });
+      expect(result['items'], isEmpty);
+      expect(result['items'], isA<List>());
+    });
+
+    test('preserves non-null values', () {
+      final result = filterNullsFromMap({
+        'string': 'value',
+        'number': 42,
+        'boolean': true,
+        'list': [1, 2, 3],
+        'map': {'nested': 'value'},
+      });
+      expect(result['string'], 'value');
+      expect(result['number'], 42);
+      expect(result['boolean'], true);
+      expect(result['list'], [1, 2, 3]);
+      expect(result['map'], {'nested': 'value'});
+    });
+
+    test('handles deeply nested structures', () {
+      final result = filterNullsFromMap({
+        'level1': {
+          'level2': {
+            'level3': {
+              'value': 'kept',
+              'nullable': null,
+            },
+            'nullable': null,
+          },
+          'kept': 'value',
+        },
+        'topNull': null,
+      });
+      expect(result['level1']['level2']['level3'], {'value': 'kept'});
+      expect(result['level1']['kept'], 'value');
+      expect(result, isNot(contains('topNull')));
     });
   });
 }

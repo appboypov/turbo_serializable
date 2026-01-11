@@ -32,7 +32,6 @@ Second
 - 1
 - two
 - true
-- null
 - {nested: object}
 
 ## Nested Array
