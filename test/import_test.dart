@@ -1,4 +1,5 @@
 import 'package:test/test.dart';
+import 'package:turbo_serializable/models/turbo_serializable_config.dart';
 import 'package:turbo_serializable/turbo_serializable.dart';
 
 class TestSerializable extends TurboSerializable<Object?> {
@@ -7,7 +8,7 @@ class TestSerializable extends TurboSerializable<Object?> {
   TestSerializable(this.name)
       : super(
             config: TurboSerializableConfig(
-          toJsonMap: (instance) {
+          toJson: (instance) {
             final self = instance as TestSerializable;
             return {'name': self.name};
           },
@@ -23,7 +24,7 @@ class TestSerializableId extends TurboSerializableId<String, Object?> {
   })
       : super(
             config: TurboSerializableConfig(
-          toJsonMap: (_) => null,
+          toJson: (_) => null,
         ));
 
   @override
@@ -35,7 +36,7 @@ void main() {
     final obj = TestSerializable('test');
     expect(obj.toJson(), {'name': 'test'});
     expect(obj.validate(), isNull);
-    // toYaml converts from JSON when toJsonCallback is provided
+    // toYaml converts from JSON when toJson is provided
     expect(obj.toYaml(), isNotNull);
     expect(obj.toYaml(), contains('name: test'));
     // toMarkdown converts from JSON

@@ -4,89 +4,7 @@ import 'package:turbo_serializable/abstracts/has_to_json.dart';
 import 'package:turbo_serializable/converters/format_converters.dart';
 import 'package:turbo_serializable/enums/serialization_format.dart';
 import 'package:turbo_serializable/converters/xml_converter.dart';
-
-/// Configuration for [TurboSerializable] instances.
-///
-/// Specifies callbacks for serialization methods and automatically determines
-/// the primary format based on which callbacks are provided.
-class TurboSerializableConfig {
-
-  /// Callback for JSON serialization.
-  final Map<String, dynamic>? Function(TurboSerializable input)? toJsonMap;
-
-  /// Callback for YAML serialization.
-  final String? Function(TurboSerializable input)? toYamlString;
-
-  /// Callback for Markdown serialization.
-  final String? Function(TurboSerializable input)? toMarkdownString;
-
-  /// Callback for XML serialization.
-  final String? Function(
-    TurboSerializable, {
-    String? rootElementName,
-    bool includeNulls,
-    bool prettyPrint,
-  })? toXmlCallback;
-
-  /// The primary serialization format, determined from the provided callbacks.
-  ///
-  /// Computed once during initialization based on which callbacks are non-null.
-  /// Priority: json > yaml > markdown > xml
-  final SerializationFormat primaryFormat;
-
-  /// Creates a [TurboSerializableConfig] with optional callbacks.
-  ///
-  /// At least one callback must be provided. The [primaryFormat] is
-  /// automatically determined based on which callbacks are non-null.
-  TurboSerializableConfig({
-    this.toJsonMap,
-    this.toYamlString,
-    this.toMarkdownString,
-    this.toXmlCallback,
-  })  : assert(
-          toJsonMap != null ||
-              toYamlString != null ||
-              toMarkdownString != null ||
-              toXmlCallback != null,
-          'At least one callback must be provided',
-        ),
-        primaryFormat = _computePrimaryFormat(
-          toJsonMap,
-          toYamlString,
-          toMarkdownString,
-          toXmlCallback,
-        );
-
-  /// Computes the primary format based on which callbacks are provided.
-  ///
-  /// Priority order: json > yaml > markdown > xml
-  static SerializationFormat _computePrimaryFormat(
-    Map<String, dynamic>? Function(TurboSerializable)? toJsonCallback,
-    String? Function(TurboSerializable)? toYamlCallback,
-    String? Function(TurboSerializable)? toMarkdownCallback,
-    String? Function(
-      TurboSerializable, {
-      String? rootElementName,
-      bool includeNulls,
-      bool prettyPrint,
-    })? toXmlCallback,
-  ) {
-    if (toJsonCallback != null) {
-      return SerializationFormat.jsonMap;
-    }
-    if (toYamlCallback != null) {
-      return SerializationFormat.yamlString;
-    }
-    if (toMarkdownCallback != null) {
-      return SerializationFormat.markdownString;
-    }
-    if (toXmlCallback != null) {
-      return SerializationFormat.xmlString;
-    }
-    // This should never be reached due to the assertion, but provide a default
-    return SerializationFormat.jsonMap;
-  }
-}
+import 'package:turbo_serializable/models/turbo_serializable_config.dart';
 
 /// Base abstract class for serializable objects in the turbo ecosystem.
 ///
@@ -94,7 +12,7 @@ class TurboSerializableConfig {
 /// serialization methods. The primary format is automatically determined
 /// from the provided callbacks. All other formats are automatically
 /// converted from the primary format.
-abstract class TurboSerializable<M extends HasToJson> {
+abstract class TurboSerializable<M> {
   /// Creates a [TurboSerializable] instance with required [config]
   /// and optional [metaData].
   ///
@@ -130,11 +48,18 @@ abstract class TurboSerializable<M extends HasToJson> {
 
   /// Converts metadata to a JSON map.
   @visibleForTesting
-  Map<String, dynamic> metaDataToJsonMap() => metaData?.toJson() ?? {};
+  Map<String, dynamic> metaDataToJsonMap() {
+    if (metaData == null) return {};
+    // Try to call toJson() if it's a HasToJson instance
+    if (metaData is HasToJson) {
+      return (metaData as HasToJson).toJson();
+    }
+    return {};
+  }
 
   /// Converts this object to a JSON map.
   ///
-  /// If the primary format is [SerializationFormat.jsonMap], uses the
+  /// If the primary format is [SerializationFormat.json], uses the
   /// configured callback. Otherwise, converts from the primary format.
   ///
   /// [includeMetaData] - Whether to include metadata under `_meta` key
@@ -142,8 +67,8 @@ abstract class TurboSerializable<M extends HasToJson> {
   /// Returns null if the callback is not provided or returns null.
   Map<String, dynamic>? toJson({bool includeMetaData = true}) {
     Map<String, dynamic>? result;
-    if (config.primaryFormat == SerializationFormat.jsonMap) {
-      result = config.toJsonMap?.call(this);
+    if (config.primaryFormat == SerializationFormat.json) {
+      result = config.toJson?.call(this);
     } else {
       result = convertToJson();
     }
@@ -158,7 +83,7 @@ abstract class TurboSerializable<M extends HasToJson> {
   /// Converts this object to a YAML string.
   ///
   /// If a YAML callback is provided, uses that. Otherwise, if the primary
-  /// format is [SerializationFormat.yamlString], uses the configured callback.
+  /// format is [SerializationFormat.yaml], uses the configured callback.
   /// Otherwise, converts from the primary format.
   ///
   /// [includeMetaData] - Whether to include metadata under `_meta` key
@@ -166,12 +91,12 @@ abstract class TurboSerializable<M extends HasToJson> {
   /// Returns null if the callback is not provided or returns null.
   String? toYaml({bool includeMetaData = true}) {
     // Check if YAML callback is provided
-    final yamlResult = config.toYamlString?.call(this);
+    final yamlResult = config.toYaml?.call(this);
     if (yamlResult != null) {
       return yamlResult;
     }
     // If not provided, convert from primary format
-    if (config.primaryFormat == SerializationFormat.yamlString) {
+    if (config.primaryFormat == SerializationFormat.yaml) {
       return null; // Already checked above
     }
     return convertToYaml(includeMetaData: includeMetaData);
@@ -180,7 +105,7 @@ abstract class TurboSerializable<M extends HasToJson> {
   /// Converts this object to a Markdown string with headers for keys.
   ///
   /// If a Markdown callback is provided, uses that. Otherwise, if the primary
-  /// format is [SerializationFormat.markdownString], uses the configured callback.
+  /// format is [SerializationFormat.markdown], uses the configured callback.
   /// Otherwise, converts from the primary format.
   ///
   /// [includeMetaData] - Whether to include metadata as YAML frontmatter
@@ -190,12 +115,12 @@ abstract class TurboSerializable<M extends HasToJson> {
     bool includeMetaData = true,
   }) {
     // Check if Markdown callback is provided
-    final markdownResult = config.toMarkdownString?.call(this);
+    final markdownResult = config.toMarkdown?.call(this);
     if (markdownResult != null) {
       return markdownResult;
     }
     // If not provided, convert from primary format
-    if (config.primaryFormat == SerializationFormat.markdownString) {
+    if (config.primaryFormat == SerializationFormat.markdown) {
       return null; // Already checked above
     }
     return convertToMarkdown(
@@ -206,7 +131,7 @@ abstract class TurboSerializable<M extends HasToJson> {
   /// Converts this object to an XML string.
   ///
   /// If an XML callback is provided, uses that. Otherwise, if the primary
-  /// format is [SerializationFormat.xmlString], uses the configured callback.
+  /// format is [SerializationFormat.xml], uses the configured callback.
   /// Otherwise, converts from the primary format.
   ///
   /// The root element name defaults to the class name (runtimeType).
@@ -223,7 +148,7 @@ abstract class TurboSerializable<M extends HasToJson> {
     bool usePascalCase = false,
   }) {
     // Check if XML callback is provided
-    final xmlResult = config.toXmlCallback?.call(
+    final xmlResult = config.toXml?.call(
       this,
       rootElementName: rootElementName,
       includeNulls: includeNulls,
@@ -233,7 +158,7 @@ abstract class TurboSerializable<M extends HasToJson> {
       return xmlResult;
     }
     // If not provided, convert from primary format
-    if (config.primaryFormat == SerializationFormat.xmlString) {
+    if (config.primaryFormat == SerializationFormat.xml) {
       return null; // Already checked above
     }
     return convertToXml(
@@ -251,26 +176,26 @@ abstract class TurboSerializable<M extends HasToJson> {
   @visibleForTesting
   Map<String, dynamic>? convertToJson() {
     switch (config.primaryFormat) {
-      case SerializationFormat.jsonMap:
-        return config.toJsonMap?.call(this);
-      case SerializationFormat.yamlString:
-        final yaml = config.toYamlString?.call(this);
+      case SerializationFormat.json:
+        return config.toJson?.call(this);
+      case SerializationFormat.yaml:
+        final yaml = config.toYaml?.call(this);
         if (yaml == null) return null;
         try {
           return yamlToJson(yaml);
         } catch (e) {
           return null;
         }
-      case SerializationFormat.markdownString:
-        final markdown = config.toMarkdownString?.call(this);
+      case SerializationFormat.markdown:
+        final markdown = config.toMarkdown?.call(this);
         if (markdown == null) return null;
         try {
           return markdownToJson(markdown);
         } catch (e) {
           return null;
         }
-      case SerializationFormat.xmlString:
-        final xml = config.toXmlCallback?.call(
+      case SerializationFormat.xml:
+        final xml = config.toXml?.call(
           this,
           rootElementName: null,
           includeNulls: false,
@@ -290,18 +215,18 @@ abstract class TurboSerializable<M extends HasToJson> {
   String? convertToYaml({bool includeMetaData = true}) {
     final meta = includeMetaData ? metaDataToJsonMap() : null;
     switch (config.primaryFormat) {
-      case SerializationFormat.jsonMap:
-        final json = config.toJsonMap?.call(this);
+      case SerializationFormat.json:
+        final json = config.toJson?.call(this);
         if (json == null) return null;
         return jsonToYaml(json, metaData: meta);
-      case SerializationFormat.yamlString:
-        return config.toYamlString?.call(this);
-      case SerializationFormat.markdownString:
-        final markdown = config.toMarkdownString?.call(this);
+      case SerializationFormat.yaml:
+        return config.toYaml?.call(this);
+      case SerializationFormat.markdown:
+        final markdown = config.toMarkdown?.call(this);
         if (markdown == null) return null;
         return markdownToYaml(markdown);
-      case SerializationFormat.xmlString:
-        final xml = config.toXmlCallback?.call(
+      case SerializationFormat.xml:
+        final xml = config.toXml?.call(
           this,
           rootElementName: null,
           includeNulls: false,
@@ -319,18 +244,18 @@ abstract class TurboSerializable<M extends HasToJson> {
   }) {
     final meta = includeMetaData ? metaDataToJsonMap() : null;
     switch (config.primaryFormat) {
-      case SerializationFormat.jsonMap:
-        final json = config.toJsonMap?.call(this);
+      case SerializationFormat.json:
+        final json = config.toJson?.call(this);
         if (json == null) return null;
         return jsonToMarkdown(json, metaData: meta);
-      case SerializationFormat.yamlString:
-        final yaml = config.toYamlString?.call(this);
+      case SerializationFormat.yaml:
+        final yaml = config.toYaml?.call(this);
         if (yaml == null) return null;
         return yamlToMarkdown(yaml, metaData: meta);
-      case SerializationFormat.markdownString:
-        return config.toMarkdownString?.call(this);
-      case SerializationFormat.xmlString:
-        final xml = config.toXmlCallback?.call(
+      case SerializationFormat.markdown:
+        return config.toMarkdown?.call(this);
+      case SerializationFormat.xml:
+        final xml = config.toXml?.call(
           this,
           rootElementName: null,
           includeNulls: false,
@@ -352,8 +277,8 @@ abstract class TurboSerializable<M extends HasToJson> {
   }) {
     final meta = includeMetaData ? metaDataToJsonMap() : null;
     switch (config.primaryFormat) {
-      case SerializationFormat.jsonMap:
-        final json = config.toJsonMap?.call(this);
+      case SerializationFormat.json:
+        final json = config.toJson?.call(this);
         if (json == null) return null;
         final elementName =
             rootElementName ?? runtimeType.toString().replaceAll(RegExp(r'<.*>'), '');
@@ -365,8 +290,8 @@ abstract class TurboSerializable<M extends HasToJson> {
           usePascalCase: usePascalCase,
           metaData: meta,
         );
-      case SerializationFormat.yamlString:
-        final yaml = config.toYamlString?.call(this);
+      case SerializationFormat.yaml:
+        final yaml = config.toYaml?.call(this);
         if (yaml == null) return null;
         final elementName =
             rootElementName ?? runtimeType.toString().replaceAll(RegExp(r'<.*>'), '');
@@ -378,8 +303,8 @@ abstract class TurboSerializable<M extends HasToJson> {
           usePascalCase: usePascalCase,
           metaData: meta,
         );
-      case SerializationFormat.markdownString:
-        final markdown = config.toMarkdownString?.call(this);
+      case SerializationFormat.markdown:
+        final markdown = config.toMarkdown?.call(this);
         if (markdown == null) return null;
         final elementName =
             rootElementName ?? runtimeType.toString().replaceAll(RegExp(r'<.*>'), '');
@@ -390,8 +315,8 @@ abstract class TurboSerializable<M extends HasToJson> {
           prettyPrint: prettyPrint,
           usePascalCase: usePascalCase,
         );
-      case SerializationFormat.xmlString:
-        return config.toXmlCallback?.call(
+      case SerializationFormat.xml:
+        return config.toXml?.call(
           this,
           rootElementName: rootElementName,
           includeNulls: includeNulls,

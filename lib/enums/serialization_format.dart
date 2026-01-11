@@ -4,14 +4,14 @@
 /// instance, indicating which serialization method is actually implemented.
 enum SerializationFormat {
   /// JSON format (`Map<String, dynamic>`)
-  jsonMap,
+  json,
 
   /// YAML format (String)
-  yamlString,
+  yaml,
 
   /// Markdown format (String)
-  markdownString,
+  markdown,
 
   /// XML format (String)
-  xmlString;
+  xml;
 }

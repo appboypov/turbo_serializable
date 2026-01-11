@@ -35,7 +35,7 @@ class User extends TurboSerializable<void> {
   User({required this.name, required this.age})
       : super(
             config: TurboSerializableConfig(
-          toJsonCallback: (instance) {
+          toJson: (instance) {
             final self = instance as User;
             return {'name': self.name, 'age': self.age};
           },
@@ -62,7 +62,7 @@ void main() {
 | `TurboSerializableId<T, M>` | Extends TurboSerializable with typed identifier `T` and `isLocalDefault` flag |
 | `TurboSerializableConfig`  | Configuration class with callbacks for serialization methods                   |
 | `HasToJson`                 | Interface for metadata types that can be serialized to JSON                   |
-| `SerializationFormat`       | Enum: `json`, `yaml`, `markdown`, `xml`                                       |
+| `SerializationFormat`       | Enum: `json`, `yaml`, `markdown`, `xml`                  |
 
 ### TurboSerializable Methods
 
@@ -109,7 +109,7 @@ class Product extends TurboSerializableId<String, void> {
   })
       : super(
             config: TurboSerializableConfig(
-          toJsonCallback: (instance) {
+          toJson: (instance) {
             final self = instance as Product;
             return {
               'id': self.id,
@@ -145,11 +145,11 @@ class Document extends TurboSerializable<Frontmatter> {
   })
       : super(
             config: TurboSerializableConfig(
-          toJsonCallback: (instance) {
+          toJson: (instance) {
             final self = instance as Document;
             return {'content': self.content};
           },
-          toMarkdownCallback: (instance) {
+          toMarkdown: (instance) {
             final self = instance as Document;
             return self.content;
           },
@@ -173,7 +173,7 @@ class User extends TurboSerializable<void> {
   User({required this.name, required this.age})
       : super(
             config: TurboSerializableConfig(
-          toJsonCallback: (instance) {
+          toJson: (instance) {
             final self = instance as User;
             return {'name': self.name, 'age': self.age};
           },
@@ -186,6 +186,7 @@ class User extends TurboSerializable<void> {
     return null;
   }
 }
+```
 
 ### Standalone Converters
 

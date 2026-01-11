@@ -6,6 +6,7 @@
 /// with automatic conversion to all other supported formats.
 library turbo_serializable;
 
+export 'abstracts/has_to_json.dart';
 export 'abstracts/turbo_serializable.dart';
 export 'abstracts/turbo_serializable_id.dart';
 export 'enums/serialization_format.dart';

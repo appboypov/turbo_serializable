@@ -10,18 +10,17 @@ class FullModel extends TurboSerializable<Object?> {
   FullModel({
     required this.name,
     required this.age,
-  })
-      : super(
+  }) : super(
             config: TurboSerializableConfig(
-          toJsonMap: (instance) {
+          toJson: (instance) {
             final self = instance as FullModel;
             return {'name': self.name, 'age': self.age};
           },
-          toYamlString: (instance) {
+          toYaml: (instance) {
             final self = instance as FullModel;
             return 'name: ${self.name}\nage: ${self.age}';
           },
-          toMarkdownString: (instance) {
+          toMarkdown: (instance) {
             final self = instance as FullModel;
             return '# ${self.name}\n\nAge: ${self.age}';
           },
@@ -44,9 +43,8 @@ class PartialModel extends TurboSerializable<Object?> {
   final String name;
 
   PartialModel(this.name)
-      : super(
-            config: TurboSerializableConfig(
-          toJsonMap: (instance) {
+      : super(config: TurboSerializableConfig(
+          toJson: (instance) {
             final self = instance as PartialModel;
             return {'name': self.name};
           },
@@ -58,7 +56,7 @@ class EmptyModel extends TurboSerializable<Object?> {
   EmptyModel({super.metaData})
       : super(
             config: TurboSerializableConfig(
-          toJsonMap: (_) => null,
+          toJson: (_) => null,
         ));
 }
 
@@ -72,9 +70,8 @@ class FullModelWithId extends TurboSerializableId<String, Object?> {
     required this.name,
     super.isLocalDefault,
   })  : _id = id,
-        super(
-            config: TurboSerializableConfig(
-          toJsonMap: (instance) {
+        super(config: TurboSerializableConfig(
+          toJson: (instance) {
             final self = instance as FullModelWithId;
             return {'id': self.id, 'name': self.name};
           },
@@ -99,7 +96,7 @@ class CustomIdModel extends TurboSerializableId<CustomId, Object?> {
       : _id = CustomId(idValue),
         super(
             config: TurboSerializableConfig(
-          toJsonMap: (_) => null,
+          toJson: (_) => null,
         ));
 
   @override
@@ -128,18 +125,18 @@ class Document extends TurboSerializable<Frontmatter> {
   Document({
     required this.content,
     super.metaData,
-  })
-      : super(
+  }) : super(
             config: TurboSerializableConfig(
-          toJsonMap: (instance) {
+          toJson: (instance) {
             final self = instance as Document;
             return {'content': self.content};
           },
-          toMarkdownString: (instance) {
+          toMarkdown: (instance) {
             final self = instance as Document;
             return self.content;
           },
         ));
+}
 
 /// Document with ID and frontmatter metadata
 class DocumentWithId extends TurboSerializableId<String, Frontmatter> {
@@ -152,9 +149,8 @@ class DocumentWithId extends TurboSerializableId<String, Frontmatter> {
     super.metaData,
     super.isLocalDefault,
   })  : _id = id,
-        super(
-            config: TurboSerializableConfig(
-          toJsonMap: (instance) {
+        super(config: TurboSerializableConfig(
+          toJson: (instance) {
             final self = instance as DocumentWithId;
             return {'id': self.id, 'content': self.content};
           },
@@ -243,7 +239,8 @@ void main() {
   assert(doc.metaData != null, 'metaData should be set');
   assert(doc.metaData!.title == 'My Document', 'metaData title should match');
   assert(doc.metaData!.tags.length == 3, 'metaData tags should have 3 items');
-  assert(doc.toMarkdown() == '# Hello World\n\nThis is content.', 'toMarkdown should return content');
+  assert(
+      doc.toMarkdown() == '# Hello World\n\nThis is content.', 'toMarkdown should return content');
   print('  ✓ Metadata works with TurboSerializable');
 
   // Test 10: Metadata with TurboSerializableId
