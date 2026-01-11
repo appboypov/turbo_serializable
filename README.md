@@ -8,13 +8,14 @@ A serialization abstraction for the turbo ecosystem with multi-format support (J
 
 ## Features
 
-- **Primary format specification** - Provide callbacks for one format, get automatic conversion to all others
+- **Primary format specification** - Provide callbacks for one format, get automatic conversion to all others. Primary format is determined by priority: json > yaml > markdown > xml
 - **Multi-format support** - JSON, YAML, Markdown, and XML serialization
 - **Standalone converters** - 12 format conversion functions for direct use
 - **Typed metadata** - Generic `M` parameter for frontmatter and auxiliary data (implements `HasToJson` for serialization)
 - **Typed identifiers** - `TurboSerializableId<T, M>` for objects with unique IDs
-- **Local state tracking** - Track whether instances are synced to remote
+- **Local state tracking** - Track whether instances are synced to remote via `isLocalDefault` flag
 - **Validation integration** - Built-in validation using TurboResponse
+- **Case transformation** - Support for camelCase, PascalCase, snake_case, and kebab-case in XML serialization
 
 ## Installation
 
@@ -63,33 +64,55 @@ void main() {
 | `TurboSerializableConfig`   | Configuration class with callbacks for serialization methods                  |
 | `HasToJson`                 | Interface for metadata types that can be serialized to JSON                   |
 | `SerializationFormat`       | Enum: `json`, `yaml`, `markdown`, `xml`                                       |
+| `CaseStyle`                 | Enum: `none`, `camelCase`, `pascalCase`, `snakeCase`, `kebabCase`            |
+| `TurboConstants`            | Constants class for metadata keys, XML defaults, and error messages           |
 
 ### TurboSerializable Methods
 
 | Method                                                                                | Returns                 | Description                                            |
 |---------------------------------------------------------------------------------------|-------------------------|--------------------------------------------------------|
-| `toJson({includeMetaData})`                                                           | `Map<String, dynamic>?` | Serialize to JSON map                                  |
-| `toYaml({includeMetaData})`                                                           | `String?`               | Serialize to YAML string                               |
-| `toMarkdown({includeMetaData})`                                                       | `String?`               | Serialize to Markdown with headers                     |
-| `toXml({rootElementName, includeNulls, prettyPrint, includeMetaData, usePascalCase})` | `String?`               | Serialize to XML string                                |
+| `toJson({includeMetaData, includeNulls})`                                             | `Map<String, dynamic>?` | Serialize to JSON map. Returns null if callback not provided or returns null |
+| `toYaml({includeMetaData, includeNulls, prettyPrint})`                                 | `String?`               | Serialize to YAML string. Returns null if callback not provided or returns null |
+| `toMarkdown({includeMetaData, includeNulls, prettyPrint})`                             | `String?`               | Serialize to Markdown with headers. Returns null if callback not provided or returns null |
+| `toXml({rootElementName, includeNulls, prettyPrint, includeMetaData, caseStyle})`      | `String?`               | Serialize to XML string. Returns null if callback not provided or returns null |
 | `validate<T>()`                                                                       | `TurboResponse<T>?`     | Returns null if valid, `TurboResponse.fail` if invalid |
+
+**Parameter Details:**
+- `includeMetaData` (default: `true`) - Whether to include metadata in serialization
+- `includeNulls` (default: `false`) - Whether to include null values in output
+- `prettyPrint` (default: `true`) - Whether to format output with indentation/spacing
+- `rootElementName` (optional) - Root element name for XML (defaults to class name)
+- `caseStyle` (default: `CaseStyle.none`) - Case transformation for XML element names
 
 ### Standalone Converters
 
-| Function                                 | Description                                        |
-|------------------------------------------|----------------------------------------------------|
-| `jsonToYaml(Map)`                        | Convert JSON map to YAML string                    |
-| `jsonToMarkdown(Map, {metaData})`        | Convert JSON to Markdown with optional frontmatter |
-| `jsonToXml(Map)`                         | Convert JSON map to XML string                     |
-| `yamlToJson(String)`                     | Parse YAML string to JSON map                      |
-| `yamlToMarkdown(String)`                 | Convert YAML to Markdown                           |
-| `yamlToXml(String)`                      | Convert YAML to XML                                |
-| `markdownToJson(String)`                 | Parse Markdown with frontmatter to JSON            |
-| `markdownToYaml(String)`                 | Convert Markdown to YAML                           |
-| `markdownToXml(String)`                  | Convert Markdown to XML                            |
-| `xmlToJson(String)` / `xmlToMap(String)` | Parse XML to JSON map                              |
-| `xmlToYaml(String)`                      | Convert XML to YAML                                |
-| `xmlToMarkdown(String)`                  | Convert XML to Markdown                            |
+| Function                                 | Signature                                                                      | Description                                        |
+|------------------------------------------|-------------------------------------------------------------------------------|----------------------------------------------------|
+| `jsonToYaml`                             | `(Map, {metaData, includeNulls, prettyPrint})`                                | Convert JSON map to YAML string                    |
+| `jsonToMarkdown`                          | `(Map, {metaData, includeNulls, prettyPrint})`                                | Convert JSON to Markdown with optional frontmatter |
+| `jsonToXml`                               | `(Map, {rootElementName, includeNulls, prettyPrint, caseStyle, metaData})`    | Convert JSON map to XML string                     |
+| `yamlToJson`                              | `(String)`                                                                     | Parse YAML string to JSON map. Throws `FormatException` if invalid |
+| `yamlToMarkdown`                          | `(String, {metaData, includeNulls, prettyPrint})`                              | Convert YAML to Markdown                           |
+| `yamlToXml`                               | `(String, {rootElementName, includeNulls, prettyPrint, caseStyle, metaData})` | Convert YAML to XML                                |
+| `markdownToJson`                          | `(String)`                                                                     | Parse Markdown with frontmatter to JSON            |
+| `markdownToYaml`                          | `(String, {metaData, includeNulls, prettyPrint})`                             | Convert Markdown to YAML                           |
+| `markdownToXml`                           | `(String, {rootElementName, includeNulls, prettyPrint, caseStyle, metaData})`   | Convert Markdown to XML                            |
+| `xmlToJson` / `xmlToMap`                  | `(String)`                                                                     | Parse XML to JSON map. Throws `FormatException` if invalid |
+| `xmlToYaml`                               | `(String, {metaData, includeNulls, prettyPrint})`                              | Convert XML to YAML                                |
+| `xmlToMarkdown`                           | `(String, {metaData, includeNulls, prettyPrint})`                              | Convert XML to Markdown                            |
+
+**Common Parameters:**
+- `metaData` (optional) - Map to include as metadata (`_meta` key in JSON/YAML, frontmatter in Markdown, `_meta` element in XML)
+- `includeNulls` (default: `false`) - Whether to include null values
+- `prettyPrint` (default: `true`) - Whether to format output
+- `rootElementName` (optional) - Root element name for XML (defaults to `'root'`)
+- `caseStyle` (default: `CaseStyle.none`) - Case transformation for XML element names
+
+### Utility Functions
+
+| Function          | Signature                          | Description                                    |
+|-------------------|------------------------------------|------------------------------------------------|
+| `convertCase`     | `(String, CaseStyle)`              | Convert string to specified case style         |
 
 ## Examples
 
@@ -105,7 +128,7 @@ class Product extends TurboSerializableId<String, void> {
     required this.productId,
     required this.name,
     required this.price,
-    super.isLocalDefault = false,
+    super.isLocalDefault = false, // Track if this is a local-only instance
   })
       : super(
             config: TurboSerializableConfig(
@@ -122,6 +145,15 @@ class Product extends TurboSerializableId<String, void> {
   @override
   String get id => productId;
 }
+
+// Usage
+final product = Product(
+  productId: 'prod-123',
+  name: 'Widget',
+  price: 29.99,
+  isLocalDefault: true, // Not yet synced to remote
+);
+print(product.isLocalDefault); // true
 ```
 
 ### With Typed Metadata
@@ -192,17 +224,32 @@ class User extends TurboSerializable<void> {
 
 ```dart
 // JSON to other formats
-final yaml = jsonToYaml({'name': 'Test', 'age': 25});
-final xml = jsonToXml({'name': 'Test'}, rootElementName: 'User');
+final yaml = jsonToYaml(
+  {'name': 'Test', 'age': 25},
+  prettyPrint: true,
+  includeNulls: false,
+);
 
-// Parse YAML/XML back to JSON
-final json = yamlToJson('name: Test\nage: 25');
-final map = xmlToMap('<User><name>Test</name></User>');
+final xml = jsonToXml(
+  {'name': 'Test', 'age': 25},
+  rootElementName: 'User',
+  caseStyle: CaseStyle.pascalCase, // Converts to PascalCase
+  prettyPrint: true,
+);
+
+// Parse YAML/XML back to JSON (may throw FormatException)
+try {
+  final json = yamlToJson('name: Test\nage: 25');
+  final map = xmlToMap('<User><name>Test</name></User>');
+} on FormatException catch (e) {
+  print('Parse error: $e');
+}
 
 // Markdown with frontmatter
 final md = jsonToMarkdown(
   {'content': 'Hello'},
   metaData: {'title': 'Test', 'author': 'Me'},
+  prettyPrint: true,
 );
 // Output:
 // ---
@@ -211,6 +258,60 @@ final md = jsonToMarkdown(
 // ---
 // ## Content
 // Hello
+
+// XML with case transformation
+final xmlSnake = jsonToXml(
+  {'userName': 'John', 'firstName': 'John'},
+  rootElementName: 'user',
+  caseStyle: CaseStyle.snakeCase, // Converts to snake_case
+);
+// Output: <user><user_name>John</user_name><first_name>John</first_name></user>
+```
+
+### Primary Format Determination
+
+The primary format is automatically determined based on which callbacks you provide in `TurboSerializableConfig`. Priority order:
+
+1. **JSON** - If `toJson` callback is provided
+2. **YAML** - If `toYaml` callback is provided (and `toJson` is not)
+3. **Markdown** - If `toMarkdown` callback is provided (and `toJson`/`toYaml` are not)
+4. **XML** - If `toXml` callback is provided (and others are not)
+
+You only need to provide **one** callback - all other formats are automatically converted from the primary format:
+
+```dart
+// Only provide JSON callback - get all formats automatically
+class User extends TurboSerializable<void> {
+  User() : super(config: TurboSerializableConfig(
+    toJson: (instance) => {'name': 'Alice'}, // Primary format: JSON
+  ));
+  
+  // All these work automatically:
+  // - toJson() uses the callback directly
+  // - toYaml() converts from JSON
+  // - toMarkdown() converts from JSON
+  // - toXml() converts from JSON
+}
+```
+
+### Error Handling
+
+- **Serialization methods** (`toJson`, `toYaml`, `toMarkdown`, `toXml`) return `null` if:
+  - The callback is not provided in the config
+  - The callback returns `null`
+  
+- **Parsing functions** (`yamlToJson`, `xmlToMap`, `markdownToJson`) throw `FormatException` if:
+  - The input format is invalid
+  - The input cannot be parsed
+
+Always wrap parsing calls in try-catch blocks:
+
+```dart
+try {
+  final json = yamlToJson(invalidYaml);
+} on FormatException catch (e) {
+  // Handle parsing error
+}
 ```
 
 ## License
