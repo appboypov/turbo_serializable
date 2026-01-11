@@ -24,7 +24,8 @@ String jsonToXml(
   Map<String, dynamic>? metaData,
 }) {
   final builder = XmlBuilder();
-  builder.processing(TurboConstants.xmlProcessingInstruction, TurboConstants.xmlDeclaration);
+  builder.processing(
+      TurboConstants.xmlProcessingInstruction, TurboConstants.xmlDeclaration);
   final rootName = convertCase(
     rootElementName ?? TurboConstants.defaultRootElement,
     caseStyle,
@@ -54,7 +55,6 @@ String jsonToXml(
       ? document.toXmlString(pretty: true)
       : document.toXmlString();
 }
-
 
 /// Converts an XML string to a JSON map.
 ///
@@ -159,7 +159,7 @@ String convertValueToXmlString(dynamic value) {
 @visibleForTesting
 dynamic parseXmlElement(XmlElement element) {
   final children = element.children;
-  
+
   // Check if element has only text content (no nested elements)
   final textChildren = children.whereType<XmlText>().toList();
   final elementChildren = children.whereType<XmlElement>().toList();
@@ -169,22 +169,22 @@ dynamic parseXmlElement(XmlElement element) {
     final text = textChildren.map((e) => e.value).join('');
     return parseXmlValue(text);
   }
-  
+
   if (elementChildren.isEmpty && textChildren.isEmpty) {
     // Empty element
     return null;
   }
-  
+
   // Has nested elements - build a map
   final Map<String, dynamic> result = {};
-  
+
   // Group elements by name to handle lists
   final Map<String, List<XmlElement>> groupedElements = {};
   for (final child in elementChildren) {
     final name = child.name.local;
     groupedElements.putIfAbsent(name, () => []).add(child);
   }
-  
+
   groupedElements.forEach((name, elements) {
     if (elements.length == 1) {
       // Single element - parse as object or value
@@ -201,15 +201,18 @@ dynamic parseXmlElement(XmlElement element) {
       result[name] = list;
     }
   });
-  
+
   // Handle mixed content (text + elements) - store text in a special key
   if (textChildren.isNotEmpty && elementChildren.isNotEmpty) {
-    final text = textChildren.map((e) => e.value.trim()).where((t) => t.isNotEmpty).join(' ');
+    final text = textChildren
+        .map((e) => e.value.trim())
+        .where((t) => t.isNotEmpty)
+        .join(' ');
     if (text.isNotEmpty) {
       result[TurboConstants.textKey] = text;
     }
   }
-  
+
   return result.isEmpty ? null : result;
 }
 

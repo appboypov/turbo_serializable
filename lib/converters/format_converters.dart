@@ -5,7 +5,8 @@ import 'package:yaml/yaml.dart' as yaml;
 
 import 'package:turbo_serializable/constants/turbo_constants.dart';
 import 'package:turbo_serializable/enums/case_style.dart';
-import 'package:turbo_serializable/converters/xml_converter.dart' show jsonToXml, xmlToMap;
+import 'package:turbo_serializable/converters/xml_converter.dart'
+    show jsonToXml, xmlToMap;
 
 /// Converts JSON to YAML string.
 ///
@@ -25,9 +26,12 @@ String jsonToYaml(
   if (!includeNulls) {
     processedJson = filterNullsFromMap(json);
   }
-  
+
   if (metaData != null && metaData.isNotEmpty) {
-    final withMeta = <String, dynamic>{TurboConstants.metaKey: metaData, ...processedJson};
+    final withMeta = <String, dynamic>{
+      TurboConstants.metaKey: metaData,
+      ...processedJson
+    };
     return convertMapToYaml(withMeta, 0, prettyPrint: prettyPrint);
   }
   return convertMapToYaml(processedJson, 0, prettyPrint: prettyPrint);
@@ -62,7 +66,7 @@ String jsonToMarkdown(
   if (!includeNulls) {
     processedJson = filterNullsFromMap(json);
   }
-  
+
   final buffer = StringBuffer();
 
   // Add frontmatter if metadata is provided
@@ -73,7 +77,9 @@ String jsonToMarkdown(
   }
 
   // Add content with headers
-  buffer.write(convertMapToMarkdownHeaders(processedJson, TurboConstants.markdownHeaderLevel2, prettyPrint: prettyPrint));
+  buffer.write(convertMapToMarkdownHeaders(
+      processedJson, TurboConstants.markdownHeaderLevel2,
+      prettyPrint: prettyPrint));
 
   return buffer.toString().trimRight();
 }
@@ -98,11 +104,16 @@ String formatJsonValue(dynamic value, int indent) {
     return value.toString();
   } else if (value is List) {
     if (value.isEmpty) return '[]';
-    final items = value.map((e) => '$nextIndent${formatJsonValue(e, indent + 1)}').join(',\n');
+    final items = value
+        .map((e) => '$nextIndent${formatJsonValue(e, indent + 1)}')
+        .join(',\n');
     return '[\n$items\n$indentStr]';
   } else if (value is Map<String, dynamic>) {
     if (value.isEmpty) return '{}';
-    final entries = value.entries.map((e) => '$nextIndent"${e.key}": ${formatJsonValue(e.value, indent + 1)}').join(',\n');
+    final entries = value.entries
+        .map((e) =>
+            '$nextIndent"${e.key}": ${formatJsonValue(e.value, indent + 1)}')
+        .join(',\n');
     return '{\n$entries\n$indentStr}';
   }
   return value.toString();
@@ -355,7 +366,7 @@ String xmlToMarkdown(
 /// Returns a new map with all null values removed recursively.
 Map<String, dynamic> filterNullsFromMap(Map<String, dynamic> map) {
   final result = <String, dynamic>{};
-  
+
   map.forEach((key, value) {
     if (value == null) {
       // Skip null values
@@ -381,7 +392,7 @@ Map<String, dynamic> filterNullsFromMap(Map<String, dynamic> map) {
       result[key] = value;
     }
   });
-  
+
   return result;
 }
 
@@ -434,7 +445,8 @@ String convertToTitleCase(String input) {
 /// [level] - The header level (2 = ##, 3 = ###, 4 = ####, 5+ = bold)
 /// [prettyPrint] - Whether to add spacing between sections (default: true)
 @visibleForTesting
-String convertMapToMarkdownHeaders(Map<String, dynamic> map, int level, {bool prettyPrint = true}) {
+String convertMapToMarkdownHeaders(Map<String, dynamic> map, int level,
+    {bool prettyPrint = true}) {
   final buffer = StringBuffer();
 
   map.forEach((key, value) {
@@ -451,7 +463,8 @@ String convertMapToMarkdownHeaders(Map<String, dynamic> map, int level, {bool pr
       if (prettyPrint) buffer.writeln();
     } else if (value is Map<String, dynamic>) {
       if (prettyPrint) buffer.writeln();
-      buffer.write(convertMapToMarkdownHeaders(value, level + 1, prettyPrint: prettyPrint));
+      buffer.write(convertMapToMarkdownHeaders(value, level + 1,
+          prettyPrint: prettyPrint));
     } else if (value is List) {
       if (value.isEmpty) {
         if (prettyPrint) buffer.writeln();
@@ -460,7 +473,8 @@ String convertMapToMarkdownHeaders(Map<String, dynamic> map, int level, {bool pr
         if (prettyPrint) buffer.writeln();
         for (final item in value) {
           if (item is Map<String, dynamic>) {
-            buffer.write(convertMapToMarkdownHeaders(item, level + 1, prettyPrint: prettyPrint));
+            buffer.write(convertMapToMarkdownHeaders(item, level + 1,
+                prettyPrint: prettyPrint));
           } else {
             buffer.writeln('- $item');
           }
@@ -487,7 +501,8 @@ String convertMapToMarkdownHeaders(Map<String, dynamic> map, int level, {bool pr
 /// [indent] - The current indentation level
 /// [prettyPrint] - Whether to format with indentation (default: true)
 @visibleForTesting
-String convertMapToYaml(Map<String, dynamic> map, int indent, {bool prettyPrint = true}) {
+String convertMapToYaml(Map<String, dynamic> map, int indent,
+    {bool prettyPrint = true}) {
   final buffer = StringBuffer();
   final indentStr = prettyPrint ? (TurboConstants.indentSpaces * indent) : '';
   final separator = prettyPrint ? '\n' : '';
@@ -498,7 +513,8 @@ String convertMapToYaml(Map<String, dynamic> map, int indent, {bool prettyPrint 
     } else if (value is Map<String, dynamic>) {
       buffer.write('$indentStr$key:$separator');
       if (prettyPrint) buffer.writeln();
-      buffer.write(convertMapToYaml(value, indent + 1, prettyPrint: prettyPrint));
+      buffer
+          .write(convertMapToYaml(value, indent + 1, prettyPrint: prettyPrint));
     } else if (value is List) {
       buffer.write('$indentStr$key:$separator');
       if (prettyPrint) buffer.writeln();
@@ -506,13 +522,16 @@ String convertMapToYaml(Map<String, dynamic> map, int indent, {bool prettyPrint 
         if (item is Map<String, dynamic>) {
           buffer.write('$indentStr  -');
           if (prettyPrint) buffer.writeln();
-          buffer.write(convertMapToYaml(item, indent + 2, prettyPrint: prettyPrint));
+          buffer.write(
+              convertMapToYaml(item, indent + 2, prettyPrint: prettyPrint));
         } else {
-          buffer.write('$indentStr  - ${convertValueToYamlString(item)}$separator');
+          buffer.write(
+              '$indentStr  - ${convertValueToYamlString(item)}$separator');
         }
       }
     } else {
-      buffer.write('$indentStr$key: ${convertValueToYamlString(value)}$separator');
+      buffer.write(
+          '$indentStr$key: ${convertValueToYamlString(value)}$separator');
     }
   });
 

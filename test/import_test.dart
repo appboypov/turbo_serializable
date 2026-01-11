@@ -5,8 +5,7 @@ class TestSerializable extends TurboSerializable<Object?> {
   final String name;
 
   TestSerializable(this.name)
-      : super(
-            config: TurboSerializableConfig(
+      : super(config: TurboSerializableConfig(
           toJson: (instance) {
             final self = instance as TestSerializable;
             return {'name': self.name};
@@ -20,8 +19,7 @@ class TestSerializableId extends TurboSerializableId<String, Object?> {
   TestSerializableId(
     this.testId, {
     super.isLocalDefault,
-  })
-      : super(
+  }) : super(
             config: TurboSerializableConfig(
           toJson: (_) => null,
         ));

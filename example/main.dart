@@ -210,7 +210,8 @@ void main() {
 
   // Test 6: TurboSerializableId with isLocalDefault
   print('\nTest 6: TurboSerializableId with isLocalDefault=true');
-  final localDefault = FullModelWithId(id: 'temp-id', name: 'Temp', isLocalDefault: true);
+  final localDefault =
+      FullModelWithId(id: 'temp-id', name: 'Temp', isLocalDefault: true);
   assert(localDefault.isLocalDefault == true, 'isLocalDefault should be true');
   print('  ✓ isLocalDefault can be set to true');
 
@@ -223,7 +224,8 @@ void main() {
   // Test 8: Type inheritance verification
   print('\nTest 8: Type inheritance verification');
   assert(full.toJson() != null, 'FullModel inherits TurboSerializable methods');
-  assert(withId.toJson() != null, 'TurboSerializableId inherits TurboSerializable methods');
+  assert(withId.toJson() != null,
+      'TurboSerializableId inherits TurboSerializable methods');
   assert(withId.id.isNotEmpty, 'TurboSerializableId provides typed id getter');
   print('  ✓ Type inheritance is correct');
 
@@ -235,12 +237,13 @@ void main() {
     tags: ['example', 'test', 'demo'],
     publishedAt: DateTime(2026, 1, 9),
   );
-  final doc = Document(content: '# Hello World\n\nThis is content.', metaData: docMeta);
+  final doc =
+      Document(content: '# Hello World\n\nThis is content.', metaData: docMeta);
   assert(doc.metaData != null, 'metaData should be set');
   assert(doc.metaData!.title == 'My Document', 'metaData title should match');
   assert(doc.metaData!.tags.length == 3, 'metaData tags should have 3 items');
-  assert(
-      doc.toMarkdown() == '# Hello World\n\nThis is content.', 'toMarkdown should return content');
+  assert(doc.toMarkdown() == '# Hello World\n\nThis is content.',
+      'toMarkdown should return content');
   print('  ✓ Metadata works with TurboSerializable');
 
   // Test 10: Metadata with TurboSerializableId
@@ -258,14 +261,16 @@ void main() {
   );
   assert(docWithId.id == 'doc-001', 'ID should be set');
   assert(docWithId.metaData != null, 'metaData should be set');
-  assert(docWithId.metaData!.title == 'Document With ID', 'metaData title should match');
+  assert(docWithId.metaData!.title == 'Document With ID',
+      'metaData title should match');
   assert(docWithId.isLocalDefault == false, 'isLocalDefault should be false');
   print('  ✓ Metadata works with TurboSerializableId');
 
   // Test 11: Null metadata is valid
   print('\nTest 11: Null metadata is valid');
   final docNoMeta = Document(content: 'No meta');
-  assert(docNoMeta.metaData == null, 'metaData should be null when not provided');
+  assert(
+      docNoMeta.metaData == null, 'metaData should be null when not provided');
   assert(docNoMeta.toJson() != null, 'toJson should still work');
   print('  ✓ Null metadata is handled correctly');
 
@@ -283,8 +288,10 @@ void main() {
     {'content': 'Hello'},
     metaData: {'title': 'Test', 'author': 'Me'},
   );
-  assert(mdWithFrontmatter.contains('---'), 'Should have frontmatter delimiters');
-  assert(mdWithFrontmatter.contains('title: Test'), 'Should have frontmatter content');
+  assert(
+      mdWithFrontmatter.contains('---'), 'Should have frontmatter delimiters');
+  assert(mdWithFrontmatter.contains('title: Test'),
+      'Should have frontmatter content');
   final parsedMd = markdownToJson('---\ntitle: Test\n---\n{"key": "value"}');
   assert(parsedMd['title'] == 'Test', 'Should parse frontmatter');
   assert(parsedMd['body']['key'] == 'value', 'Should parse JSON body');

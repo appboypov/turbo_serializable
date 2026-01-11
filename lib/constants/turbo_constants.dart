@@ -71,11 +71,13 @@ abstract class TurboConstants {
   // ============================================================================
 
   /// Error message for YAML parsing failures.
-  static String failedToParseYaml(Object error) => 'Failed to parse YAML: $error';
+  static String failedToParseYaml(Object error) =>
+      'Failed to parse YAML: $error';
 
   /// Error message for XML parsing failures.
   static String failedToParseXml(Object error) => 'Failed to parse XML: $error';
 
   /// Error message when no callbacks are provided to TurboSerializableConfig.
-  static const String atLeastOneCallbackRequired = 'At least one callback must be provided';
+  static const String atLeastOneCallbackRequired =
+      'At least one callback must be provided';
 }

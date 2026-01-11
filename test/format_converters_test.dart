@@ -112,9 +112,7 @@ void main() {
       final result = formatJsonValue({
         'level1': {
           'level2': {
-            'level3': {
-              'level4': 'deep'
-            }
+            'level3': {'level4': 'deep'}
           }
         }
       }, 0);
@@ -176,7 +174,9 @@ void main() {
 
     test('formats with indentation when prettyPrint is true', () {
       final result = convertMapToYaml(
-        {'parent': {'child': 'value'}},
+        {
+          'parent': {'child': 'value'}
+        },
         0,
         prettyPrint: true,
       );
@@ -337,7 +337,9 @@ void main() {
 
     test('formats with indentation when prettyPrint is true', () {
       final result = jsonToYaml(
-        {'parent': {'child': 'value'}},
+        {
+          'parent': {'child': 'value'}
+        },
         prettyPrint: true,
       );
       expect(result, contains('parent:'));
@@ -766,7 +768,8 @@ void main() {
     });
 
     test('camelCase with nested JSON in Markdown', () {
-      final markdown = '{"user_info": {"first_name": "John", "last_name": "Doe"}}';
+      final markdown =
+          '{"user_info": {"first_name": "John", "last_name": "Doe"}}';
       final result = markdownToXml(markdown, caseStyle: CaseStyle.camelCase);
       expect(result, contains('<userInfo>'));
       expect(result, contains('<firstName>John</firstName>'));

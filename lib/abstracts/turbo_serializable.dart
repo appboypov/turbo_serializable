@@ -85,11 +85,11 @@ abstract class TurboSerializable<M> {
         result = {TurboConstants.metaKey: meta, ...result};
       }
     }
-    
+
     if (result != null && !includeNulls) {
       result = filterNullsFromMap(result);
     }
-    
+
     return result;
   }
 
@@ -246,11 +246,11 @@ abstract class TurboSerializable<M> {
         }
         break;
     }
-    
+
     if (result != null && !includeNulls) {
       result = filterNullsFromMap(result);
     }
-    
+
     return result;
   }
 
@@ -364,8 +364,8 @@ abstract class TurboSerializable<M> {
       case SerializationFormat.json:
         final json = config.toJson?.call(this);
         if (json == null) return null;
-        final elementName =
-            rootElementName ?? runtimeType.toString().replaceAll(RegExp(r'<.*>'), '');
+        final elementName = rootElementName ??
+            runtimeType.toString().replaceAll(RegExp(r'<.*>'), '');
         return jsonToXml(
           json,
           rootElementName: elementName,
@@ -377,8 +377,8 @@ abstract class TurboSerializable<M> {
       case SerializationFormat.yaml:
         final yaml = config.toYaml?.call(this);
         if (yaml == null) return null;
-        final elementName =
-            rootElementName ?? runtimeType.toString().replaceAll(RegExp(r'<.*>'), '');
+        final elementName = rootElementName ??
+            runtimeType.toString().replaceAll(RegExp(r'<.*>'), '');
         return yamlToXml(
           yaml,
           rootElementName: elementName,
@@ -390,8 +390,8 @@ abstract class TurboSerializable<M> {
       case SerializationFormat.markdown:
         final markdown = config.toMarkdown?.call(this);
         if (markdown == null) return null;
-        final elementName =
-            rootElementName ?? runtimeType.toString().replaceAll(RegExp(r'<.*>'), '');
+        final elementName = rootElementName ??
+            runtimeType.toString().replaceAll(RegExp(r'<.*>'), '');
         return markdownToXml(
           markdown,
           rootElementName: elementName,

@@ -8,7 +8,6 @@ import 'package:turbo_serializable/enums/serialization_format.dart';
 /// Specifies callbacks for serialization methods and automatically determines
 /// the primary format based on which callbacks are provided.
 class TurboSerializableConfig {
-
   /// Callback for JSON serialization.
   final Map<String, dynamic>? Function(TurboSerializable input)? toJson;
 
@@ -20,13 +19,13 @@ class TurboSerializableConfig {
 
   /// Callback for XML serialization.
   final String? Function(
-      TurboSerializable, {
-      String? rootElementName,
-      bool includeNulls,
-      bool prettyPrint,
-      bool includeMetaData,
-      CaseStyle caseStyle,
-      })? toXml;
+    TurboSerializable, {
+    String? rootElementName,
+    bool includeNulls,
+    bool prettyPrint,
+    bool includeMetaData,
+    CaseStyle caseStyle,
+  })? toXml;
 
   /// The primary serialization format, determined from the provided callbacks.
   ///
@@ -44,12 +43,12 @@ class TurboSerializableConfig {
     this.toMarkdown,
     this.toXml,
   })  : assert(
-  toJson != null ||
-      toYaml != null ||
-      toMarkdown != null ||
-      toXml != null,
-  TurboConstants.atLeastOneCallbackRequired,
-  ),
+          toJson != null ||
+              toYaml != null ||
+              toMarkdown != null ||
+              toXml != null,
+          TurboConstants.atLeastOneCallbackRequired,
+        ),
         primaryFormat = _computePrimaryFormat(
           toJson,
           toYaml,
@@ -61,18 +60,18 @@ class TurboSerializableConfig {
   ///
   /// Priority order: json > yaml > markdown > xml
   static SerializationFormat _computePrimaryFormat(
-      Map<String, dynamic>? Function(TurboSerializable)? toJson,
-      String? Function(TurboSerializable)? toYaml,
-      String? Function(TurboSerializable)? toMarkdown,
-      String? Function(
-          TurboSerializable, {
-          String? rootElementName,
-          bool includeNulls,
-          bool prettyPrint,
-          bool includeMetaData,
-          CaseStyle caseStyle,
-          })? toXml,
-      ) {
+    Map<String, dynamic>? Function(TurboSerializable)? toJson,
+    String? Function(TurboSerializable)? toYaml,
+    String? Function(TurboSerializable)? toMarkdown,
+    String? Function(
+      TurboSerializable, {
+      String? rootElementName,
+      bool includeNulls,
+      bool prettyPrint,
+      bool includeMetaData,
+      CaseStyle caseStyle,
+    })? toXml,
+  ) {
     if (toJson != null) {
       return SerializationFormat.json;
     }

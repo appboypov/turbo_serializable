@@ -7,19 +7,22 @@ void main() {
     test('converts camelCase', () {
       expect(convertCase('userName', CaseStyle.pascalCase), 'UserName');
       expect(convertCase('firstName', CaseStyle.pascalCase), 'FirstName');
-      expect(convertCase('myVariableName', CaseStyle.pascalCase), 'MyVariableName');
+      expect(convertCase('myVariableName', CaseStyle.pascalCase),
+          'MyVariableName');
     });
 
     test('converts snake_case', () {
       expect(convertCase('user_name', CaseStyle.pascalCase), 'UserName');
       expect(convertCase('first_name', CaseStyle.pascalCase), 'FirstName');
-      expect(convertCase('my_variable_name', CaseStyle.pascalCase), 'MyVariableName');
+      expect(convertCase('my_variable_name', CaseStyle.pascalCase),
+          'MyVariableName');
     });
 
     test('converts kebab-case', () {
       expect(convertCase('user-name', CaseStyle.pascalCase), 'UserName');
       expect(convertCase('first-name', CaseStyle.pascalCase), 'FirstName');
-      expect(convertCase('my-variable-name', CaseStyle.pascalCase), 'MyVariableName');
+      expect(convertCase('my-variable-name', CaseStyle.pascalCase),
+          'MyVariableName');
     });
 
     test('handles already PascalCase', () {
@@ -62,19 +65,22 @@ void main() {
     test('converts PascalCase', () {
       expect(convertCase('UserName', CaseStyle.camelCase), 'userName');
       expect(convertCase('FirstName', CaseStyle.camelCase), 'firstName');
-      expect(convertCase('MyVariableName', CaseStyle.camelCase), 'myVariableName');
+      expect(
+          convertCase('MyVariableName', CaseStyle.camelCase), 'myVariableName');
     });
 
     test('converts snake_case', () {
       expect(convertCase('user_name', CaseStyle.camelCase), 'userName');
       expect(convertCase('first_name', CaseStyle.camelCase), 'firstName');
-      expect(convertCase('my_variable_name', CaseStyle.camelCase), 'myVariableName');
+      expect(convertCase('my_variable_name', CaseStyle.camelCase),
+          'myVariableName');
     });
 
     test('converts kebab-case', () {
       expect(convertCase('user-name', CaseStyle.camelCase), 'userName');
       expect(convertCase('first-name', CaseStyle.camelCase), 'firstName');
-      expect(convertCase('my-variable-name', CaseStyle.camelCase), 'myVariableName');
+      expect(convertCase('my-variable-name', CaseStyle.camelCase),
+          'myVariableName');
     });
 
     test('handles already camelCase', () {
@@ -112,19 +118,22 @@ void main() {
     test('converts camelCase', () {
       expect(convertCase('userName', CaseStyle.snakeCase), 'user_name');
       expect(convertCase('firstName', CaseStyle.snakeCase), 'first_name');
-      expect(convertCase('myVariableName', CaseStyle.snakeCase), 'my_variable_name');
+      expect(convertCase('myVariableName', CaseStyle.snakeCase),
+          'my_variable_name');
     });
 
     test('converts PascalCase', () {
       expect(convertCase('UserName', CaseStyle.snakeCase), 'user_name');
       expect(convertCase('FirstName', CaseStyle.snakeCase), 'first_name');
-      expect(convertCase('MyVariableName', CaseStyle.snakeCase), 'my_variable_name');
+      expect(convertCase('MyVariableName', CaseStyle.snakeCase),
+          'my_variable_name');
     });
 
     test('converts kebab-case', () {
       expect(convertCase('user-name', CaseStyle.snakeCase), 'user_name');
       expect(convertCase('first-name', CaseStyle.snakeCase), 'first_name');
-      expect(convertCase('my-variable-name', CaseStyle.snakeCase), 'my_variable_name');
+      expect(convertCase('my-variable-name', CaseStyle.snakeCase),
+          'my_variable_name');
     });
 
     test('handles already snake_case', () {
@@ -161,19 +170,22 @@ void main() {
     test('converts camelCase', () {
       expect(convertCase('userName', CaseStyle.kebabCase), 'user-name');
       expect(convertCase('firstName', CaseStyle.kebabCase), 'first-name');
-      expect(convertCase('myVariableName', CaseStyle.kebabCase), 'my-variable-name');
+      expect(convertCase('myVariableName', CaseStyle.kebabCase),
+          'my-variable-name');
     });
 
     test('converts PascalCase', () {
       expect(convertCase('UserName', CaseStyle.kebabCase), 'user-name');
       expect(convertCase('FirstName', CaseStyle.kebabCase), 'first-name');
-      expect(convertCase('MyVariableName', CaseStyle.kebabCase), 'my-variable-name');
+      expect(convertCase('MyVariableName', CaseStyle.kebabCase),
+          'my-variable-name');
     });
 
     test('converts snake_case', () {
       expect(convertCase('user_name', CaseStyle.kebabCase), 'user-name');
       expect(convertCase('first_name', CaseStyle.kebabCase), 'first-name');
-      expect(convertCase('my_variable_name', CaseStyle.kebabCase), 'my-variable-name');
+      expect(convertCase('my_variable_name', CaseStyle.kebabCase),
+          'my-variable-name');
     });
 
     test('handles already kebab-case', () {
@@ -283,9 +295,12 @@ void main() {
     test('skips null list items when includeNulls is false', () {
       final builder = XmlBuilder();
       builder.element('root', nest: () {
-        buildXmlElement(builder, {
-          'items': ['a', null, 'c']
-        }, includeNulls: false);
+        buildXmlElement(
+            builder,
+            {
+              'items': ['a', null, 'c']
+            },
+            includeNulls: false);
       });
       final doc = builder.buildDocument();
       final items = doc.rootElement.findElements('items').toList();
@@ -295,7 +310,8 @@ void main() {
     test('uses PascalCase when requested', () {
       final builder = XmlBuilder();
       builder.element('root', nest: () {
-        buildXmlElement(builder, {'user_name': 'test'}, caseStyle: CaseStyle.pascalCase);
+        buildXmlElement(builder, {'user_name': 'test'},
+            caseStyle: CaseStyle.pascalCase);
       });
       final doc = builder.buildDocument();
       expect(doc.rootElement.findElements('UserName').length, 1);
@@ -304,7 +320,8 @@ void main() {
     test('uses camelCase when requested', () {
       final builder = XmlBuilder();
       builder.element('root', nest: () {
-        buildXmlElement(builder, {'user_name': 'test'}, caseStyle: CaseStyle.camelCase);
+        buildXmlElement(builder, {'user_name': 'test'},
+            caseStyle: CaseStyle.camelCase);
       });
       final doc = builder.buildDocument();
       expect(doc.rootElement.findElements('userName').length, 1);
@@ -313,7 +330,8 @@ void main() {
     test('uses snakeCase when requested', () {
       final builder = XmlBuilder();
       builder.element('root', nest: () {
-        buildXmlElement(builder, {'userName': 'test'}, caseStyle: CaseStyle.snakeCase);
+        buildXmlElement(builder, {'userName': 'test'},
+            caseStyle: CaseStyle.snakeCase);
       });
       final doc = builder.buildDocument();
       expect(doc.rootElement.findElements('user_name').length, 1);
@@ -322,7 +340,8 @@ void main() {
     test('uses kebabCase when requested', () {
       final builder = XmlBuilder();
       builder.element('root', nest: () {
-        buildXmlElement(builder, {'userName': 'test'}, caseStyle: CaseStyle.kebabCase);
+        buildXmlElement(builder, {'userName': 'test'},
+            caseStyle: CaseStyle.kebabCase);
       });
       final doc = builder.buildDocument();
       expect(doc.rootElement.findElements('user-name').length, 1);
@@ -331,7 +350,8 @@ void main() {
     test('uses none case style when requested', () {
       final builder = XmlBuilder();
       builder.element('root', nest: () {
-        buildXmlElement(builder, {'userName': 'test', 'user_name': 'test2'}, caseStyle: CaseStyle.none);
+        buildXmlElement(builder, {'userName': 'test', 'user_name': 'test2'},
+            caseStyle: CaseStyle.none);
       });
       final doc = builder.buildDocument();
       expect(doc.rootElement.findElements('userName').length, 1);
@@ -341,9 +361,12 @@ void main() {
     test('camelCase with nested maps', () {
       final builder = XmlBuilder();
       builder.element('root', nest: () {
-        buildXmlElement(builder, {
-          'user_info': {'first_name': 'John'}
-        }, caseStyle: CaseStyle.camelCase);
+        buildXmlElement(
+            builder,
+            {
+              'user_info': {'first_name': 'John'}
+            },
+            caseStyle: CaseStyle.camelCase);
       });
       final doc = builder.buildDocument();
       final userInfo = doc.rootElement.findElements('userInfo').first;
@@ -353,9 +376,12 @@ void main() {
     test('snakeCase with nested maps', () {
       final builder = XmlBuilder();
       builder.element('root', nest: () {
-        buildXmlElement(builder, {
-          'userInfo': {'firstName': 'John'}
-        }, caseStyle: CaseStyle.snakeCase);
+        buildXmlElement(
+            builder,
+            {
+              'userInfo': {'firstName': 'John'}
+            },
+            caseStyle: CaseStyle.snakeCase);
       });
       final doc = builder.buildDocument();
       final userInfo = doc.rootElement.findElements('user_info').first;
@@ -365,9 +391,12 @@ void main() {
     test('kebabCase with nested maps', () {
       final builder = XmlBuilder();
       builder.element('root', nest: () {
-        buildXmlElement(builder, {
-          'userInfo': {'firstName': 'John'}
-        }, caseStyle: CaseStyle.kebabCase);
+        buildXmlElement(
+            builder,
+            {
+              'userInfo': {'firstName': 'John'}
+            },
+            caseStyle: CaseStyle.kebabCase);
       });
       final doc = builder.buildDocument();
       final userInfo = doc.rootElement.findElements('user-info').first;
@@ -377,9 +406,12 @@ void main() {
     test('camelCase with lists', () {
       final builder = XmlBuilder();
       builder.element('root', nest: () {
-        buildXmlElement(builder, {
-          'user_items': ['a', 'b']
-        }, caseStyle: CaseStyle.camelCase);
+        buildXmlElement(
+            builder,
+            {
+              'user_items': ['a', 'b']
+            },
+            caseStyle: CaseStyle.camelCase);
       });
       final doc = builder.buildDocument();
       expect(doc.rootElement.findElements('userItems').length, 2);
@@ -388,9 +420,12 @@ void main() {
     test('snakeCase with lists', () {
       final builder = XmlBuilder();
       builder.element('root', nest: () {
-        buildXmlElement(builder, {
-          'userItems': ['a', 'b']
-        }, caseStyle: CaseStyle.snakeCase);
+        buildXmlElement(
+            builder,
+            {
+              'userItems': ['a', 'b']
+            },
+            caseStyle: CaseStyle.snakeCase);
       });
       final doc = builder.buildDocument();
       expect(doc.rootElement.findElements('user_items').length, 2);
@@ -399,9 +434,12 @@ void main() {
     test('kebabCase with lists', () {
       final builder = XmlBuilder();
       builder.element('root', nest: () {
-        buildXmlElement(builder, {
-          'userItems': ['a', 'b']
-        }, caseStyle: CaseStyle.kebabCase);
+        buildXmlElement(
+            builder,
+            {
+              'userItems': ['a', 'b']
+            },
+            caseStyle: CaseStyle.kebabCase);
       });
       final doc = builder.buildDocument();
       expect(doc.rootElement.findElements('user-items').length, 2);
@@ -466,14 +504,16 @@ void main() {
     });
 
     test('parses element with children', () {
-      final doc = XmlDocument.parse('<root><name>test</name><age>30</age></root>');
+      final doc =
+          XmlDocument.parse('<root><name>test</name><age>30</age></root>');
       final result = parseXmlElement(doc.rootElement) as Map<String, dynamic>;
       expect(result['name'], 'test');
       expect(result['age'], 30);
     });
 
     test('parses multiple elements with same name as list', () {
-      final doc = XmlDocument.parse('<root><item>a</item><item>b</item><item>c</item></root>');
+      final doc = XmlDocument.parse(
+          '<root><item>a</item><item>b</item><item>c</item></root>');
       final result = parseXmlElement(doc.rootElement) as Map<String, dynamic>;
       expect(result['item'], ['a', 'b', 'c']);
     });
@@ -562,7 +602,8 @@ void main() {
     });
 
     test('uses PascalCase root and elements', () {
-      final result = jsonToXml({'user_name': 'test'}, caseStyle: CaseStyle.pascalCase);
+      final result =
+          jsonToXml({'user_name': 'test'}, caseStyle: CaseStyle.pascalCase);
       expect(result, contains('<Root>'));
       expect(result, contains('<UserName>'));
     });
@@ -610,7 +651,9 @@ void main() {
 
     test('camelCase with nested elements', () {
       final result = jsonToXml(
-        {'user_info': {'first_name': 'John', 'last_name': 'Doe'}},
+        {
+          'user_info': {'first_name': 'John', 'last_name': 'Doe'}
+        },
         caseStyle: CaseStyle.camelCase,
       );
       expect(result, contains('<userInfo>'));
@@ -651,7 +694,9 @@ void main() {
 
     test('snakeCase with nested elements', () {
       final result = jsonToXml(
-        {'userInfo': {'firstName': 'John', 'lastName': 'Doe'}},
+        {
+          'userInfo': {'firstName': 'John', 'lastName': 'Doe'}
+        },
         caseStyle: CaseStyle.snakeCase,
       );
       expect(result, contains('<user_info>'));
@@ -692,7 +737,9 @@ void main() {
 
     test('kebabCase with nested elements', () {
       final result = jsonToXml(
-        {'userInfo': {'firstName': 'John', 'lastName': 'Doe'}},
+        {
+          'userInfo': {'firstName': 'John', 'lastName': 'Doe'}
+        },
         caseStyle: CaseStyle.kebabCase,
       );
       expect(result, contains('<user-info>'));
@@ -769,13 +816,15 @@ void main() {
     });
 
     test('parses numeric values', () {
-      final result = xmlToMap('<root><count>42</count><price>9.99</price></root>');
+      final result =
+          xmlToMap('<root><count>42</count><price>9.99</price></root>');
       expect(result['count'], 42);
       expect(result['price'], 9.99);
     });
 
     test('parses boolean values', () {
-      final result = xmlToMap('<root><active>true</active><deleted>false</deleted></root>');
+      final result = xmlToMap(
+          '<root><active>true</active><deleted>false</deleted></root>');
       expect(result['active'], true);
       expect(result['deleted'], false);
     });

@@ -21,7 +21,12 @@ class TestModel extends TurboSerializable<Object?> {
             final self = instance as TestModel;
             return '# ${self.name}';
           },
-          toXml: (instance, {String? rootElementName, bool includeNulls = false, bool prettyPrint = true, bool includeMetaData = true, CaseStyle caseStyle = CaseStyle.none}) {
+          toXml: (instance,
+              {String? rootElementName,
+              bool includeNulls = false,
+              bool prettyPrint = true,
+              bool includeMetaData = true,
+              CaseStyle caseStyle = CaseStyle.none}) {
             final self = instance as TestModel;
             return '<name>${self.name}</name>';
           },
@@ -46,8 +51,7 @@ class TestModelWithId extends TurboSerializableId<String, Object?> {
     super.isLocalDefault,
     super.metaData,
   })  : _id = id,
-        super(
-            config: TurboSerializableConfig(
+        super(config: TurboSerializableConfig(
           toJson: (instance) {
             final self = instance as TestModelWithId;
             return {'id': self.id, 'name': self.name};
@@ -104,8 +108,7 @@ class DocumentModel extends TurboSerializable<FrontmatterMeta> {
   DocumentModel({
     required this.content,
     super.metaData,
-  })
-      : super(
+  }) : super(
             config: TurboSerializableConfig(
           toJson: (instance) {
             final self = instance as DocumentModel;
@@ -128,8 +131,7 @@ class DocumentWithId extends TurboSerializableId<String, FrontmatterMeta> {
     super.metaData,
     super.isLocalDefault,
   })  : _id = id,
-        super(
-            config: TurboSerializableConfig(
+        super(config: TurboSerializableConfig(
           toJson: (instance) {
             final self = instance as DocumentWithId;
             return {'id': self.id, 'content': self.content};
@@ -231,7 +233,8 @@ void main() {
       test('can override toXml', () {
         final model = TestModel('John');
         expect(model.toXml(), equals('<name>John</name>'));
-        expect(model.toXml(rootElementName: 'Custom'), equals('<name>John</name>'));
+        expect(model.toXml(rootElementName: 'Custom'),
+            equals('<name>John</name>'));
       });
 
       test('default toXml uses toJson conversion', () {
@@ -345,7 +348,9 @@ void main() {
         expect(model.validate(), isNull);
       });
 
-      test('can override validate to return TurboResponse.fail for invalid state', () {
+      test(
+          'can override validate to return TurboResponse.fail for invalid state',
+          () {
         final model = TestModel('');
         final result = model.validate<String>();
         expect(result, isNotNull);
@@ -441,7 +446,8 @@ void main() {
         expect(model.validate(), isNull);
       });
 
-      test('can override validate to return TurboResponse.fail for invalid id', () {
+      test('can override validate to return TurboResponse.fail for invalid id',
+          () {
         final model = TestModelWithId(id: '', name: 'John');
         final result = model.validate<String>();
         expect(result, isNotNull);
@@ -449,7 +455,9 @@ void main() {
         expect(result.error, equals('ID cannot be empty'));
       });
 
-      test('can override validate to return TurboResponse.fail for invalid name', () {
+      test(
+          'can override validate to return TurboResponse.fail for invalid name',
+          () {
         final model = TestModelWithId(id: '123', name: '');
         final result = model.validate<String>();
         expect(result, isNotNull);
@@ -598,7 +606,8 @@ void main() {
       });
 
       test('toXml with camelCase from Markdown primary format', () {
-        final model = _MarkdownOnlyModel(content: '{"name": "Test", "age": 25}');
+        final model =
+            _MarkdownOnlyModel(content: '{"name": "Test", "age": 25}');
         final xml = model.toXml(caseStyle: CaseStyle.camelCase);
         expect(xml, isNotNull);
         expect(xml, contains('<name>Test</name>'));
@@ -606,7 +615,8 @@ void main() {
       });
 
       test('toXml with PascalCase from Markdown primary format', () {
-        final model = _MarkdownOnlyModel(content: '{"name": "Test", "age": 25}');
+        final model =
+            _MarkdownOnlyModel(content: '{"name": "Test", "age": 25}');
         final xml = model.toXml(caseStyle: CaseStyle.pascalCase);
         expect(xml, isNotNull);
         expect(xml, contains('<Name>Test</Name>'));
@@ -614,7 +624,8 @@ void main() {
       });
 
       test('toXml with snakeCase from Markdown primary format', () {
-        final model = _MarkdownOnlyModel(content: '{"name": "Test", "age": 25}');
+        final model =
+            _MarkdownOnlyModel(content: '{"name": "Test", "age": 25}');
         final xml = model.toXml(caseStyle: CaseStyle.snakeCase);
         expect(xml, isNotNull);
         expect(xml, contains('<name>Test</name>'));
@@ -622,7 +633,8 @@ void main() {
       });
 
       test('toXml with kebabCase from Markdown primary format', () {
-        final model = _MarkdownOnlyModel(content: '{"name": "Test", "age": 25}');
+        final model =
+            _MarkdownOnlyModel(content: '{"name": "Test", "age": 25}');
         final xml = model.toXml(caseStyle: CaseStyle.kebabCase);
         expect(xml, isNotNull);
         expect(xml, contains('<name>Test</name>'));
@@ -728,10 +740,12 @@ void main() {
       });
 
       test('handles null values', () {
-        final yaml = jsonToYaml({'name': 'Test', 'value': null}, includeNulls: true);
+        final yaml =
+            jsonToYaml({'name': 'Test', 'value': null}, includeNulls: true);
         expect(yaml, contains('value: null'));
-        
-        final yamlWithoutNulls = jsonToYaml({'name': 'Test', 'value': null}, includeNulls: false);
+
+        final yamlWithoutNulls =
+            jsonToYaml({'name': 'Test', 'value': null}, includeNulls: false);
         expect(yamlWithoutNulls, contains('name: Test'));
         expect(yamlWithoutNulls, isNot(contains('value')));
       });
@@ -847,7 +861,8 @@ Some regular markdown content
 
     group('XML converters', () {
       test('jsonToXml converts simple map', () {
-        final xml = jsonToXml({'name': 'Test', 'age': 25}, rootElementName: 'root');
+        final xml =
+            jsonToXml({'name': 'Test', 'age': 25}, rootElementName: 'root');
         expect(xml, contains('<root>'));
         expect(xml, contains('<name>Test</name>'));
         expect(xml, contains('<age>25</age>'));
@@ -1187,9 +1202,7 @@ class _YamlOnlyModel extends TurboSerializable<Object?> {
   _YamlOnlyModel({
     required this.name,
     required this.age,
-  })
-      : super(
-            config: TurboSerializableConfig(
+  }) : super(config: TurboSerializableConfig(
           toYaml: (instance) {
             final self = instance as _YamlOnlyModel;
             return 'name: ${self.name}\nage: ${self.age}\n';
@@ -1202,9 +1215,7 @@ class _MarkdownOnlyModel extends TurboSerializable<Object?> {
 
   _MarkdownOnlyModel({
     required this.content,
-  })
-      : super(
-            config: TurboSerializableConfig(
+  }) : super(config: TurboSerializableConfig(
           toMarkdown: (instance) {
             final self = instance as _MarkdownOnlyModel;
             return self.content;
@@ -1221,9 +1232,7 @@ class _MarkdownWithFrontmatterModel extends TurboSerializable<Object?> {
     required this.title,
     required this.description,
     required this.body,
-  })
-      : super(
-            config: TurboSerializableConfig(
+  }) : super(config: TurboSerializableConfig(
           toMarkdown: (instance) {
             final self = instance as _MarkdownWithFrontmatterModel;
             return '''
@@ -1244,10 +1253,13 @@ class _XmlOnlyModel extends TurboSerializable<Object?> {
   _XmlOnlyModel({
     required this.name,
     required this.age,
-  })
-      : super(
-            config: TurboSerializableConfig(
-          toXml: (instance, {String? rootElementName, bool includeNulls = false, bool prettyPrint = true, bool includeMetaData = true, CaseStyle caseStyle = CaseStyle.none}) {
+  }) : super(config: TurboSerializableConfig(
+          toXml: (instance,
+              {String? rootElementName,
+              bool includeNulls = false,
+              bool prettyPrint = true,
+              bool includeMetaData = true,
+              CaseStyle caseStyle = CaseStyle.none}) {
             final self = instance as _XmlOnlyModel;
             final elementName = rootElementName ?? 'XmlOnlyModel';
             return '<?xml version="1.0" encoding="UTF-8"?>\n<$elementName>\n  <name>${self.name}</name>\n  <age>${self.age}</age>\n</$elementName>';
@@ -1279,9 +1291,7 @@ class _JsonOnlyModel extends TurboSerializable<Object?> {
   _JsonOnlyModel({
     required this.name,
     required this.age,
-  })
-      : super(
-            config: TurboSerializableConfig(
+  }) : super(config: TurboSerializableConfig(
           toJson: (instance) {
             final self = instance as _JsonOnlyModel;
             return {'name': self.name, 'age': self.age};
@@ -1296,9 +1306,7 @@ class _NestedModel extends TurboSerializable<Object?> {
   _NestedModel({
     required this.name,
     this.child,
-  })
-      : super(
-            config: TurboSerializableConfig(
+  }) : super(config: TurboSerializableConfig(
           toJson: (instance) {
             final self = instance as _NestedModel;
             return {
@@ -1313,8 +1321,7 @@ class _ListModel extends TurboSerializable<Object?> {
   final List<String> items;
 
   _ListModel({required this.items})
-      : super(
-            config: TurboSerializableConfig(
+      : super(config: TurboSerializableConfig(
           toJson: (instance) {
             final self = instance as _ListModel;
             return {'items': self.items};
@@ -1329,9 +1336,7 @@ class _NullableModel extends TurboSerializable<Object?> {
   _NullableModel({
     required this.name,
     this.value,
-  })
-      : super(
-            config: TurboSerializableConfig(
+  }) : super(config: TurboSerializableConfig(
           toJson: (instance) {
             final self = instance as _NullableModel;
             return {
@@ -1347,12 +1352,12 @@ class _DeeplyNestedModel extends TurboSerializable<Object?> {
       : super(
             config: TurboSerializableConfig(
           toJson: (_) => {
-                'level1': {
-                  'level2': {
-                    'level3': {'value': 'deep'}
-                  }
-                }
-              },
+            'level1': {
+              'level2': {
+                'level3': {'value': 'deep'}
+              }
+            }
+          },
         ));
 }
 
@@ -1361,9 +1366,9 @@ class _EmptyCollectionsModel extends TurboSerializable<Object?> {
       : super(
             config: TurboSerializableConfig(
           toJson: (_) => {
-                'emptyList': <String>[],
-                'emptyMap': <String, dynamic>{},
-              },
+            'emptyList': <String>[],
+            'emptyMap': <String, dynamic>{},
+          },
         ));
 }
 
@@ -1372,8 +1377,7 @@ class _BooleanModel extends TurboSerializable<Object?> {
   final bool deleted;
 
   _BooleanModel({required this.active, required this.deleted})
-      : super(
-            config: TurboSerializableConfig(
+      : super(config: TurboSerializableConfig(
           toJson: (instance) {
             final self = instance as _BooleanModel;
             return {
@@ -1393,9 +1397,7 @@ class _NumericModel extends TurboSerializable<Object?> {
     required this.intValue,
     required this.doubleValue,
     required this.negativeValue,
-  })
-      : super(
-            config: TurboSerializableConfig(
+  }) : super(config: TurboSerializableConfig(
           toJson: (instance) {
             final self = instance as _NumericModel;
             return {
@@ -1427,8 +1429,7 @@ class _ModelWithMeta extends TurboSerializable<_MetaWithToJson> {
   final String content;
 
   _ModelWithMeta({required this.content, super.metaData})
-      : super(
-            config: TurboSerializableConfig(
+      : super(config: TurboSerializableConfig(
           toJson: (instance) {
             final self = instance as _ModelWithMeta;
             return {'content': self.content};
@@ -1440,8 +1441,7 @@ class _ModelWithBadMeta extends TurboSerializable<_MetaWithoutToJson> {
   final String content;
 
   _ModelWithBadMeta({required this.content, super.metaData})
-      : super(
-            config: TurboSerializableConfig(
+      : super(config: TurboSerializableConfig(
           toJson: (instance) {
             final self = instance as _ModelWithBadMeta;
             return {'content': self.content};

@@ -256,7 +256,8 @@ void main() {
   group('JSON → YAML conversion', () {
     test('converts basic JSON to YAML', () {
       final jsonFile = File('${inputDir.path}/json/basic.json');
-      final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      final data =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
       final result = jsonToYaml(data);
 
       expect(result, contains('firstName: John'));
@@ -269,32 +270,37 @@ void main() {
 
     test('converts snake_case keys to YAML', () {
       final jsonFile = File('${inputDir.path}/json/snake_case.json');
-      final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      final data =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
       final result = jsonToYaml(data);
 
       expect(result, contains('first_name: John'));
       expect(result, contains('user_age: 30'));
 
-      File('${outputDir.path}/snake_case_to_yaml.yaml').writeAsStringSync(result);
+      File('${outputDir.path}/snake_case_to_yaml.yaml')
+          .writeAsStringSync(result);
     });
 
     test('preserves edge values in YAML', () {
       final jsonFile = File('${inputDir.path}/json/edge_values.json');
-      final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      final data =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
       final result = jsonToYaml(data, includeNulls: true);
 
       expect(result, contains('nullValue: null'));
       expect(result, contains('unicode:'));
       expect(result, contains('emoji:'));
 
-      File('${outputDir.path}/edge_values_to_yaml.yaml').writeAsStringSync(result);
+      File('${outputDir.path}/edge_values_to_yaml.yaml')
+          .writeAsStringSync(result);
     });
   });
 
   group('JSON → XML conversion', () {
     test('converts basic JSON to XML', () {
       final jsonFile = File('${inputDir.path}/json/basic.json');
-      final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      final data =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
       final result = jsonToXml(data);
 
       expect(result, contains('<?xml'));
@@ -307,32 +313,37 @@ void main() {
 
     test('converts to PascalCase XML', () {
       final jsonFile = File('${inputDir.path}/json/basic.json');
-      final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      final data =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
       final result = jsonToXml(data, caseStyle: CaseStyle.pascalCase);
 
       expect(result, contains('<Root>'));
       expect(result, contains('<FirstName>John</FirstName>'));
       expect(result, contains('<Age>30</Age>'));
 
-      File('${outputDir.path}/json_to_xml_pascal.xml').writeAsStringSync(result);
+      File('${outputDir.path}/json_to_xml_pascal.xml')
+          .writeAsStringSync(result);
     });
 
     test('converts deep nesting to XML', () {
       final jsonFile = File('${inputDir.path}/json/deep_nesting.json');
-      final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      final data =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
       final result = jsonToXml(data);
 
       expect(result, contains('<level1>'));
       expect(result, contains('<level6>deep value</level6>'));
 
-      File('${outputDir.path}/deep_nesting_to_xml.xml').writeAsStringSync(result);
+      File('${outputDir.path}/deep_nesting_to_xml.xml')
+          .writeAsStringSync(result);
     });
   });
 
   group('JSON → Markdown conversion', () {
     test('converts basic JSON with header format', () {
       final jsonFile = File('${inputDir.path}/json/basic.json');
-      final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      final data =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
       final result = jsonToMarkdown(data);
 
       expect(result, contains('## First Name'));
@@ -345,7 +356,8 @@ void main() {
 
     test('converts with metadata frontmatter', () {
       final jsonFile = File('${inputDir.path}/json/basic.json');
-      final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      final data =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
       final metadata = {'title': 'User Data', 'generated': '2026-01-11'};
       final result = jsonToMarkdown(data, metaData: metadata);
 
@@ -353,12 +365,14 @@ void main() {
       expect(result, contains('title: User Data'));
       expect(result, contains('---\n## '));
 
-      File('${outputDir.path}/json_to_markdown_with_meta.md').writeAsStringSync(result);
+      File('${outputDir.path}/json_to_markdown_with_meta.md')
+          .writeAsStringSync(result);
     });
 
     test('deep nesting uses bold at level 5+', () {
       final jsonFile = File('${inputDir.path}/json/deep_nesting.json');
-      final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      final data =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
       final result = jsonToMarkdown(data);
 
       expect(result, contains('## Level1'));
@@ -369,12 +383,14 @@ void main() {
       expect(result, contains('**Level6**'));
       expect(result, contains('deep value'));
 
-      File('${outputDir.path}/deep_nesting_to_markdown.md').writeAsStringSync(result);
+      File('${outputDir.path}/deep_nesting_to_markdown.md')
+          .writeAsStringSync(result);
     });
 
     test('converts arrays correctly', () {
       final jsonFile = File('${inputDir.path}/json/arrays.json');
-      final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      final data =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
       final result = jsonToMarkdown(data);
 
       expect(result, contains('## Primitive Array'));
@@ -469,13 +485,13 @@ void main() {
       File('${outputDir.path}/xml_pascal_to_json.json')
           .writeAsStringSync(jsonString);
     });
-
   });
 
   group('Round-trip conversions', () {
     test('JSON → YAML → JSON preserves data', () {
       final jsonFile = File('${inputDir.path}/json/basic.json');
-      final original = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      final original =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
 
       final yaml = jsonToYaml(original);
       final roundTripped = yamlToJson(yaml);
@@ -488,7 +504,8 @@ void main() {
 
     test('JSON → XML → JSON preserves data', () {
       final jsonFile = File('${inputDir.path}/json/basic.json');
-      final original = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      final original =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
 
       final xml = jsonToXml(original);
       final roundTripped = xmlToJson(xml);
@@ -513,20 +530,23 @@ void main() {
 
     test('deep nesting survives JSON → YAML → JSON', () {
       final jsonFile = File('${inputDir.path}/json/deep_nesting.json');
-      final original = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      final original =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
 
       final yaml = jsonToYaml(original);
       final roundTripped = yamlToJson(yaml);
 
       expect(
-        roundTripped['level1']['level2']['level3']['level4']['level5']['level6'],
+        roundTripped['level1']['level2']['level3']['level4']['level5']
+            ['level6'],
         'deep value',
       );
     });
 
     test('arrays survive JSON → YAML → JSON', () {
       final jsonFile = File('${inputDir.path}/json/arrays.json');
-      final original = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      final original =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
 
       final yaml = jsonToYaml(original);
       final roundTripped = yamlToJson(yaml);
@@ -540,7 +560,8 @@ void main() {
   group('Format options', () {
     test('YAML with metadata', () {
       final jsonFile = File('${inputDir.path}/json/basic.json');
-      final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      final data =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
       final metadata = {'title': 'Test', 'version': '1.0'};
       final result = jsonToYaml(data, metaData: metadata);
 
@@ -553,7 +574,8 @@ void main() {
 
     test('XML with metadata', () {
       final jsonFile = File('${inputDir.path}/json/basic.json');
-      final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      final data =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
       final metadata = {'title': 'Test', 'version': '1.0'};
       final result = jsonToXml(data, metaData: metadata);
 
@@ -566,30 +588,34 @@ void main() {
 
     test('XML with PascalCase and metadata', () {
       final jsonFile = File('${inputDir.path}/json/basic.json');
-      final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      final data =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
       final metadata = {'title': 'Test'};
-      final result = jsonToXml(data, caseStyle: CaseStyle.pascalCase, metaData: metadata);
+      final result =
+          jsonToXml(data, caseStyle: CaseStyle.pascalCase, metaData: metadata);
 
       // Note: '_meta' converts to 'Meta' in PascalCase (leading underscore removed)
       expect(result, contains('<Meta>'));
       expect(result, contains('<Title>Test</Title>'));
       expect(result, contains('<FirstName>John</FirstName>'));
 
-      File('${outputDir.path}/xml_pascal_with_meta.xml').writeAsStringSync(result);
+      File('${outputDir.path}/xml_pascal_with_meta.xml')
+          .writeAsStringSync(result);
     });
   });
 
   group('Case style integration tests', () {
     test('JSON → XML (camelCase) → JSON round-trip', () {
       final jsonFile = File('${inputDir.path}/json/basic.json');
-      final originalData = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
-      
+      final originalData =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+
       // Convert to XML with camelCase
       final xml = jsonToXml(originalData, caseStyle: CaseStyle.camelCase);
       expect(xml, isNotNull);
       expect(xml, contains('<firstName>'));
       expect(xml, contains('<lastName>'));
-      
+
       // Convert back to JSON
       final convertedData = xmlToJson(xml);
       expect(convertedData, isA<Map<String, dynamic>>());
@@ -599,14 +625,15 @@ void main() {
 
     test('JSON → XML (snakeCase) → JSON round-trip', () {
       final jsonFile = File('${inputDir.path}/json/basic.json');
-      final originalData = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
-      
+      final originalData =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+
       // Convert to XML with snakeCase
       final xml = jsonToXml(originalData, caseStyle: CaseStyle.snakeCase);
       expect(xml, isNotNull);
       expect(xml, contains('<first_name>'));
       expect(xml, contains('<last_name>'));
-      
+
       // Convert back to JSON
       final convertedData = xmlToJson(xml);
       expect(convertedData, isA<Map<String, dynamic>>());
@@ -616,14 +643,15 @@ void main() {
 
     test('JSON → XML (kebabCase) → JSON round-trip', () {
       final jsonFile = File('${inputDir.path}/json/basic.json');
-      final originalData = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
-      
+      final originalData =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+
       // Convert to XML with kebabCase
       final xml = jsonToXml(originalData, caseStyle: CaseStyle.kebabCase);
       expect(xml, isNotNull);
       expect(xml, contains('<first-name>'));
       expect(xml, contains('<last-name>'));
-      
+
       // Convert back to JSON
       final convertedData = xmlToJson(xml);
       expect(convertedData, isA<Map<String, dynamic>>());
@@ -633,14 +661,15 @@ void main() {
 
     test('JSON → XML (none) → JSON round-trip preserves original keys', () {
       final jsonFile = File('${inputDir.path}/json/basic.json');
-      final originalData = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
-      
+      final originalData =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+
       // Convert to XML with none case style
       final xml = jsonToXml(originalData, caseStyle: CaseStyle.none);
       expect(xml, isNotNull);
       expect(xml, contains('<firstName>'));
       expect(xml, contains('<lastName>'));
-      
+
       // Convert back to JSON
       final convertedData = xmlToJson(xml);
       expect(convertedData, isA<Map<String, dynamic>>());
@@ -650,59 +679,69 @@ void main() {
 
     test('Complex nested structure with camelCase', () {
       final jsonFile = File('${inputDir.path}/json/deep_nesting.json');
-      final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
-      
+      final data =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+
       final xml = jsonToXml(data, caseStyle: CaseStyle.camelCase);
       expect(xml, isNotNull);
       expect(xml, contains('<level1>'));
       expect(xml, contains('<level2>'));
       expect(xml, contains('<level3>'));
-      
+
       // Verify nested structure is preserved
       final convertedData = xmlToJson(xml);
-      expect(convertedData['level1']['level2']['level3']['level4']['level5']['level6'], 
+      expect(
+          convertedData['level1']['level2']['level3']['level4']['level5']
+              ['level6'],
           data['level1']['level2']['level3']['level4']['level5']['level6']);
     });
 
     test('Complex nested structure with snakeCase', () {
       final jsonFile = File('${inputDir.path}/json/deep_nesting.json');
-      final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
-      
+      final data =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+
       final xml = jsonToXml(data, caseStyle: CaseStyle.snakeCase);
       expect(xml, isNotNull);
       expect(xml, contains('<level1>'));
       expect(xml, contains('<level2>'));
-      
+
       // Verify nested structure is preserved
       final convertedData = xmlToJson(xml);
-      expect(convertedData['level1']['level2']['level3']['level4']['level5']['level6'], 
+      expect(
+          convertedData['level1']['level2']['level3']['level4']['level5']
+              ['level6'],
           data['level1']['level2']['level3']['level4']['level5']['level6']);
     });
 
     test('YAML → XML (camelCase) → YAML round-trip', () {
       final yamlFile = File('${inputDir.path}/yaml/basic.yaml');
       final yamlContent = yamlFile.readAsStringSync();
-      
+
       // Convert to XML with camelCase
       final xml = yamlToXml(yamlContent, caseStyle: CaseStyle.camelCase);
       expect(xml, isNotNull);
-      
+
       // Convert back to YAML
       final convertedYaml = xmlToYaml(xml);
-      expect(convertedYaml, isNotNull);
-      expect(convertedYaml!.contains('firstName:') || convertedYaml.contains('name:'), isTrue);
+      expect(
+          convertedYaml.contains('firstName:') ||
+              convertedYaml.contains('name:'),
+          isTrue);
       expect(convertedYaml, contains('age:'));
     });
 
     test('Markdown → XML (PascalCase) → Markdown round-trip', () {
-      final markdownFile = File('${inputDir.path}/markdown/frontmatter_json.md');
+      final markdownFile =
+          File('${inputDir.path}/markdown/frontmatter_json.md');
       final markdownContent = markdownFile.readAsStringSync();
-      
+
       // Convert to XML with PascalCase
-      final xml = markdownToXml(markdownContent, caseStyle: CaseStyle.pascalCase);
+      final xml =
+          markdownToXml(markdownContent, caseStyle: CaseStyle.pascalCase);
       expect(xml, isNotNull);
       expect(xml, contains('<Root>'));
-      
+
       // Convert back to Markdown
       final convertedMarkdown = xmlToMarkdown(xml);
       expect(convertedMarkdown, isNotNull);
@@ -710,23 +749,27 @@ void main() {
 
     test('Case styles with metadata', () {
       final jsonFile = File('${inputDir.path}/json/basic.json');
-      final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      final data =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
       final metadata = {'title': 'Test Document', 'version': '1.0'};
-      
+
       // Test camelCase with metadata
-      final camelXml = jsonToXml(data, caseStyle: CaseStyle.camelCase, metaData: metadata);
+      final camelXml =
+          jsonToXml(data, caseStyle: CaseStyle.camelCase, metaData: metadata);
       // Note: '_meta' with leading underscore converts to 'Meta' in camelCase
       expect(camelXml, contains('<Meta>'));
       expect(camelXml, contains('<title>Test Document</title>'));
-      
+
       // Test snakeCase with metadata
-      final snakeXml = jsonToXml(data, caseStyle: CaseStyle.snakeCase, metaData: metadata);
+      final snakeXml =
+          jsonToXml(data, caseStyle: CaseStyle.snakeCase, metaData: metadata);
       // Note: '_meta' stays as '_meta' in snakeCase
       expect(snakeXml, contains('<_meta>'));
       expect(snakeXml, contains('<title>Test Document</title>'));
-      
+
       // Test kebabCase with metadata
-      final kebabXml = jsonToXml(data, caseStyle: CaseStyle.kebabCase, metaData: metadata);
+      final kebabXml =
+          jsonToXml(data, caseStyle: CaseStyle.kebabCase, metaData: metadata);
       // Note: '_meta' converts to '-meta' in kebabCase (underscore becomes hyphen)
       expect(kebabXml, contains('<-meta>'));
       expect(kebabXml, contains('<title>Test Document</title>'));
@@ -734,14 +777,16 @@ void main() {
 
     test('Markdown no extra newline between frontmatter and content', () {
       final jsonFile = File('${inputDir.path}/json/basic.json');
-      final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      final data =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
       final metadata = {'title': 'Test'};
       final result = jsonToMarkdown(data, metaData: metadata);
 
       expect(result, contains('---\n## '));
       expect(result, isNot(contains('---\n\n##')));
 
-      File('${outputDir.path}/markdown_no_extra_newline.md').writeAsStringSync(result);
+      File('${outputDir.path}/markdown_no_extra_newline.md')
+          .writeAsStringSync(result);
     });
   });
 
@@ -816,7 +861,8 @@ void main() {
   group('Edge case handling', () {
     test('unicode and emoji preserved through JSON → YAML → JSON', () {
       final jsonFile = File('${inputDir.path}/json/edge_values.json');
-      final original = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      final original =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
 
       final yaml = jsonToYaml(original);
       final roundTripped = yamlToJson(yaml);
@@ -827,7 +873,8 @@ void main() {
 
     test('null values handled correctly', () {
       final jsonFile = File('${inputDir.path}/json/edge_values.json');
-      final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      final data =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
 
       // With includeNulls=true, null values are included in YAML
       final yaml = jsonToYaml(data, includeNulls: true);
@@ -848,7 +895,7 @@ void main() {
       // With includeNulls=true, null values are included in Markdown
       final markdown = jsonToMarkdown(data, includeNulls: true);
       expect(markdown, contains('## Null Value'));
-      
+
       // By default (includeNulls=false), null values are skipped in Markdown
       final markdownWithoutNulls = jsonToMarkdown(data, includeNulls: false);
       expect(markdownWithoutNulls, isNot(contains('Null Value')));
@@ -858,7 +905,8 @@ void main() {
       // Note: Empty arrays and objects in YAML (key:) are parsed as null
       // This is a limitation of YAML syntax representation
       final jsonFile = File('${inputDir.path}/json/edge_values.json');
-      final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      final data =
+          jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
 
       final yaml = jsonToYaml(data);
       final roundTripped = yamlToJson(yaml);
