@@ -546,9 +546,9 @@ void main() {
     });
   });
 
-  group('mapToXml', () {
+  group('jsonToXml', () {
     test('creates XML with root element', () {
-      final result = mapToXml({'name': 'test'});
+      final result = jsonToXml({'name': 'test'});
       expect(result, contains('<?xml'));
       expect(result, contains('<root>'));
       expect(result, contains('<name>test</name>'));
@@ -556,19 +556,19 @@ void main() {
     });
 
     test('uses custom root element name', () {
-      final result = mapToXml({'name': 'test'}, rootElementName: 'user');
+      final result = jsonToXml({'name': 'test'}, rootElementName: 'user');
       expect(result, contains('<user>'));
       expect(result, contains('</user>'));
     });
 
     test('uses PascalCase root and elements', () {
-      final result = mapToXml({'user_name': 'test'}, caseStyle: CaseStyle.pascalCase);
+      final result = jsonToXml({'user_name': 'test'}, caseStyle: CaseStyle.pascalCase);
       expect(result, contains('<Root>'));
       expect(result, contains('<UserName>'));
     });
 
     test('includes metadata', () {
-      final result = mapToXml(
+      final result = jsonToXml(
         {'data': 'value'},
         metaData: {'version': '1.0'},
       );
@@ -577,7 +577,7 @@ void main() {
     });
 
     test('PascalCase with metadata', () {
-      final result = mapToXml(
+      final result = jsonToXml(
         {'data': 'value'},
         caseStyle: CaseStyle.pascalCase,
         metaData: {'version': '1.0'},
@@ -588,7 +588,7 @@ void main() {
     });
 
     test('converts to camelCase XML', () {
-      final result = mapToXml(
+      final result = jsonToXml(
         {'user_name': 'test', 'first_name': 'John'},
         caseStyle: CaseStyle.camelCase,
       );
@@ -598,7 +598,7 @@ void main() {
     });
 
     test('camelCase with metadata', () {
-      final result = mapToXml(
+      final result = jsonToXml(
         {'data': 'value'},
         caseStyle: CaseStyle.camelCase,
         metaData: {'version': '1.0'},
@@ -609,7 +609,7 @@ void main() {
     });
 
     test('camelCase with nested elements', () {
-      final result = mapToXml(
+      final result = jsonToXml(
         {'user_info': {'first_name': 'John', 'last_name': 'Doe'}},
         caseStyle: CaseStyle.camelCase,
       );
@@ -619,7 +619,7 @@ void main() {
     });
 
     test('camelCase with custom root element', () {
-      final result = mapToXml(
+      final result = jsonToXml(
         {'user_name': 'test'},
         rootElementName: 'user_profile',
         caseStyle: CaseStyle.camelCase,
@@ -629,7 +629,7 @@ void main() {
     });
 
     test('converts to snakeCase XML', () {
-      final result = mapToXml(
+      final result = jsonToXml(
         {'userName': 'test', 'firstName': 'John'},
         caseStyle: CaseStyle.snakeCase,
       );
@@ -639,7 +639,7 @@ void main() {
     });
 
     test('snakeCase with metadata', () {
-      final result = mapToXml(
+      final result = jsonToXml(
         {'data': 'value'},
         caseStyle: CaseStyle.snakeCase,
         metaData: {'version': '1.0'},
@@ -650,7 +650,7 @@ void main() {
     });
 
     test('snakeCase with nested elements', () {
-      final result = mapToXml(
+      final result = jsonToXml(
         {'userInfo': {'firstName': 'John', 'lastName': 'Doe'}},
         caseStyle: CaseStyle.snakeCase,
       );
@@ -660,7 +660,7 @@ void main() {
     });
 
     test('snakeCase with custom root element', () {
-      final result = mapToXml(
+      final result = jsonToXml(
         {'userName': 'test'},
         rootElementName: 'userProfile',
         caseStyle: CaseStyle.snakeCase,
@@ -670,7 +670,7 @@ void main() {
     });
 
     test('converts to kebabCase XML', () {
-      final result = mapToXml(
+      final result = jsonToXml(
         {'userName': 'test', 'firstName': 'John'},
         caseStyle: CaseStyle.kebabCase,
       );
@@ -680,7 +680,7 @@ void main() {
     });
 
     test('kebabCase with metadata', () {
-      final result = mapToXml(
+      final result = jsonToXml(
         {'data': 'value'},
         caseStyle: CaseStyle.kebabCase,
         metaData: {'version': '1.0'},
@@ -691,7 +691,7 @@ void main() {
     });
 
     test('kebabCase with nested elements', () {
-      final result = mapToXml(
+      final result = jsonToXml(
         {'userInfo': {'firstName': 'John', 'lastName': 'Doe'}},
         caseStyle: CaseStyle.kebabCase,
       );
@@ -701,7 +701,7 @@ void main() {
     });
 
     test('kebabCase with custom root element', () {
-      final result = mapToXml(
+      final result = jsonToXml(
         {'userName': 'test'},
         rootElementName: 'userProfile',
         caseStyle: CaseStyle.kebabCase,
@@ -711,7 +711,7 @@ void main() {
     });
 
     test('none case style preserves original keys', () {
-      final result = mapToXml(
+      final result = jsonToXml(
         {'userName': 'test', 'first_name': 'John', 'last-name': 'Doe'},
         caseStyle: CaseStyle.none,
       );
@@ -722,7 +722,7 @@ void main() {
     });
 
     test('none case style with metadata', () {
-      final result = mapToXml(
+      final result = jsonToXml(
         {'data': 'value'},
         caseStyle: CaseStyle.none,
         metaData: {'version': '1.0'},
@@ -732,15 +732,15 @@ void main() {
     });
 
     test('handles null values', () {
-      final resultExclude = mapToXml({'key': null}, includeNulls: false);
+      final resultExclude = jsonToXml({'key': null}, includeNulls: false);
       expect(resultExclude, isNot(contains('<key>')));
 
-      final resultInclude = mapToXml({'key': null}, includeNulls: true);
+      final resultInclude = jsonToXml({'key': null}, includeNulls: true);
       expect(resultInclude, contains('<key>'));
     });
 
     test('creates minified XML when prettyPrint is false', () {
-      final result = mapToXml({'name': 'test'}, prettyPrint: false);
+      final result = jsonToXml({'name': 'test'}, prettyPrint: false);
       expect(result, isNot(contains('\n  ')));
     });
   });

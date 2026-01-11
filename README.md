@@ -80,7 +80,7 @@ void main() {
 |------------------------------------------|----------------------------------------------------|
 | `jsonToYaml(Map)`                        | Convert JSON map to YAML string                    |
 | `jsonToMarkdown(Map, {metaData})`        | Convert JSON to Markdown with optional frontmatter |
-| `jsonToXml(Map)` / `mapToXml(Map)`       | Convert JSON map to XML string                     |
+| `jsonToXml(Map)`                         | Convert JSON map to XML string                     |
 | `yamlToJson(String)`                     | Parse YAML string to JSON map                      |
 | `yamlToMarkdown(String)`                 | Convert YAML to Markdown                           |
 | `yamlToXml(String)`                      | Convert YAML to XML                                |
@@ -193,7 +193,7 @@ class User extends TurboSerializable<void> {
 ```dart
 // JSON to other formats
 final yaml = jsonToYaml({'name': 'Test', 'age': 25});
-final xml = mapToXml({'name': 'Test'}, rootElementName: 'User');
+final xml = jsonToXml({'name': 'Test'}, rootElementName: 'User');
 
 // Parse YAML/XML back to JSON
 final json = yamlToJson('name: Test\nage: 25');

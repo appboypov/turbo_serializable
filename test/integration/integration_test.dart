@@ -295,7 +295,7 @@ void main() {
     test('converts basic JSON to XML', () {
       final jsonFile = File('${inputDir.path}/json/basic.json');
       final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
-      final result = mapToXml(data);
+      final result = jsonToXml(data);
 
       expect(result, contains('<?xml'));
       expect(result, contains('<root>'));
@@ -308,7 +308,7 @@ void main() {
     test('converts to PascalCase XML', () {
       final jsonFile = File('${inputDir.path}/json/basic.json');
       final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
-      final result = mapToXml(data, caseStyle: CaseStyle.pascalCase);
+      final result = jsonToXml(data, caseStyle: CaseStyle.pascalCase);
 
       expect(result, contains('<Root>'));
       expect(result, contains('<FirstName>John</FirstName>'));
@@ -320,7 +320,7 @@ void main() {
     test('converts deep nesting to XML', () {
       final jsonFile = File('${inputDir.path}/json/deep_nesting.json');
       final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
-      final result = mapToXml(data);
+      final result = jsonToXml(data);
 
       expect(result, contains('<level1>'));
       expect(result, contains('<level6>deep value</level6>'));
@@ -490,7 +490,7 @@ void main() {
       final jsonFile = File('${inputDir.path}/json/basic.json');
       final original = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
 
-      final xml = mapToXml(original);
+      final xml = jsonToXml(original);
       final roundTripped = xmlToJson(xml);
 
       expect(roundTripped['firstName'], original['firstName']);
@@ -555,7 +555,7 @@ void main() {
       final jsonFile = File('${inputDir.path}/json/basic.json');
       final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
       final metadata = {'title': 'Test', 'version': '1.0'};
-      final result = mapToXml(data, metaData: metadata);
+      final result = jsonToXml(data, metaData: metadata);
 
       expect(result, contains('<_meta>'));
       expect(result, contains('<title>Test</title>'));
@@ -568,7 +568,7 @@ void main() {
       final jsonFile = File('${inputDir.path}/json/basic.json');
       final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
       final metadata = {'title': 'Test'};
-      final result = mapToXml(data, caseStyle: CaseStyle.pascalCase, metaData: metadata);
+      final result = jsonToXml(data, caseStyle: CaseStyle.pascalCase, metaData: metadata);
 
       // Note: '_meta' converts to 'Meta' in PascalCase (leading underscore removed)
       expect(result, contains('<Meta>'));
@@ -585,7 +585,7 @@ void main() {
       final originalData = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
       
       // Convert to XML with camelCase
-      final xml = mapToXml(originalData, caseStyle: CaseStyle.camelCase);
+      final xml = jsonToXml(originalData, caseStyle: CaseStyle.camelCase);
       expect(xml, isNotNull);
       expect(xml, contains('<firstName>'));
       expect(xml, contains('<lastName>'));
@@ -602,7 +602,7 @@ void main() {
       final originalData = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
       
       // Convert to XML with snakeCase
-      final xml = mapToXml(originalData, caseStyle: CaseStyle.snakeCase);
+      final xml = jsonToXml(originalData, caseStyle: CaseStyle.snakeCase);
       expect(xml, isNotNull);
       expect(xml, contains('<first_name>'));
       expect(xml, contains('<last_name>'));
@@ -619,7 +619,7 @@ void main() {
       final originalData = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
       
       // Convert to XML with kebabCase
-      final xml = mapToXml(originalData, caseStyle: CaseStyle.kebabCase);
+      final xml = jsonToXml(originalData, caseStyle: CaseStyle.kebabCase);
       expect(xml, isNotNull);
       expect(xml, contains('<first-name>'));
       expect(xml, contains('<last-name>'));
@@ -636,7 +636,7 @@ void main() {
       final originalData = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
       
       // Convert to XML with none case style
-      final xml = mapToXml(originalData, caseStyle: CaseStyle.none);
+      final xml = jsonToXml(originalData, caseStyle: CaseStyle.none);
       expect(xml, isNotNull);
       expect(xml, contains('<firstName>'));
       expect(xml, contains('<lastName>'));
@@ -652,7 +652,7 @@ void main() {
       final jsonFile = File('${inputDir.path}/json/deep_nesting.json');
       final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
       
-      final xml = mapToXml(data, caseStyle: CaseStyle.camelCase);
+      final xml = jsonToXml(data, caseStyle: CaseStyle.camelCase);
       expect(xml, isNotNull);
       expect(xml, contains('<level1>'));
       expect(xml, contains('<level2>'));
@@ -668,7 +668,7 @@ void main() {
       final jsonFile = File('${inputDir.path}/json/deep_nesting.json');
       final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
       
-      final xml = mapToXml(data, caseStyle: CaseStyle.snakeCase);
+      final xml = jsonToXml(data, caseStyle: CaseStyle.snakeCase);
       expect(xml, isNotNull);
       expect(xml, contains('<level1>'));
       expect(xml, contains('<level2>'));
@@ -714,19 +714,19 @@ void main() {
       final metadata = {'title': 'Test Document', 'version': '1.0'};
       
       // Test camelCase with metadata
-      final camelXml = mapToXml(data, caseStyle: CaseStyle.camelCase, metaData: metadata);
+      final camelXml = jsonToXml(data, caseStyle: CaseStyle.camelCase, metaData: metadata);
       // Note: '_meta' with leading underscore converts to 'Meta' in camelCase
       expect(camelXml, contains('<Meta>'));
       expect(camelXml, contains('<title>Test Document</title>'));
       
       // Test snakeCase with metadata
-      final snakeXml = mapToXml(data, caseStyle: CaseStyle.snakeCase, metaData: metadata);
+      final snakeXml = jsonToXml(data, caseStyle: CaseStyle.snakeCase, metaData: metadata);
       // Note: '_meta' stays as '_meta' in snakeCase
       expect(snakeXml, contains('<_meta>'));
       expect(snakeXml, contains('<title>Test Document</title>'));
       
       // Test kebabCase with metadata
-      final kebabXml = mapToXml(data, caseStyle: CaseStyle.kebabCase, metaData: metadata);
+      final kebabXml = jsonToXml(data, caseStyle: CaseStyle.kebabCase, metaData: metadata);
       // Note: '_meta' converts to '-meta' in kebabCase (underscore becomes hyphen)
       expect(kebabXml, contains('<-meta>'));
       expect(kebabXml, contains('<title>Test Document</title>'));
@@ -838,11 +838,11 @@ void main() {
       expect(yamlWithoutNulls, isNot(contains('nullValue')));
 
       // By default (includeNulls=false), null values are skipped in XML
-      final xml = mapToXml(data);
+      final xml = jsonToXml(data);
       expect(xml, isNot(contains('<nullValue')));
 
       // With includeNulls=true, empty elements are created
-      final xmlWithNulls = mapToXml(data, includeNulls: true);
+      final xmlWithNulls = jsonToXml(data, includeNulls: true);
       expect(xmlWithNulls, contains('<nullValue>'));
 
       // With includeNulls=true, null values are included in Markdown
@@ -873,7 +873,7 @@ void main() {
         'content': '<script>alert("xss")</script>',
         'ampersand': 'Tom & Jerry',
       };
-      final xml = mapToXml(data);
+      final xml = jsonToXml(data);
 
       // XML package automatically escapes special characters
       expect(xml, contains('&lt;'));

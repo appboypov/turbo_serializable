@@ -15,7 +15,7 @@ import 'package:turbo_serializable/converters/case_converter.dart';
 /// [metaData] - Optional metadata to include as a `_meta` element
 ///
 /// Returns the XML string representation of the JSON map.
-String mapToXml(
+String jsonToXml(
   Map<String, dynamic> json, {
   String? rootElementName,
   bool includeNulls = false,

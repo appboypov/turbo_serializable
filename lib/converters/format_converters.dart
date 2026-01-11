@@ -5,7 +5,7 @@ import 'package:yaml/yaml.dart' as yaml;
 
 import 'package:turbo_serializable/constants/turbo_constants.dart';
 import 'package:turbo_serializable/enums/case_style.dart';
-import 'package:turbo_serializable/converters/xml_converter.dart';
+import 'package:turbo_serializable/converters/xml_converter.dart' show jsonToXml, xmlToMap;
 
 /// Converts JSON to YAML string.
 ///
@@ -165,7 +165,7 @@ String yamlToXml(
   Map<String, dynamic>? metaData,
 }) {
   final json = yamlToJson(yamlString);
-  return mapToXml(
+  return jsonToXml(
     json,
     rootElementName: rootElementName,
     includeNulls: includeNulls,
@@ -264,6 +264,7 @@ String markdownToYaml(
 /// [includeNulls] - Whether to include null values
 /// [prettyPrint] - Whether to format XML with indentation
 /// [caseStyle] - The case style to apply to element names
+/// [metaData] - Optional metadata to include as a `_meta` element
 ///
 /// Returns an XML string representation of the Markdown.
 String markdownToXml(
@@ -272,14 +273,16 @@ String markdownToXml(
   bool includeNulls = false,
   bool prettyPrint = true,
   CaseStyle caseStyle = CaseStyle.none,
+  Map<String, dynamic>? metaData,
 }) {
   final json = markdownToJson(markdown);
-  return mapToXml(
+  return jsonToXml(
     json,
     rootElementName: rootElementName,
     includeNulls: includeNulls,
     prettyPrint: prettyPrint,
     caseStyle: caseStyle,
+    metaData: metaData,
   );
 }
 

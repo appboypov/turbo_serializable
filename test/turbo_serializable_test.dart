@@ -846,8 +846,8 @@ Some regular markdown content
     });
 
     group('XML converters', () {
-      test('mapToXml converts simple map', () {
-        final xml = mapToXml({'name': 'Test', 'age': 25}, rootElementName: 'root');
+      test('jsonToXml converts simple map', () {
+        final xml = jsonToXml({'name': 'Test', 'age': 25}, rootElementName: 'root');
         expect(xml, contains('<root>'));
         expect(xml, contains('<name>Test</name>'));
         expect(xml, contains('<age>25</age>'));
@@ -865,7 +865,7 @@ Some regular markdown content
       });
 
       test('handles special characters', () {
-        final xml = mapToXml({'text': 'a & b < c'}, rootElementName: 'root');
+        final xml = jsonToXml({'text': 'a & b < c'}, rootElementName: 'root');
         expect(xml, contains('&amp;'));
         expect(xml, contains('&lt;'));
       });

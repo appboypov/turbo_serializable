@@ -31,7 +31,7 @@
 
 ### Added
 - Standalone format converter functions: `jsonToYaml`, `jsonToMarkdown`, `jsonToXml`, `yamlToJson`, `yamlToMarkdown`, `yamlToXml`, `markdownToJson`, `markdownToYaml`, `markdownToXml`, `xmlToJson`, `xmlToYaml`, `xmlToMarkdown`
-- `mapToXml` and `xmlToMap` functions for direct JSON/XML conversion
+- `jsonToXml` and `xmlToMap` functions for direct JSON/XML conversion
 - Markdown-to-JSON parsing with YAML frontmatter support
 - JSON-to-Markdown conversion with header-based format (keys become `##`, `###`, `####`, `**bold**` at level 5+)
 - Title Case conversion for markdown headers

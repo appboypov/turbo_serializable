@@ -361,7 +361,7 @@ abstract class TurboSerializable<M> {
         if (json == null) return null;
         final elementName =
             rootElementName ?? runtimeType.toString().replaceAll(RegExp(r'<.*>'), '');
-        return mapToXml(
+        return jsonToXml(
           json,
           rootElementName: elementName,
           includeNulls: includeNulls,
@@ -393,6 +393,7 @@ abstract class TurboSerializable<M> {
           includeNulls: includeNulls,
           prettyPrint: prettyPrint,
           caseStyle: caseStyle,
+          metaData: meta,
         );
       case SerializationFormat.xml:
         return config.toXml?.call(
