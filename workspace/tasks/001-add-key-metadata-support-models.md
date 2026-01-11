@@ -1,5 +1,5 @@
 ---
-status: to-do
+status: done
 skill-level: medior
 parent-type: change
 parent-id: add-key-metadata-support
@@ -47,21 +47,21 @@ The package has a complete set of model classes in `lib/models/` that can repres
 
 ## Implementation Checklist
 
-- [ ] 1.1 Create `lib/models/key_metadata.dart` with `KeyMetadata` class
-- [ ] 1.2 Create `lib/models/divider_meta.dart` with `DividerMeta` class
-- [ ] 1.3 Create `lib/models/callout_meta.dart` with `CalloutMeta` class
-- [ ] 1.4 Create `lib/models/code_block_meta.dart` with `CodeBlockMeta` class
-- [ ] 1.5 Create `lib/models/list_meta.dart` with `ListMeta` class
-- [ ] 1.6 Create `lib/models/table_meta.dart` with `TableMeta` class
-- [ ] 1.7 Create `lib/models/emphasis_meta.dart` with `EmphasisMeta` class
-- [ ] 1.8 Create `lib/models/xml_meta.dart` with `XmlMeta` class
-- [ ] 1.9 Create `lib/models/yaml_meta.dart` with `YamlMeta` class
-- [ ] 1.10 Create `lib/models/json_meta.dart` with `JsonMeta` class
-- [ ] 1.11 Create `lib/models/whitespace_meta.dart` with `WhitespaceMeta` class
-- [ ] 1.12 Create `lib/models/layout_aware_parse_result.dart` with `LayoutAwareParseResult` class
-- [ ] 1.13 Export all models from `lib/turbo_serializable.dart`
-- [ ] 1.14 Add `keyMetaKey` constant to `TurboConstants`
-- [ ] 1.15 Write unit tests for all model classes in `test/models/`
+- [x] 1.1 Create `lib/models/key_metadata.dart` with `KeyMetadata` class
+- [x] 1.2 Create `lib/models/divider_meta.dart` with `DividerMeta` class
+- [x] 1.3 Create `lib/models/callout_meta.dart` with `CalloutMeta` class
+- [x] 1.4 Create `lib/models/code_block_meta.dart` with `CodeBlockMeta` class
+- [x] 1.5 Create `lib/models/list_meta.dart` with `ListMeta` class
+- [x] 1.6 Create `lib/models/table_meta.dart` with `TableMeta` class
+- [x] 1.7 Create `lib/models/emphasis_meta.dart` with `EmphasisMeta` class
+- [x] 1.8 Create `lib/models/xml_meta.dart` with `XmlMeta` class
+- [x] 1.9 Create `lib/models/yaml_meta.dart` with `YamlMeta` class
+- [x] 1.10 Create `lib/models/json_meta.dart` with `JsonMeta` class
+- [x] 1.11 Create `lib/models/whitespace_meta.dart` with `WhitespaceMeta` class
+- [x] 1.12 Create `lib/models/layout_aware_parse_result.dart` with `LayoutAwareParseResult` class
+- [x] 1.13 Export all models from `lib/turbo_serializable.dart`
+- [x] 1.14 Add `keyMetaKey` constant to `TurboConstants`
+- [x] 1.15 Write unit tests for all model classes in `test/models/`
 
 ## Notes
 
