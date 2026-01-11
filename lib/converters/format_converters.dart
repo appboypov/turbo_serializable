@@ -90,13 +90,13 @@ String formatJsonValue(dynamic value, int indent) {
 
 /// Converts YAML string to JSON map.
 ///
-/// [yaml] - The YAML string to parse
+/// [yamlString] - The YAML string to parse
 ///
 /// Returns a `Map<String, dynamic>` representation of the YAML.
 /// Throws [FormatException] if the YAML is invalid.
-Map<String, dynamic> yamlToJson(String yaml) {
+Map<String, dynamic> yamlToJson(String yamlString) {
   try {
-    final doc = yaml.loadYaml(yaml);
+    final doc = yaml.loadYaml(yamlString);
     return convertYamlToMap(doc);
   } catch (e) {
     throw FormatException('Failed to parse YAML: $e');
@@ -105,21 +105,21 @@ Map<String, dynamic> yamlToJson(String yaml) {
 
 /// Converts YAML string to Markdown string.
 ///
-/// [yaml] - The YAML string to convert
+/// [yamlString] - The YAML string to convert
 /// [metaData] - Optional metadata to include as YAML frontmatter
 ///
 /// Returns a Markdown string representation of the YAML.
 String yamlToMarkdown(
-  String yaml, {
+  String yamlString, {
   Map<String, dynamic>? metaData,
 }) {
-  final json = yamlToJson(yaml);
+  final json = yamlToJson(yamlString);
   return jsonToMarkdown(json, metaData: metaData);
 }
 
 /// Converts YAML string to XML string.
 ///
-/// [yaml] - The YAML string to convert
+/// [yamlString] - The YAML string to convert
 /// [rootElementName] - Optional root element name
 /// [includeNulls] - Whether to include null values
 /// [prettyPrint] - Whether to format XML with indentation
@@ -128,14 +128,14 @@ String yamlToMarkdown(
 ///
 /// Returns an XML string representation of the YAML.
 String yamlToXml(
-  String yaml, {
+  String yamlString, {
   String? rootElementName,
   bool includeNulls = false,
   bool prettyPrint = true,
   bool usePascalCase = false,
   Map<String, dynamic>? metaData,
 }) {
-  final json = yamlToJson(yaml);
+  final json = yamlToJson(yamlString);
   return mapToXml(
     json,
     rootElementName: rootElementName,

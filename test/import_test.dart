@@ -1,5 +1,4 @@
 import 'package:test/test.dart';
-import 'package:turbo_serializable/models/turbo_serializable_config.dart';
 import 'package:turbo_serializable/turbo_serializable.dart';
 
 class TestSerializable extends TurboSerializable<Object?> {

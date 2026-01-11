@@ -1,5 +1,4 @@
 // ignore_for_file: avoid_print
-import 'package:turbo_serializable/models/turbo_serializable_config.dart';
 import 'package:turbo_serializable/turbo_serializable.dart';
 import 'package:turbo_response/turbo_response.dart';
 

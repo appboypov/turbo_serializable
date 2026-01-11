@@ -1,6 +1,5 @@
 import 'package:test/test.dart';
 import 'package:turbo_response/turbo_response.dart';
-import 'package:turbo_serializable/models/turbo_serializable_config.dart';
 import 'package:turbo_serializable/turbo_serializable.dart';
 
 // Test concrete implementations
@@ -843,7 +842,7 @@ Some regular markdown content
         final model = _ModelWithMeta(content: 'Hello', metaData: meta);
         final result = model.metaDataToJsonMap();
         expect(result, isNotNull);
-        expect(result!['title'], 'Test Doc');
+        expect(result['title'], 'Test Doc');
         expect(result['version'], 1);
       });
 

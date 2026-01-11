@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.1.2 - 2026-01-11
+
+### Added
+- `TurboSerializableConfig` class for configuring serialization callbacks
+- Export of `TurboSerializableConfig` from main library for easier imports
+
+### Changed
+- Refactored `TurboSerializable` to use `TurboSerializableConfig` for serialization method configuration
+- Standardized callback names in `TurboSerializableConfig`:
+  - `toJsonCallback` → `toJson`
+  - `toYamlString` → `toYaml`
+  - `toMarkdownString` → `toMarkdown`
+- Primary format is now automatically determined from provided callbacks (priority: json > yaml > markdown > xml)
+- Updated `toXml` method to include `includeMetaData` parameter
+
+### Technical Details
+- Introduced `HasToJson` interface for metadata types that can be serialized to JSON
+- Removed deprecated `toJsonImpl` methods in favor of callback-based implementations
+- Enhanced documentation to guide users on the new configuration setup
+- Ensured backward compatibility with existing serialization methods where applicable
+
 ## 0.1.1 - 2026-01-11
 
 ### Changed

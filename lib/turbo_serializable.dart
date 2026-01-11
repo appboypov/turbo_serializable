@@ -12,3 +12,4 @@ export 'abstracts/turbo_serializable_id.dart';
 export 'enums/serialization_format.dart';
 export 'converters/format_converters.dart';
 export 'converters/xml_converter.dart';
+export 'models/turbo_serializable_config.dart';

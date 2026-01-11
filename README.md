@@ -60,19 +60,19 @@ void main() {
 |-----------------------------|-------------------------------------------------------------------------------|
 | `TurboSerializable<M>`      | Base class for serializable objects with optional metadata type `M`           |
 | `TurboSerializableId<T, M>` | Extends TurboSerializable with typed identifier `T` and `isLocalDefault` flag |
-| `TurboSerializableConfig`  | Configuration class with callbacks for serialization methods                   |
+| `TurboSerializableConfig`   | Configuration class with callbacks for serialization methods                  |
 | `HasToJson`                 | Interface for metadata types that can be serialized to JSON                   |
-| `SerializationFormat`       | Enum: `json`, `yaml`, `markdown`, `xml`                  |
+| `SerializationFormat`       | Enum: `json`, `yaml`, `markdown`, `xml`                                       |
 
 ### TurboSerializable Methods
 
-| Method                                                               | Returns                 | Description                                            |
-|----------------------------------------------------------------------|-------------------------|--------------------------------------------------------|
-| `toJson({includeMetaData})`                                          | `Map<String, dynamic>?` | Serialize to JSON map                                  |
-| `toYaml({includeMetaData})`                                          | `String?`               | Serialize to YAML string                               |
-| `toMarkdown({includeMetaData})`                                      | `String?`               | Serialize to Markdown with headers                     |
-| `toXml({rootElementName, includeNulls, prettyPrint, usePascalCase})` | `String?`               | Serialize to XML string                                |
-| `validate<T>()`                                                      | `TurboResponse<T>?`     | Returns null if valid, `TurboResponse.fail` if invalid |
+| Method                                                                                | Returns                 | Description                                            |
+|---------------------------------------------------------------------------------------|-------------------------|--------------------------------------------------------|
+| `toJson({includeMetaData})`                                                           | `Map<String, dynamic>?` | Serialize to JSON map                                  |
+| `toYaml({includeMetaData})`                                                           | `String?`               | Serialize to YAML string                               |
+| `toMarkdown({includeMetaData})`                                                       | `String?`               | Serialize to Markdown with headers                     |
+| `toXml({rootElementName, includeNulls, prettyPrint, includeMetaData, usePascalCase})` | `String?`               | Serialize to XML string                                |
+| `validate<T>()`                                                                       | `TurboResponse<T>?`     | Returns null if valid, `TurboResponse.fail` if invalid |
 
 ### Standalone Converters
 
