@@ -1,4 +1,5 @@
 import 'package:turbo_serializable/abstracts/turbo_serializable.dart';
+import 'package:turbo_serializable/constants/turbo_constants.dart';
 import 'package:turbo_serializable/enums/serialization_format.dart';
 
 /// Configuration for [TurboSerializable] instances.
@@ -46,7 +47,7 @@ class TurboSerializableConfig {
       toYaml != null ||
       toMarkdown != null ||
       toXml != null,
-  'At least one callback must be provided',
+  TurboConstants.atLeastOneCallbackRequired,
   ),
         primaryFormat = _computePrimaryFormat(
           toJson,

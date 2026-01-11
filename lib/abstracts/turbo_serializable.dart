@@ -1,6 +1,7 @@
 import 'package:meta/meta.dart';
 import 'package:turbo_response/turbo_response.dart';
 import 'package:turbo_serializable/abstracts/has_to_json.dart';
+import 'package:turbo_serializable/constants/turbo_constants.dart';
 import 'package:turbo_serializable/converters/format_converters.dart';
 import 'package:turbo_serializable/enums/serialization_format.dart';
 import 'package:turbo_serializable/converters/xml_converter.dart';
@@ -76,7 +77,7 @@ abstract class TurboSerializable<M> {
     if (result != null && includeMetaData) {
       final meta = metaDataToJsonMap();
       if (meta.isNotEmpty) {
-        return {'_meta': meta, ...result};
+        return {TurboConstants.metaKey: meta, ...result};
       }
     }
     return result;

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:meta/meta.dart';
 import 'package:yaml/yaml.dart' as yaml;
 
+import '../constants/turbo_constants.dart';
 import 'xml_converter.dart';
 
 /// Converts JSON to YAML string.
@@ -16,7 +17,7 @@ String jsonToYaml(
   Map<String, dynamic>? metaData,
 }) {
   if (metaData != null && metaData.isNotEmpty) {
-    final withMeta = <String, dynamic>{'_meta': metaData, ...json};
+    final withMeta = <String, dynamic>{TurboConstants.metaKey: metaData, ...json};
     return convertMapToYaml(withMeta, 0);
   }
   return convertMapToYaml(json, 0);
@@ -47,13 +48,13 @@ String jsonToMarkdown(
 
   // Add frontmatter if metadata is provided
   if (metaData != null && metaData.isNotEmpty) {
-    buffer.writeln('---');
+    buffer.writeln(TurboConstants.frontmatterDelimiter);
     buffer.write(convertMapToYaml(metaData, 0));
-    buffer.writeln('---');
+    buffer.writeln(TurboConstants.frontmatterDelimiter);
   }
 
   // Add content with headers
-  buffer.write(convertMapToMarkdownHeaders(json, 2));
+  buffer.write(convertMapToMarkdownHeaders(json, TurboConstants.markdownHeaderLevel2));
 
   return buffer.toString().trimRight();
 }
@@ -67,8 +68,8 @@ String jsonEncodeFormatted(Map<String, dynamic> json) {
 /// Formats JSON with proper indentation.
 @visibleForTesting
 String formatJsonValue(dynamic value, int indent) {
-  final indentStr = '  ' * indent;
-  final nextIndent = '  ' * (indent + 1);
+  final indentStr = TurboConstants.indentSpaces * indent;
+  final nextIndent = TurboConstants.indentSpaces * (indent + 1);
 
   if (value == null) {
     return 'null';
@@ -99,7 +100,7 @@ Map<String, dynamic> yamlToJson(String yamlString) {
     final doc = yaml.loadYaml(yamlString);
     return convertYamlToMap(doc);
   } catch (e) {
-    throw FormatException('Failed to parse YAML: $e');
+    throw FormatException(TurboConstants.failedToParseYaml(e));
   }
 }
 
@@ -172,8 +173,8 @@ Map<String, dynamic> markdownToJson(String markdown) {
   String body = trimmed;
 
   // Check for YAML frontmatter (starts with ---)
-  if (trimmed.startsWith('---')) {
-    final endIndex = trimmed.indexOf('---', 3);
+  if (trimmed.startsWith(TurboConstants.frontmatterDelimiter)) {
+    final endIndex = trimmed.indexOf(TurboConstants.frontmatterDelimiter, 3);
     if (endIndex != -1) {
       // Extract frontmatter YAML
       final frontmatterYaml = trimmed.substring(3, endIndex).trim();
@@ -195,13 +196,13 @@ Map<String, dynamic> markdownToJson(String markdown) {
     try {
       final jsonBody = jsonDecode(body);
       if (jsonBody is Map<String, dynamic>) {
-        result['body'] = jsonBody;
+        result[TurboConstants.bodyKey] = jsonBody;
       } else {
-        result['body'] = jsonBody;
+        result[TurboConstants.bodyKey] = jsonBody;
       }
     } catch (_) {
       // Not valid JSON, store as string
-      result['body'] = body;
+      result[TurboConstants.bodyKey] = body;
     }
   }
 
@@ -340,7 +341,7 @@ String convertMapToMarkdownHeaders(Map<String, dynamic> map, int level) {
     final titleKey = convertToTitleCase(key);
 
     // Write header or bold based on level
-    if (level <= 4) {
+    if (level <= TurboConstants.markdownHeaderLevel4) {
       buffer.writeln('${'#' * level} $titleKey');
     } else {
       buffer.writeln('**$titleKey**');
@@ -384,7 +385,7 @@ String convertMapToMarkdownHeaders(Map<String, dynamic> map, int level) {
 @visibleForTesting
 String convertMapToYaml(Map<String, dynamic> map, int indent) {
   final buffer = StringBuffer();
-  final indentStr = '  ' * indent;
+  final indentStr = TurboConstants.indentSpaces * indent;
 
   map.forEach((key, value) {
     if (value == null) {

@@ -1,6 +1,8 @@
 import 'package:meta/meta.dart';
 import 'package:xml/xml.dart';
 
+import '../constants/turbo_constants.dart';
+
 /// Converts a JSON map to an XML string.
 ///
 /// [json] - The JSON map to convert
@@ -20,13 +22,13 @@ String mapToXml(
   Map<String, dynamic>? metaData,
 }) {
   final builder = XmlBuilder();
-  builder.processing('xml', 'version="1.0" encoding="UTF-8"');
+  builder.processing(TurboConstants.xmlProcessingInstruction, TurboConstants.xmlDeclaration);
   final rootName = usePascalCase
-      ? convertToPascalCase(rootElementName ?? 'root')
-      : (rootElementName ?? 'root');
+      ? convertToPascalCase(rootElementName ?? TurboConstants.defaultRootElement)
+      : (rootElementName ?? TurboConstants.defaultRootElement);
   builder.element(rootName, nest: () {
     if (metaData != null && metaData.isNotEmpty) {
-      final metaElementName = usePascalCase ? '_Meta' : '_meta';
+      final metaElementName = usePascalCase ? TurboConstants.metaKeyPascal : TurboConstants.metaKey;
       builder.element(metaElementName, nest: () {
         buildXmlElement(
           builder,
@@ -111,7 +113,7 @@ Map<String, dynamic> xmlToMap(String xml) {
     final rootElement = document.rootElement;
     return parseXmlElement(rootElement);
   } catch (e) {
-    throw FormatException('Failed to parse XML: $e');
+    throw FormatException(TurboConstants.failedToParseXml(e));
   }
 }
 
@@ -166,7 +168,7 @@ void buildXmlElement(
   } else if (value is List) {
     // This case handles lists that are direct values (shouldn't happen in normal flow)
     // but we handle it for completeness
-    final itemName = usePascalCase ? 'Item' : 'item';
+    final itemName = usePascalCase ? TurboConstants.defaultItemElementPascal : TurboConstants.defaultItemElement;
     for (final item in value) {
       if (item == null && !includeNulls) {
         continue;
@@ -249,7 +251,7 @@ dynamic parseXmlElement(XmlElement element) {
   if (textChildren.isNotEmpty && elementChildren.isNotEmpty) {
     final text = textChildren.map((e) => e.value.trim()).where((t) => t.isNotEmpty).join(' ');
     if (text.isNotEmpty) {
-      result['_text'] = text;
+      result[TurboConstants.textKey] = text;
     }
   }
   
