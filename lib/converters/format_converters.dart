@@ -7,24 +7,46 @@ import 'package:turbo_serializable/constants/turbo_constants.dart';
 import 'package:turbo_serializable/enums/case_style.dart';
 import 'package:turbo_serializable/converters/xml_converter.dart'
     show jsonToXml, xmlToMap;
+import 'package:turbo_serializable/generators/markdown_generator.dart';
+import 'package:turbo_serializable/generators/yaml_generator.dart';
+import 'package:turbo_serializable/models/layout_aware_parse_result.dart';
+import 'package:turbo_serializable/parsers/markdown_parser.dart';
+import 'package:turbo_serializable/parsers/xml_parser.dart';
+import 'package:turbo_serializable/parsers/yaml_parser.dart';
 
 /// Converts JSON to YAML string.
 ///
 /// [json] - The JSON map to convert
 /// [metaData] - Optional metadata to include under `_meta` key
+/// [keyMeta] - Optional key-level metadata for layout preservation
 /// [includeNulls] - Whether to include null values (default: false)
 /// [prettyPrint] - Whether to format YAML with indentation (default: true)
+/// [preserveLayout] - Whether to use key metadata for layout preservation
+///   (default: true). When true and [keyMeta] is provided, uses the
+///   [YamlLayoutGenerator] for byte-for-byte fidelity.
 ///
 /// Returns a YAML string representation of the JSON map.
 String jsonToYaml(
   Map<String, dynamic> json, {
   Map<String, dynamic>? metaData,
+  Map<String, dynamic>? keyMeta,
   bool includeNulls = false,
   bool prettyPrint = true,
+  bool preserveLayout = true,
 }) {
   Map<String, dynamic> processedJson = json;
   if (!includeNulls) {
     processedJson = filterNullsFromMap(json);
+  }
+
+  // Use layout generator when metadata is available and layout preservation is enabled
+  if (preserveLayout && keyMeta != null) {
+    const generator = YamlLayoutGenerator();
+    return generator.generate(
+      processedJson,
+      keyMeta: keyMeta,
+      metaData: metaData,
+    );
   }
 
   if (metaData != null && metaData.isNotEmpty) {
@@ -41,8 +63,12 @@ String jsonToYaml(
 ///
 /// [json] - The JSON map to convert
 /// [metaData] - Optional metadata to include as YAML frontmatter
+/// [keyMeta] - Optional key-level metadata for layout preservation
 /// [includeNulls] - Whether to include null values (default: false)
 /// [prettyPrint] - Whether to format Markdown with spacing (default: true)
+/// [preserveLayout] - Whether to use key metadata for layout preservation
+///   (default: true). When true and [keyMeta] is provided, uses the
+///   [MarkdownLayoutGenerator] for byte-for-byte fidelity.
 ///
 /// Returns a Markdown string with optional YAML frontmatter and header-based content.
 /// Keys become headers (## level 2, ### level 3, #### level 4, **bold** for deeper).
@@ -59,12 +85,24 @@ String jsonToYaml(
 String jsonToMarkdown(
   Map<String, dynamic> json, {
   Map<String, dynamic>? metaData,
+  Map<String, dynamic>? keyMeta,
   bool includeNulls = false,
   bool prettyPrint = true,
+  bool preserveLayout = true,
 }) {
   Map<String, dynamic> processedJson = json;
   if (!includeNulls) {
     processedJson = filterNullsFromMap(json);
+  }
+
+  // Use layout generator when metadata is available and layout preservation is enabled
+  if (preserveLayout && keyMeta != null) {
+    const generator = MarkdownLayoutGenerator();
+    return generator.generate(
+      processedJson,
+      keyMeta: keyMeta,
+      metaData: metaData,
+    );
   }
 
   final buffer = StringBuffer();
@@ -122,10 +160,22 @@ String formatJsonValue(dynamic value, int indent) {
 /// Converts YAML string to JSON map.
 ///
 /// [yamlString] - The YAML string to parse
+/// [preserveLayout] - Whether to extract layout metadata for round-trip fidelity
+///   (default: false for backward compatibility). When true, returns
+///   a [LayoutAwareParseResult] containing both data and key-level metadata.
 ///
-/// Returns a `Map<String, dynamic>` representation of the YAML.
+/// Returns a `Map<String, dynamic>` representation of the YAML when
+/// [preserveLayout] is false, or a [LayoutAwareParseResult] when true.
 /// Throws [FormatException] if the YAML is invalid.
-Map<String, dynamic> yamlToJson(String yamlString) {
+dynamic yamlToJson(String yamlString, {bool preserveLayout = false}) {
+  if (preserveLayout) {
+    return _yamlToJsonWithLayout(yamlString);
+  }
+  return _yamlToJsonBasic(yamlString);
+}
+
+/// Basic YAML to JSON conversion without layout preservation.
+Map<String, dynamic> _yamlToJsonBasic(String yamlString) {
   try {
     final doc = yaml.loadYaml(yamlString);
     return convertYamlToMap(doc);
@@ -134,12 +184,19 @@ Map<String, dynamic> yamlToJson(String yamlString) {
   }
 }
 
+/// YAML to JSON conversion with layout metadata extraction.
+LayoutAwareParseResult _yamlToJsonWithLayout(String yamlString) {
+  const parser = YamlLayoutParser();
+  return parser.parse(yamlString);
+}
+
 /// Converts YAML string to Markdown string.
 ///
 /// [yamlString] - The YAML string to convert
 /// [metaData] - Optional metadata to include as YAML frontmatter
 /// [includeNulls] - Whether to include null values (default: false)
 /// [prettyPrint] - Whether to format Markdown with spacing (default: true)
+/// [preserveLayout] - Whether to preserve YAML layout metadata (default: false)
 ///
 /// Returns a Markdown string representation of the YAML.
 String yamlToMarkdown(
@@ -147,13 +204,18 @@ String yamlToMarkdown(
   Map<String, dynamic>? metaData,
   bool includeNulls = false,
   bool prettyPrint = true,
+  bool preserveLayout = false,
 }) {
-  final json = yamlToJson(yamlString);
+  final result = yamlToJson(yamlString, preserveLayout: preserveLayout);
+  final json = preserveLayout
+      ? (result as LayoutAwareParseResult).data
+      : result as Map<String, dynamic>;
   return jsonToMarkdown(
     json,
     metaData: metaData,
     includeNulls: includeNulls,
     prettyPrint: prettyPrint,
+    preserveLayout: false,
   );
 }
 
@@ -165,6 +227,7 @@ String yamlToMarkdown(
 /// [prettyPrint] - Whether to format XML with indentation
 /// [caseStyle] - The case style to apply to element names
 /// [metaData] - Optional metadata to include as `_meta` element
+/// [preserveLayout] - Whether to preserve YAML layout metadata (default: false)
 ///
 /// Returns an XML string representation of the YAML.
 String yamlToXml(
@@ -174,8 +237,12 @@ String yamlToXml(
   bool prettyPrint = true,
   CaseStyle caseStyle = CaseStyle.none,
   Map<String, dynamic>? metaData,
+  bool preserveLayout = false,
 }) {
-  final json = yamlToJson(yamlString);
+  final result = yamlToJson(yamlString, preserveLayout: preserveLayout);
+  final json = preserveLayout
+      ? (result as LayoutAwareParseResult).data
+      : result as Map<String, dynamic>;
   return jsonToXml(
     json,
     rootElementName: rootElementName,
@@ -183,6 +250,7 @@ String yamlToXml(
     prettyPrint: prettyPrint,
     caseStyle: caseStyle,
     metaData: metaData,
+    preserveLayout: false,
   );
 }
 
@@ -203,9 +271,21 @@ String yamlToXml(
 /// - 'body' key containing the raw string content (if not valid JSON)
 ///
 /// [markdown] - The Markdown string to parse
+/// [preserveLayout] - Whether to extract layout metadata for round-trip fidelity
+///   (default: false for backward compatibility). When true, returns
+///   a [LayoutAwareParseResult] containing both data and key-level metadata.
 ///
-/// Returns a `Map<String, dynamic>` representation of the Markdown.
-Map<String, dynamic> markdownToJson(String markdown) {
+/// Returns a `Map<String, dynamic>` representation of the Markdown when
+/// [preserveLayout] is false, or a [LayoutAwareParseResult] when true.
+dynamic markdownToJson(String markdown, {bool preserveLayout = false}) {
+  if (preserveLayout) {
+    return _markdownToJsonWithLayout(markdown);
+  }
+  return _markdownToJsonBasic(markdown);
+}
+
+/// Basic Markdown to JSON conversion without layout preservation.
+Map<String, dynamic> _markdownToJsonBasic(String markdown) {
   final result = <String, dynamic>{};
 
   final trimmed = markdown.trim();
@@ -248,12 +328,19 @@ Map<String, dynamic> markdownToJson(String markdown) {
   return result;
 }
 
+/// Markdown to JSON conversion with layout metadata extraction.
+LayoutAwareParseResult _markdownToJsonWithLayout(String markdown) {
+  const parser = MarkdownLayoutParser();
+  return parser.parse(markdown);
+}
+
 /// Converts Markdown string to YAML string.
 ///
 /// [markdown] - The Markdown string to convert
 /// [metaData] - Optional metadata to include under `_meta` key
 /// [includeNulls] - Whether to include null values (default: false)
 /// [prettyPrint] - Whether to format YAML with indentation (default: true)
+/// [preserveLayout] - Whether to preserve Markdown layout metadata (default: false)
 ///
 /// Returns a YAML string representation of the Markdown.
 String markdownToYaml(
@@ -261,13 +348,18 @@ String markdownToYaml(
   Map<String, dynamic>? metaData,
   bool includeNulls = false,
   bool prettyPrint = true,
+  bool preserveLayout = false,
 }) {
-  final json = markdownToJson(markdown);
+  final result = markdownToJson(markdown, preserveLayout: preserveLayout);
+  final json = preserveLayout
+      ? (result as LayoutAwareParseResult).data
+      : result as Map<String, dynamic>;
   return jsonToYaml(
     json,
     metaData: metaData,
     includeNulls: includeNulls,
     prettyPrint: prettyPrint,
+    preserveLayout: false,
   );
 }
 
@@ -279,6 +371,7 @@ String markdownToYaml(
 /// [prettyPrint] - Whether to format XML with indentation
 /// [caseStyle] - The case style to apply to element names
 /// [metaData] - Optional metadata to include as a `_meta` element
+/// [preserveLayout] - Whether to preserve Markdown layout metadata (default: false)
 ///
 /// Returns an XML string representation of the Markdown.
 String markdownToXml(
@@ -288,8 +381,12 @@ String markdownToXml(
   bool prettyPrint = true,
   CaseStyle caseStyle = CaseStyle.none,
   Map<String, dynamic>? metaData,
+  bool preserveLayout = false,
 }) {
-  final json = markdownToJson(markdown);
+  final result = markdownToJson(markdown, preserveLayout: preserveLayout);
+  final json = preserveLayout
+      ? (result as LayoutAwareParseResult).data
+      : result as Map<String, dynamic>;
   return jsonToXml(
     json,
     rootElementName: rootElementName,
@@ -297,6 +394,7 @@ String markdownToXml(
     prettyPrint: prettyPrint,
     caseStyle: caseStyle,
     metaData: metaData,
+    preserveLayout: false,
   );
 }
 
@@ -305,10 +403,23 @@ String markdownToXml(
 /// This is a convenience function that uses the existing xmlToMap function.
 ///
 /// [xml] - The XML string to convert
+/// [preserveLayout] - Whether to extract layout metadata for round-trip fidelity
+///   (default: false for backward compatibility). When true, returns
+///   a [LayoutAwareParseResult] containing both data and key-level metadata.
 ///
-/// Returns a `Map<String, dynamic>` representation of the XML.
-Map<String, dynamic> xmlToJson(String xml) {
+/// Returns a `Map<String, dynamic>` representation of the XML when
+/// [preserveLayout] is false, or a [LayoutAwareParseResult] when true.
+dynamic xmlToJson(String xml, {bool preserveLayout = false}) {
+  if (preserveLayout) {
+    return _xmlToJsonWithLayout(xml);
+  }
   return xmlToMap(xml);
+}
+
+/// XML to JSON conversion with layout metadata extraction.
+LayoutAwareParseResult _xmlToJsonWithLayout(String xml) {
+  const parser = XmlLayoutParser();
+  return parser.parse(xml);
 }
 
 /// Converts XML string to YAML string.
@@ -317,6 +428,7 @@ Map<String, dynamic> xmlToJson(String xml) {
 /// [metaData] - Optional metadata to include under `_meta` key
 /// [includeNulls] - Whether to include null values (default: false)
 /// [prettyPrint] - Whether to format YAML with indentation (default: true)
+/// [preserveLayout] - Whether to preserve XML layout metadata (default: false)
 ///
 /// Returns a YAML string representation of the XML.
 String xmlToYaml(
@@ -324,13 +436,18 @@ String xmlToYaml(
   Map<String, dynamic>? metaData,
   bool includeNulls = false,
   bool prettyPrint = true,
+  bool preserveLayout = false,
 }) {
-  final json = xmlToMap(xml);
+  final result = xmlToJson(xml, preserveLayout: preserveLayout);
+  final json = preserveLayout
+      ? (result as LayoutAwareParseResult).data
+      : result as Map<String, dynamic>;
   return jsonToYaml(
     json,
     metaData: metaData,
     includeNulls: includeNulls,
     prettyPrint: prettyPrint,
+    preserveLayout: false,
   );
 }
 
@@ -340,6 +457,7 @@ String xmlToYaml(
 /// [metaData] - Optional metadata to include as YAML frontmatter
 /// [includeNulls] - Whether to include null values (default: false)
 /// [prettyPrint] - Whether to format Markdown with spacing (default: true)
+/// [preserveLayout] - Whether to preserve XML layout metadata (default: false)
 ///
 /// Returns a Markdown string representation of the XML.
 String xmlToMarkdown(
@@ -347,13 +465,18 @@ String xmlToMarkdown(
   Map<String, dynamic>? metaData,
   bool includeNulls = false,
   bool prettyPrint = true,
+  bool preserveLayout = false,
 }) {
-  final json = xmlToMap(xml);
+  final result = xmlToJson(xml, preserveLayout: preserveLayout);
+  final json = preserveLayout
+      ? (result as LayoutAwareParseResult).data
+      : result as Map<String, dynamic>;
   return jsonToMarkdown(
     json,
     metaData: metaData,
     includeNulls: includeNulls,
     prettyPrint: prettyPrint,
+    preserveLayout: false,
   );
 }
 

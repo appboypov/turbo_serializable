@@ -1,5 +1,5 @@
 ---
-status: to-do
+status: done
 skill-level: senior
 parent-type: change
 parent-id: add-key-metadata-support
@@ -44,23 +44,23 @@ Create a Markdown generator that uses key metadata to produce byte-for-byte iden
 
 ## Implementation Checklist
 
-- [ ] 3.1 Create `lib/generators/markdown_generator.dart` with `MarkdownLayoutGenerator` class
-- [ ] 3.2 Implement header generation with level support
-- [ ] 3.3 Implement callout generation with position awareness
-- [ ] 3.4 Implement divider generation with style support
-- [ ] 3.5 Implement code block generation with language support
-- [ ] 3.6 Implement list generation with marker style support
-- [ ] 3.7 Implement task list generation with checked state
-- [ ] 3.8 Implement table generation with alignment support
-- [ ] 3.9 Implement emphasis generation with marker preservation
-- [ ] 3.10 Implement whitespace generation with exact preservation
-- [ ] 3.11 Implement line ending handling
-- [ ] 3.12 Implement nested key metadata traversal
-- [ ] 3.13 Update `jsonToMarkdown()` to accept `keyMeta` parameter
-- [ ] 3.14 Update `jsonToMarkdown()` to use generator when `preserveLayout: true`
-- [ ] 3.15 Maintain backward compatibility for existing calls
-- [ ] 3.16 Write unit tests in `test/generators/markdown_generator_test.dart`
-- [ ] 3.17 Write byte-for-byte fidelity tests
+- [x] 3.1 Create `lib/generators/markdown_generator.dart` with `MarkdownLayoutGenerator` class
+- [x] 3.2 Implement header generation with level support
+- [x] 3.3 Implement callout generation with position awareness
+- [x] 3.4 Implement divider generation with style support
+- [x] 3.5 Implement code block generation with language support
+- [x] 3.6 Implement list generation with marker style support
+- [x] 3.7 Implement task list generation with checked state
+- [x] 3.8 Implement table generation with alignment support
+- [x] 3.9 Implement emphasis generation with marker preservation
+- [x] 3.10 Implement whitespace generation with exact preservation
+- [x] 3.11 Implement line ending handling
+- [x] 3.12 Implement nested key metadata traversal
+- [x] 3.13 Update `jsonToMarkdown()` to accept `keyMeta` parameter
+- [x] 3.14 Update `jsonToMarkdown()` to use generator when `preserveLayout: true`
+- [x] 3.15 Maintain backward compatibility for existing calls
+- [x] 3.16 Write unit tests in `test/generators/markdown_generator_test.dart`
+- [x] 3.17 Write byte-for-byte fidelity tests
 
 ## Notes
 

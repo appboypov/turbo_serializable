@@ -1,5 +1,5 @@
 ---
-status: to-do
+status: done
 skill-level: senior
 parent-type: change
 parent-id: add-key-metadata-support
@@ -40,19 +40,19 @@ Create an XML generator that uses key metadata to produce byte-for-byte identica
 
 ## Implementation Checklist
 
-- [ ] 5.1 Create `lib/generators/xml_generator.dart` with `XmlLayoutGenerator` class
-- [ ] 5.2 Implement attribute generation from `XmlMeta`
-- [ ] 5.3 Implement CDATA section generation
-- [ ] 5.4 Implement comment generation with position support
-- [ ] 5.5 Implement namespace declaration generation
-- [ ] 5.6 Implement namespace prefix application
-- [ ] 5.7 Implement mixed content generation
-- [ ] 5.8 Implement element order preservation
-- [ ] 5.9 Update `jsonToXml()` to accept `keyMeta` parameter
-- [ ] 5.10 Update `jsonToXml()` to use generator when `preserveLayout: true`
-- [ ] 5.11 Maintain backward compatibility for existing calls
-- [ ] 5.12 Write unit tests in `test/generators/xml_generator_test.dart`
-- [ ] 5.13 Write byte-for-byte fidelity tests
+- [x] 5.1 Create `lib/generators/xml_generator.dart` with `XmlLayoutGenerator` class
+- [x] 5.2 Implement attribute generation from `XmlMeta`
+- [x] 5.3 Implement CDATA section generation
+- [x] 5.4 Implement comment generation with position support
+- [x] 5.5 Implement namespace declaration generation
+- [x] 5.6 Implement namespace prefix application
+- [x] 5.7 Implement mixed content generation
+- [x] 5.8 Implement element order preservation
+- [x] 5.9 Update `jsonToXml()` to accept `keyMeta` parameter
+- [x] 5.10 Update `jsonToXml()` to use generator when `preserveLayout: true`
+- [x] 5.11 Maintain backward compatibility for existing calls
+- [x] 5.12 Write unit tests in `test/generators/xml_generator_test.dart`
+- [x] 5.13 Write byte-for-byte fidelity tests
 
 ## Notes
 

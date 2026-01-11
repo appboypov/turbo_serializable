@@ -1,5 +1,5 @@
 ---
-status: to-do
+status: done
 skill-level: senior
 parent-type: change
 parent-id: add-key-metadata-support
@@ -43,22 +43,22 @@ Comprehensive test suite validates byte-for-byte round-trip fidelity for all for
 
 ## Implementation Checklist
 
-- [ ] 11.1 Create `test/round_trip/markdown_round_trip_test.dart`
-- [ ] 11.2 Add tests for each Markdown structural element
-- [ ] 11.3 Create `test/round_trip/xml_round_trip_test.dart`
-- [ ] 11.4 Add tests for each XML structural element
-- [ ] 11.5 Create `test/round_trip/yaml_round_trip_test.dart`
-- [ ] 11.6 Add tests for each YAML structural element
-- [ ] 11.7 Create `test/round_trip/json_round_trip_test.dart`
-- [ ] 11.8 Create `test/round_trip/cross_format_test.dart`
-- [ ] 11.9 Add tests for nested key metadata
-- [ ] 11.10 Add backward compatibility tests
-- [ ] 11.11 Add edge case tests
-- [ ] 11.12 Create real-world document test fixtures
-- [ ] 11.13 Add byte-for-byte comparison utility
-- [ ] 11.14 Run all tests and fix failures
-- [ ] 11.15 Generate and review code coverage report
-- [ ] 11.16 Verify all existing tests still pass
+- [x] 11.1 Create `test/round_trip/markdown_round_trip_test.dart`
+- [x] 11.2 Add tests for each Markdown structural element
+- [x] 11.3 Create `test/round_trip/xml_round_trip_test.dart`
+- [x] 11.4 Add tests for each XML structural element
+- [x] 11.5 Create `test/round_trip/yaml_round_trip_test.dart`
+- [x] 11.6 Add tests for each YAML structural element
+- [x] 11.7 Create `test/round_trip/json_round_trip_test.dart`
+- [x] 11.8 Create `test/round_trip/cross_format_test.dart`
+- [x] 11.9 Add tests for nested key metadata
+- [x] 11.10 Add backward compatibility tests
+- [x] 11.11 Add edge case tests
+- [x] 11.12 Create real-world document test fixtures
+- [x] 11.13 Add byte-for-byte comparison utility
+- [x] 11.14 Run all tests and fix failures
+- [x] 11.15 Generate and review code coverage report
+- [x] 11.16 Verify all existing tests still pass
 
 ## Notes
 

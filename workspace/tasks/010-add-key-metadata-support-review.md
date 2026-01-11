@@ -1,5 +1,5 @@
 ---
-status: to-do
+status: done
 skill-level: senior
 parent-type: change
 parent-id: add-key-metadata-support
@@ -39,20 +39,20 @@ All components work together correctly, code is consistent, and the feature is r
 
 ## Implementation Checklist
 
-- [ ] 10.1 Review `KeyMetadata` and related model classes
-- [ ] 10.2 Review Markdown parser implementation
-- [ ] 10.3 Review Markdown generator implementation
-- [ ] 10.4 Review XML parser implementation
-- [ ] 10.5 Review XML generator implementation
-- [ ] 10.6 Review YAML parser implementation
-- [ ] 10.7 Review YAML generator implementation
-- [ ] 10.8 Review JSON layout implementation
-- [ ] 10.9 Review API integration completeness
-- [ ] 10.10 Verify all exports in `lib/turbo_serializable.dart`
-- [ ] 10.11 Run `dart analyze` and fix any issues
-- [ ] 10.12 Verify README documentation is updated
-- [ ] 10.13 Verify CHANGELOG entry is prepared
-- [ ] 10.14 Cross-check against spec requirements
+- [x] 10.1 Review `KeyMetadata` and related model classes
+- [x] 10.2 Review Markdown parser implementation
+- [x] 10.3 Review Markdown generator implementation
+- [x] 10.4 Review XML parser implementation
+- [x] 10.5 Review XML generator implementation
+- [x] 10.6 Review YAML parser implementation
+- [x] 10.7 Review YAML generator implementation
+- [x] 10.8 Review JSON layout implementation
+- [x] 10.9 Review API integration completeness
+- [x] 10.10 Verify all exports in `lib/turbo_serializable.dart`
+- [x] 10.11 Run `dart analyze` and fix any issues
+- [x] 10.12 Verify README documentation is updated
+- [x] 10.13 Verify CHANGELOG entry is prepared
+- [x] 10.14 Cross-check against spec requirements
 
 ## Notes
 

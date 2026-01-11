@@ -1,5 +1,5 @@
 ---
-status: to-do
+status: done
 skill-level: senior
 parent-type: change
 parent-id: add-key-metadata-support
@@ -44,22 +44,22 @@ Create a Markdown parser that extracts both data and layout metadata, enabling 1
 
 ## Implementation Checklist
 
-- [ ] 2.1 Create `lib/parsers/markdown_parser.dart` with `MarkdownLayoutParser` class
-- [ ] 2.2 Implement header parsing with level extraction
-- [ ] 2.3 Implement callout parsing with GitHub/Obsidian syntax support
-- [ ] 2.4 Implement divider parsing with style detection
-- [ ] 2.5 Implement fenced code block parsing with language detection
-- [ ] 2.6 Implement unordered list parsing with marker style detection
-- [ ] 2.7 Implement ordered list parsing with numbering style detection
-- [ ] 2.8 Implement task list parsing with checked state detection
-- [ ] 2.9 Implement table parsing with alignment detection
-- [ ] 2.10 Implement emphasis parsing (bold, italic, strikethrough, inline code)
-- [ ] 2.11 Implement whitespace preservation (newlines, raw whitespace)
-- [ ] 2.12 Implement line ending detection (`\n` vs `\r\n`)
-- [ ] 2.13 Update `markdownToJson()` to use new parser when `preserveLayout: true`
-- [ ] 2.14 Maintain backward compatibility when `preserveLayout: false`
-- [ ] 2.15 Write comprehensive unit tests in `test/parsers/markdown_parser_test.dart`
-- [ ] 2.16 Write integration tests for round-trip fidelity
+- [x] 2.1 Create `lib/parsers/markdown_parser.dart` with `MarkdownLayoutParser` class
+- [x] 2.2 Implement header parsing with level extraction
+- [x] 2.3 Implement callout parsing with GitHub/Obsidian syntax support
+- [x] 2.4 Implement divider parsing with style detection
+- [x] 2.5 Implement fenced code block parsing with language detection
+- [x] 2.6 Implement unordered list parsing with marker style detection
+- [x] 2.7 Implement ordered list parsing with numbering style detection
+- [x] 2.8 Implement task list parsing with checked state detection
+- [x] 2.9 Implement table parsing with alignment detection
+- [x] 2.10 Implement emphasis parsing (bold, italic, strikethrough, inline code)
+- [x] 2.11 Implement whitespace preservation (newlines, raw whitespace)
+- [x] 2.12 Implement line ending detection (`\n` vs `\r\n`)
+- [x] 2.13 Update `markdownToJson()` to use new parser when `preserveLayout: true`
+- [x] 2.14 Maintain backward compatibility when `preserveLayout: false`
+- [x] 2.15 Write comprehensive unit tests in `test/parsers/markdown_parser_test.dart`
+- [x] 2.16 Write integration tests for round-trip fidelity
 
 ## Notes
 

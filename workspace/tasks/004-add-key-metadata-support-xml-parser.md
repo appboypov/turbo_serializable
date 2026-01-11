@@ -1,5 +1,5 @@
 ---
-status: to-do
+status: done
 skill-level: senior
 parent-type: change
 parent-id: add-key-metadata-support
@@ -41,19 +41,19 @@ Create an XML parser that extracts both data and layout metadata (attributes, CD
 
 ## Implementation Checklist
 
-- [ ] 4.1 Create `lib/parsers/xml_parser.dart` with `XmlLayoutParser` class
-- [ ] 4.2 Implement attribute extraction into `XmlMeta`
-- [ ] 4.3 Implement CDATA section detection
-- [ ] 4.4 Implement comment extraction with position tracking
-- [ ] 4.5 Implement namespace declaration extraction
-- [ ] 4.6 Implement namespace prefix extraction
-- [ ] 4.7 Implement mixed content handling
-- [ ] 4.8 Implement element order preservation
-- [ ] 4.9 Update `xmlToMap()` / `xmlToJson()` to use new parser when `preserveLayout: true`
-- [ ] 4.10 Return `LayoutAwareParseResult` or add `_keyMeta` to result
-- [ ] 4.11 Maintain backward compatibility when `preserveLayout: false`
-- [ ] 4.12 Write unit tests in `test/parsers/xml_parser_test.dart`
-- [ ] 4.13 Write integration tests for round-trip fidelity
+- [x] 4.1 Create `lib/parsers/xml_parser.dart` with `XmlLayoutParser` class
+- [x] 4.2 Implement attribute extraction into `XmlMeta`
+- [x] 4.3 Implement CDATA section detection
+- [x] 4.4 Implement comment extraction with position tracking
+- [x] 4.5 Implement namespace declaration extraction
+- [x] 4.6 Implement namespace prefix extraction
+- [x] 4.7 Implement mixed content handling
+- [x] 4.8 Implement element order preservation
+- [x] 4.9 Update `xmlToMap()` / `xmlToJson()` to use new parser when `preserveLayout: true`
+- [x] 4.10 Return `LayoutAwareParseResult` or add `_keyMeta` to result
+- [x] 4.11 Maintain backward compatibility when `preserveLayout: false`
+- [x] 4.12 Write unit tests in `test/parsers/xml_parser_test.dart`
+- [x] 4.13 Write integration tests for round-trip fidelity
 
 ## Notes
 

@@ -1,5 +1,5 @@
 ---
-status: to-do
+status: done
 skill-level: medior
 parent-type: change
 parent-id: add-key-metadata-support
@@ -35,14 +35,14 @@ JSON parsing captures formatting metadata and generation respects it when `prese
 
 ## Implementation Checklist
 
-- [ ] 8.1 Create `lib/parsers/json_parser.dart` with `JsonLayoutParser` class
-- [ ] 8.2 Implement indentation detection (count leading spaces)
-- [ ] 8.3 Implement pretty vs minified detection
-- [ ] 8.4 Create `lib/generators/json_generator.dart` with `JsonLayoutGenerator` class
-- [ ] 8.5 Implement formatted output with configurable indentation
-- [ ] 8.6 Update JSON-related functions to support `preserveLayout`
-- [ ] 8.7 Write unit tests in `test/parsers/json_parser_test.dart`
-- [ ] 8.8 Write unit tests in `test/generators/json_generator_test.dart`
+- [x] 8.1 Create `lib/parsers/json_parser.dart` with `JsonLayoutParser` class
+- [x] 8.2 Implement indentation detection (count leading spaces)
+- [x] 8.3 Implement pretty vs minified detection
+- [x] 8.4 Create `lib/generators/json_generator.dart` with `JsonLayoutGenerator` class
+- [x] 8.5 Implement formatted output with configurable indentation
+- [x] 8.6 Update JSON-related functions to support `preserveLayout`
+- [x] 8.7 Write unit tests in `test/parsers/json_parser_test.dart`
+- [x] 8.8 Write unit tests in `test/generators/json_generator_test.dart`
 
 ## Notes
 

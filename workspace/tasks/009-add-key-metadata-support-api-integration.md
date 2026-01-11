@@ -1,5 +1,5 @@
 ---
-status: to-do
+status: done
 skill-level: medior
 parent-type: change
 parent-id: add-key-metadata-support
@@ -38,26 +38,26 @@ All converter functions accept `preserveLayout` (default: `true`) and `keyMeta` 
 
 ## Implementation Checklist
 
-- [ ] 9.1 Update `jsonToYaml()` signature with `keyMeta` and `preserveLayout`
-- [ ] 9.2 Update `jsonToMarkdown()` signature with `keyMeta` and `preserveLayout`
-- [ ] 9.3 Update `jsonToXml()` signature with `keyMeta` and `preserveLayout`
-- [ ] 9.4 Update `yamlToJson()` to return/provide `keyMeta`
-- [ ] 9.5 Update `yamlToMarkdown()` to pass `keyMeta` through
-- [ ] 9.6 Update `yamlToXml()` to pass `keyMeta` through
-- [ ] 9.7 Update `markdownToJson()` to return/provide `keyMeta`
-- [ ] 9.8 Update `markdownToYaml()` to pass `keyMeta` through
-- [ ] 9.9 Update `markdownToXml()` to pass `keyMeta` through
-- [ ] 9.10 Update `xmlToJson()` to return/provide `keyMeta`
-- [ ] 9.11 Update `xmlToYaml()` to pass `keyMeta` through
-- [ ] 9.12 Update `xmlToMarkdown()` to pass `keyMeta` through
-- [ ] 9.13 Update `TurboSerializable.toJson()` with `preserveLayout`
-- [ ] 9.14 Update `TurboSerializable.toYaml()` with `preserveLayout`
-- [ ] 9.15 Update `TurboSerializable.toMarkdown()` with `preserveLayout`
-- [ ] 9.16 Update `TurboSerializable.toXml()` with `preserveLayout`
-- [ ] 9.17 Update `TurboSerializableConfig` if needed
-- [ ] 9.18 Update dartdoc comments for all modified functions
-- [ ] 9.19 Update README with new parameters
-- [ ] 9.20 Write integration tests for cross-format metadata preservation
+- [x] 9.1 Update `jsonToYaml()` signature with `keyMeta` and `preserveLayout`
+- [x] 9.2 Update `jsonToMarkdown()` signature with `keyMeta` and `preserveLayout`
+- [x] 9.3 Update `jsonToXml()` signature with `keyMeta` and `preserveLayout`
+- [x] 9.4 Update `yamlToJson()` to return/provide `keyMeta`
+- [x] 9.5 Update `yamlToMarkdown()` to pass `keyMeta` through
+- [x] 9.6 Update `yamlToXml()` to pass `keyMeta` through
+- [x] 9.7 Update `markdownToJson()` to return/provide `keyMeta`
+- [x] 9.8 Update `markdownToYaml()` to pass `keyMeta` through
+- [x] 9.9 Update `markdownToXml()` to pass `keyMeta` through
+- [x] 9.10 Update `xmlToJson()` to return/provide `keyMeta`
+- [x] 9.11 Update `xmlToYaml()` to pass `keyMeta` through
+- [x] 9.12 Update `xmlToMarkdown()` to pass `keyMeta` through
+- [x] 9.13 Update `TurboSerializable.toJson()` with `preserveLayout`
+- [x] 9.14 Update `TurboSerializable.toYaml()` with `preserveLayout`
+- [x] 9.15 Update `TurboSerializable.toMarkdown()` with `preserveLayout`
+- [x] 9.16 Update `TurboSerializable.toXml()` with `preserveLayout`
+- [x] 9.17 Update `TurboSerializableConfig` if needed
+- [x] 9.18 Update dartdoc comments for all modified functions
+- [x] 9.19 Update README with new parameters
+- [x] 9.20 Write integration tests for cross-format metadata preservation
 
 ## Notes
 

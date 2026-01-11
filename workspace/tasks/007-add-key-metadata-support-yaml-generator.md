@@ -1,5 +1,5 @@
 ---
-status: to-do
+status: done
 skill-level: senior
 parent-type: change
 parent-id: add-key-metadata-support
@@ -39,18 +39,18 @@ Create a YAML generator that uses key metadata to produce byte-for-byte identica
 
 ## Implementation Checklist
 
-- [ ] 7.1 Create `lib/generators/yaml_generator.dart` with `YamlLayoutGenerator` class
-- [ ] 7.2 Implement anchor generation
-- [ ] 7.3 Implement alias generation with anchor linking
-- [ ] 7.4 Implement comment generation with line association
-- [ ] 7.5 Implement flow vs block style generation
-- [ ] 7.6 Implement scalar style application (literal, folded, quoted)
-- [ ] 7.7 Implement multi-document generation
-- [ ] 7.8 Update `jsonToYaml()` to accept `keyMeta` parameter
-- [ ] 7.9 Update `jsonToYaml()` to use generator when `preserveLayout: true`
-- [ ] 7.10 Maintain backward compatibility for existing calls
-- [ ] 7.11 Write unit tests in `test/generators/yaml_generator_test.dart`
-- [ ] 7.12 Write byte-for-byte fidelity tests
+- [x] 7.1 Create `lib/generators/yaml_generator.dart` with `YamlLayoutGenerator` class
+- [x] 7.2 Implement anchor generation
+- [x] 7.3 Implement alias generation with anchor linking
+- [x] 7.4 Implement comment generation with line association
+- [x] 7.5 Implement flow vs block style generation
+- [x] 7.6 Implement scalar style application (literal, folded, quoted)
+- [x] 7.7 Implement multi-document generation
+- [x] 7.8 Update `jsonToYaml()` to accept `keyMeta` parameter
+- [x] 7.9 Update `jsonToYaml()` to use generator when `preserveLayout: true`
+- [x] 7.10 Maintain backward compatibility for existing calls
+- [x] 7.11 Write unit tests in `test/generators/yaml_generator_test.dart`
+- [x] 7.12 Write byte-for-byte fidelity tests
 
 ## Notes
 

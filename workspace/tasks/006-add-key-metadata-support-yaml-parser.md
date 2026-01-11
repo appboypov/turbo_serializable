@@ -1,5 +1,5 @@
 ---
-status: to-do
+status: done
 skill-level: senior
 parent-type: change
 parent-id: add-key-metadata-support
@@ -40,18 +40,18 @@ Create a YAML parser that extracts both data and layout metadata (anchors, alias
 
 ## Implementation Checklist
 
-- [ ] 6.1 Create `lib/parsers/yaml_parser.dart` with `YamlLayoutParser` class
-- [ ] 6.2 Implement anchor extraction
-- [ ] 6.3 Implement alias extraction
-- [ ] 6.4 Implement comment extraction with line association
-- [ ] 6.5 Implement flow vs block style detection
-- [ ] 6.6 Implement scalar style detection (literal, folded, quoted)
-- [ ] 6.7 Implement multi-document handling
-- [ ] 6.8 Update `yamlToJson()` to use new parser when `preserveLayout: true`
-- [ ] 6.9 Return `LayoutAwareParseResult` or add `_keyMeta` to result
-- [ ] 6.10 Maintain backward compatibility when `preserveLayout: false`
-- [ ] 6.11 Write unit tests in `test/parsers/yaml_parser_test.dart`
-- [ ] 6.12 Write integration tests for round-trip fidelity
+- [x] 6.1 Create `lib/parsers/yaml_parser.dart` with `YamlLayoutParser` class
+- [x] 6.2 Implement anchor extraction
+- [x] 6.3 Implement alias extraction
+- [x] 6.4 Implement comment extraction with line association
+- [x] 6.5 Implement flow vs block style detection
+- [x] 6.6 Implement scalar style detection (literal, folded, quoted)
+- [x] 6.7 Implement multi-document handling
+- [x] 6.8 Update `yamlToJson()` to use new parser when `preserveLayout: true`
+- [x] 6.9 Return `LayoutAwareParseResult` or add `_keyMeta` to result
+- [x] 6.10 Maintain backward compatibility when `preserveLayout: false`
+- [x] 6.11 Write unit tests in `test/parsers/yaml_parser_test.dart`
+- [x] 6.12 Write integration tests for round-trip fidelity
 
 ## Notes
 
