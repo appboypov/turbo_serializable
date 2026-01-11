@@ -240,18 +240,21 @@ Map<String, dynamic> markdownToJson(String markdown) {
 /// Converts Markdown string to YAML string.
 ///
 /// [markdown] - The Markdown string to convert
+/// [metaData] - Optional metadata to include under `_meta` key
 /// [includeNulls] - Whether to include null values (default: false)
 /// [prettyPrint] - Whether to format YAML with indentation (default: true)
 ///
 /// Returns a YAML string representation of the Markdown.
 String markdownToYaml(
   String markdown, {
+  Map<String, dynamic>? metaData,
   bool includeNulls = false,
   bool prettyPrint = true,
 }) {
   final json = markdownToJson(markdown);
   return jsonToYaml(
     json,
+    metaData: metaData,
     includeNulls: includeNulls,
     prettyPrint: prettyPrint,
   );

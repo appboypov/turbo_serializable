@@ -277,7 +277,12 @@ abstract class TurboSerializable<M> {
       case SerializationFormat.markdown:
         final markdown = config.toMarkdown?.call(this);
         if (markdown == null) return null;
-        return markdownToYaml(markdown);
+        return markdownToYaml(
+          markdown,
+          metaData: meta,
+          includeNulls: includeNulls,
+          prettyPrint: prettyPrint,
+        );
       case SerializationFormat.xml:
         final xml = config.toXml?.call(
           this,
