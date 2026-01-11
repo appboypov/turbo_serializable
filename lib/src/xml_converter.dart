@@ -103,7 +103,7 @@ String convertToPascalCase(String input) {
 ///
 /// [xml] - The XML string to parse
 ///
-/// Returns a Map<String, dynamic> representation of the XML.
+/// Returns a `Map<String, dynamic>` representation of the XML.
 /// Throws [FormatException] if the XML is invalid.
 Map<String, dynamic> xmlToMap(String xml) {
   try {

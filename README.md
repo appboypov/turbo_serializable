@@ -18,7 +18,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  turbo_serializable: ^0.0.1
+  turbo_serializable: ^0.1.0
 ```
 
 ## Usage
@@ -297,6 +297,69 @@ class GenericModel<T> extends TurboSerializable<void> {
     return null;
   }
 }
+```
+
+### Standalone Converter Functions
+
+Use standalone functions for direct format conversion without a class:
+
+```dart
+import 'package:turbo_serializable/turbo_serializable.dart';
+
+// JSON conversions
+final yaml = jsonToYaml({'name': 'John', 'age': 30});
+final markdown = jsonToMarkdown({'name': 'John', 'age': 30});
+final xml = mapToXml({'name': 'John', 'age': 30});
+
+// YAML conversions
+final json = yamlToJson('name: John\nage: 30');
+final mdFromYaml = yamlToMarkdown('name: John\nage: 30');
+
+// XML conversions
+final jsonFromXml = xmlToJson('<root><name>John</name></root>');
+final yamlFromXml = xmlToYaml('<root><name>John</name></root>');
+
+// Markdown conversions (parses YAML frontmatter + body)
+final data = markdownToJson('''
+---
+title: My Doc
+---
+{"content": "Hello"}
+''');
+// Result: {title: 'My Doc', body: {content: 'Hello'}}
+```
+
+**Markdown Output Format:**
+
+`jsonToMarkdown` converts keys to headers with Title Case:
+- Level 1 keys → `## Header`
+- Level 2 keys → `### Header`
+- Level 3 keys → `#### Header`
+- Level 4+ keys → `**Bold**`
+
+```dart
+final md = jsonToMarkdown({
+  'userName': 'John',
+  'address': {
+    'city': 'NYC',
+    'details': {
+      'street': 'Main St'
+    }
+  }
+});
+// Output:
+// ## User Name
+// John
+//
+// ## Address
+//
+// ### City
+// NYC
+//
+// ### Details
+//
+// #### Street
+// Main St
 ```
 
 ### Primary Format and Automatic Conversions

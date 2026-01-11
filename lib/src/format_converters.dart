@@ -92,7 +92,7 @@ String formatJsonValue(dynamic value, int indent) {
 ///
 /// [yamlString] - The YAML string to parse
 ///
-/// Returns a Map<String, dynamic> representation of the YAML.
+/// Returns a `Map<String, dynamic>` representation of the YAML.
 /// Throws [FormatException] if the YAML is invalid.
 Map<String, dynamic> yamlToJson(String yamlString) {
   try {
@@ -164,7 +164,7 @@ String yamlToXml(
 ///
 /// [markdown] - The Markdown string to parse
 ///
-/// Returns a Map<String, dynamic> representation of the Markdown.
+/// Returns a `Map<String, dynamic>` representation of the Markdown.
 Map<String, dynamic> markdownToJson(String markdown) {
   final result = <String, dynamic>{};
 
@@ -250,7 +250,7 @@ String markdownToXml(
 ///
 /// [xml] - The XML string to convert
 ///
-/// Returns a Map<String, dynamic> representation of the XML.
+/// Returns a `Map<String, dynamic>` representation of the XML.
 Map<String, dynamic> xmlToJson(String xml) {
   return xmlToMap(xml);
 }
