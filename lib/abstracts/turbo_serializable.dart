@@ -75,7 +75,9 @@ abstract class TurboSerializable<M> {
 
     if (result != null && includeMetaData) {
       final meta = metaDataToJsonMap();
-      return {'_meta': meta, ...result};
+      if (meta.isNotEmpty) {
+        return {'_meta': meta, ...result};
+      }
     }
     return result;
   }
@@ -153,6 +155,8 @@ abstract class TurboSerializable<M> {
       rootElementName: rootElementName,
       includeNulls: includeNulls,
       prettyPrint: prettyPrint,
+      includeMetaData: includeMetaData,
+      usePascalCase: usePascalCase,
     );
     if (xmlResult != null) {
       return xmlResult;
@@ -200,6 +204,8 @@ abstract class TurboSerializable<M> {
           rootElementName: null,
           includeNulls: false,
           prettyPrint: true,
+          includeMetaData: true,
+          usePascalCase: false,
         );
         if (xml == null) return null;
         try {
@@ -231,6 +237,8 @@ abstract class TurboSerializable<M> {
           rootElementName: null,
           includeNulls: false,
           prettyPrint: true,
+          includeMetaData: includeMetaData,
+          usePascalCase: false,
         );
         if (xml == null) return null;
         return xmlToYaml(xml, metaData: meta);
@@ -260,6 +268,8 @@ abstract class TurboSerializable<M> {
           rootElementName: null,
           includeNulls: false,
           prettyPrint: true,
+          includeMetaData: includeMetaData,
+          usePascalCase: false,
         );
         if (xml == null) return null;
         return xmlToMarkdown(xml, metaData: meta);
@@ -321,6 +331,8 @@ abstract class TurboSerializable<M> {
           rootElementName: rootElementName,
           includeNulls: includeNulls,
           prettyPrint: prettyPrint,
+          includeMetaData: includeMetaData,
+          usePascalCase: usePascalCase,
         );
     }
   }

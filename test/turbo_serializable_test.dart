@@ -21,7 +21,7 @@ class TestModel extends TurboSerializable<Object?> {
             final self = instance as TestModel;
             return '# ${self.name}';
           },
-          toXml: (instance, {String? rootElementName, bool includeNulls = false, bool prettyPrint = true}) {
+          toXml: (instance, {String? rootElementName, bool includeNulls = false, bool prettyPrint = true, bool includeMetaData = true, bool usePascalCase = false}) {
             final self = instance as TestModel;
             return '<name>${self.name}</name>';
           },
@@ -846,10 +846,11 @@ Some regular markdown content
         expect(result['version'], 1);
       });
 
-      test('returns null when metadata lacks toJson()', () {
+      test('returns empty map when metadata lacks toJson()', () {
         final meta = _MetaWithoutToJson(title: 'Test');
         final model = _ModelWithBadMeta(content: 'Hello', metaData: meta);
-        expect(model.metaDataToJsonMap(), isNull);
+        expect(model.metaDataToJsonMap(), isEmpty);
+        expect(model.metaDataToJsonMap(), equals({}));
       });
     });
 
@@ -1098,7 +1099,7 @@ class _XmlOnlyModel extends TurboSerializable<Object?> {
   })
       : super(
             config: TurboSerializableConfig(
-          toXml: (instance, {String? rootElementName, bool includeNulls = false, bool prettyPrint = true}) {
+          toXml: (instance, {String? rootElementName, bool includeNulls = false, bool prettyPrint = true, bool includeMetaData = true, bool usePascalCase = false}) {
             final self = instance as _XmlOnlyModel;
             final elementName = rootElementName ?? 'XmlOnlyModel';
             return '<?xml version="1.0" encoding="UTF-8"?>\n<$elementName>\n  <name>${self.name}</name>\n  <age>${self.age}</age>\n</$elementName>';

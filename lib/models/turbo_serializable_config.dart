@@ -22,6 +22,8 @@ class TurboSerializableConfig {
       String? rootElementName,
       bool includeNulls,
       bool prettyPrint,
+      bool includeMetaData,
+      bool usePascalCase,
       })? toXml;
 
   /// The primary serialization format, determined from the provided callbacks.
@@ -65,6 +67,8 @@ class TurboSerializableConfig {
           String? rootElementName,
           bool includeNulls,
           bool prettyPrint,
+          bool includeMetaData,
+          bool usePascalCase,
           })? toXml,
       ) {
     if (toJson != null) {

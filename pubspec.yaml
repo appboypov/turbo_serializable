@@ -1,5 +1,5 @@
 name: turbo_serializable
-description: A serialization abstraction for the turbo ecosystem with optional multi-format support (JSON, YAML, Markdown).
+description: A serialization abstraction for the turbo ecosystem with multi-format support (JSON, YAML, Markdown, XML).
 version: 0.1.1
 repository: https://github.com/appboypov/turbo_serializable
 homepage: https://github.com/appboypov/turbo_serializable
