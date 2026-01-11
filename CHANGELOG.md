@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1 - 2026-01-11
+
+### Changed
+- Rewrote README with Library/Package format: badges, features list, API reference tables, focused examples
+- Reduced README from 329 to 90 lines (73% reduction)
+
 ## 0.1.0 - 2026-01-11
 
 ### Added
