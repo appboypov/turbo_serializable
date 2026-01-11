@@ -20,7 +20,7 @@ A serialization abstraction for the turbo ecosystem with multi-format support (J
 
 ```yaml
 dependencies:
-  turbo_serializable: ^0.1.1
+  turbo_serializable: ^0.1.2
 ```
 
 ## Quick Start

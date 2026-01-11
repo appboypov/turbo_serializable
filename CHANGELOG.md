@@ -5,6 +5,13 @@
 ### Added
 - `TurboSerializableConfig` class for configuring serialization callbacks
 - Export of `TurboSerializableConfig` from main library for easier imports
+- Case converter utility (`convertCase`) for flexible string casing transformations
+- Case style support for serialization in `TurboSerializable` with `CaseStyle` enum
+- `TurboConstants` class for centralized constant management
+- Enhanced `markdownToYaml` function with `metaData`, `includeNulls`, and `prettyPrint` parameters
+- Enhanced serialization methods with `includeNulls` and `prettyPrint` options
+- Comprehensive architectural documentation and specifications
+- Expanded testing guidelines and documentation structure
 
 ### Changed
 - Refactored `TurboSerializable` to use `TurboSerializableConfig` for serialization method configuration
@@ -14,6 +21,10 @@
   - `toMarkdownString` → `toMarkdown`
 - Primary format is now automatically determined from provided callbacks (priority: json > yaml > markdown > xml)
 - Updated `toXml` method to include `includeMetaData` parameter
+- Renamed `mapToXml` to `jsonToXml` for consistency in XML conversion
+
+### Fixed
+- Function naming consistency in XML converter (`mapToXml` → `jsonToXml`)
 
 ### Technical Details
 - Introduced `HasToJson` interface for metadata types that can be serialized to JSON
