@@ -1,9 +1,9 @@
 import 'package:meta/meta.dart';
 import 'package:xml/xml.dart';
 
-import '../constants/turbo_constants.dart';
-import '../enums/case_style.dart';
-import '../src/case_converter.dart';
+import 'package:turbo_serializable/constants/turbo_constants.dart';
+import 'package:turbo_serializable/enums/case_style.dart';
+import 'package:turbo_serializable/converters/case_converter.dart';
 
 /// Converts a JSON map to an XML string.
 ///

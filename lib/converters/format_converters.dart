@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:meta/meta.dart';
 import 'package:yaml/yaml.dart' as yaml;
 
-import '../constants/turbo_constants.dart';
-import '../enums/case_style.dart';
-import 'xml_converter.dart';
+import 'package:turbo_serializable/constants/turbo_constants.dart';
+import 'package:turbo_serializable/enums/case_style.dart';
+import 'package:turbo_serializable/converters/xml_converter.dart';
 
 /// Converts JSON to YAML string.
 ///

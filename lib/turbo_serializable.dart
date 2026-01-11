@@ -15,4 +15,4 @@ export 'converters/xml_converter.dart';
 export 'enums/case_style.dart';
 export 'enums/serialization_format.dart';
 export 'models/turbo_serializable_config.dart';
-export 'src/case_converter.dart' show convertCase;
+export 'converters/case_converter.dart' show convertCase;

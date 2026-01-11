@@ -1,6 +1,6 @@
 import 'package:change_case/change_case.dart';
 
-import '../enums/case_style.dart';
+import 'package:turbo_serializable/enums/case_style.dart';
 
 /// Converts a string to the specified case style.
 ///
