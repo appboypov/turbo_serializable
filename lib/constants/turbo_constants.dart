@@ -4,7 +4,7 @@
 /// error messages used for serialization and format conversion.
 abstract class TurboConstants {
   TurboConstants._();
-  
+
   // ============================================================================
   // Metadata Keys
   // ============================================================================

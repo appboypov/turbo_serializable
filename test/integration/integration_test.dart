@@ -308,7 +308,7 @@ void main() {
     test('converts to PascalCase XML', () {
       final jsonFile = File('${inputDir.path}/json/basic.json');
       final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
-      final result = mapToXml(data, usePascalCase: true);
+      final result = mapToXml(data, caseStyle: CaseStyle.pascalCase);
 
       expect(result, contains('<Root>'));
       expect(result, contains('<FirstName>John</FirstName>'));
@@ -568,13 +568,168 @@ void main() {
       final jsonFile = File('${inputDir.path}/json/basic.json');
       final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
       final metadata = {'title': 'Test'};
-      final result = mapToXml(data, usePascalCase: true, metaData: metadata);
+      final result = mapToXml(data, caseStyle: CaseStyle.pascalCase, metaData: metadata);
 
-      expect(result, contains('<_Meta>'));
+      // Note: '_meta' converts to 'Meta' in PascalCase (leading underscore removed)
+      expect(result, contains('<Meta>'));
       expect(result, contains('<Title>Test</Title>'));
       expect(result, contains('<FirstName>John</FirstName>'));
 
       File('${outputDir.path}/xml_pascal_with_meta.xml').writeAsStringSync(result);
+    });
+  });
+
+  group('Case style integration tests', () {
+    test('JSON → XML (camelCase) → JSON round-trip', () {
+      final jsonFile = File('${inputDir.path}/json/basic.json');
+      final originalData = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      
+      // Convert to XML with camelCase
+      final xml = mapToXml(originalData, caseStyle: CaseStyle.camelCase);
+      expect(xml, isNotNull);
+      expect(xml, contains('<firstName>'));
+      expect(xml, contains('<lastName>'));
+      
+      // Convert back to JSON
+      final convertedData = xmlToJson(xml);
+      expect(convertedData, isA<Map<String, dynamic>>());
+      expect(convertedData['firstName'], originalData['firstName']);
+      expect(convertedData['lastName'], originalData['lastName']);
+    });
+
+    test('JSON → XML (snakeCase) → JSON round-trip', () {
+      final jsonFile = File('${inputDir.path}/json/basic.json');
+      final originalData = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      
+      // Convert to XML with snakeCase
+      final xml = mapToXml(originalData, caseStyle: CaseStyle.snakeCase);
+      expect(xml, isNotNull);
+      expect(xml, contains('<first_name>'));
+      expect(xml, contains('<last_name>'));
+      
+      // Convert back to JSON
+      final convertedData = xmlToJson(xml);
+      expect(convertedData, isA<Map<String, dynamic>>());
+      expect(convertedData['first_name'], originalData['firstName']);
+      expect(convertedData['last_name'], originalData['lastName']);
+    });
+
+    test('JSON → XML (kebabCase) → JSON round-trip', () {
+      final jsonFile = File('${inputDir.path}/json/basic.json');
+      final originalData = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      
+      // Convert to XML with kebabCase
+      final xml = mapToXml(originalData, caseStyle: CaseStyle.kebabCase);
+      expect(xml, isNotNull);
+      expect(xml, contains('<first-name>'));
+      expect(xml, contains('<last-name>'));
+      
+      // Convert back to JSON
+      final convertedData = xmlToJson(xml);
+      expect(convertedData, isA<Map<String, dynamic>>());
+      expect(convertedData['first-name'], originalData['firstName']);
+      expect(convertedData['last-name'], originalData['lastName']);
+    });
+
+    test('JSON → XML (none) → JSON round-trip preserves original keys', () {
+      final jsonFile = File('${inputDir.path}/json/basic.json');
+      final originalData = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      
+      // Convert to XML with none case style
+      final xml = mapToXml(originalData, caseStyle: CaseStyle.none);
+      expect(xml, isNotNull);
+      expect(xml, contains('<firstName>'));
+      expect(xml, contains('<lastName>'));
+      
+      // Convert back to JSON
+      final convertedData = xmlToJson(xml);
+      expect(convertedData, isA<Map<String, dynamic>>());
+      expect(convertedData['firstName'], originalData['firstName']);
+      expect(convertedData['lastName'], originalData['lastName']);
+    });
+
+    test('Complex nested structure with camelCase', () {
+      final jsonFile = File('${inputDir.path}/json/deep_nesting.json');
+      final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      
+      final xml = mapToXml(data, caseStyle: CaseStyle.camelCase);
+      expect(xml, isNotNull);
+      expect(xml, contains('<level1>'));
+      expect(xml, contains('<level2>'));
+      expect(xml, contains('<level3>'));
+      
+      // Verify nested structure is preserved
+      final convertedData = xmlToJson(xml);
+      expect(convertedData['level1']['level2']['level3']['level4']['level5']['level6'], 
+          data['level1']['level2']['level3']['level4']['level5']['level6']);
+    });
+
+    test('Complex nested structure with snakeCase', () {
+      final jsonFile = File('${inputDir.path}/json/deep_nesting.json');
+      final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      
+      final xml = mapToXml(data, caseStyle: CaseStyle.snakeCase);
+      expect(xml, isNotNull);
+      expect(xml, contains('<level1>'));
+      expect(xml, contains('<level2>'));
+      
+      // Verify nested structure is preserved
+      final convertedData = xmlToJson(xml);
+      expect(convertedData['level1']['level2']['level3']['level4']['level5']['level6'], 
+          data['level1']['level2']['level3']['level4']['level5']['level6']);
+    });
+
+    test('YAML → XML (camelCase) → YAML round-trip', () {
+      final yamlFile = File('${inputDir.path}/yaml/basic.yaml');
+      final yamlContent = yamlFile.readAsStringSync();
+      
+      // Convert to XML with camelCase
+      final xml = yamlToXml(yamlContent, caseStyle: CaseStyle.camelCase);
+      expect(xml, isNotNull);
+      
+      // Convert back to YAML
+      final convertedYaml = xmlToYaml(xml);
+      expect(convertedYaml, isNotNull);
+      expect(convertedYaml!.contains('firstName:') || convertedYaml.contains('name:'), isTrue);
+      expect(convertedYaml, contains('age:'));
+    });
+
+    test('Markdown → XML (PascalCase) → Markdown round-trip', () {
+      final markdownFile = File('${inputDir.path}/markdown/frontmatter_json.md');
+      final markdownContent = markdownFile.readAsStringSync();
+      
+      // Convert to XML with PascalCase
+      final xml = markdownToXml(markdownContent, caseStyle: CaseStyle.pascalCase);
+      expect(xml, isNotNull);
+      expect(xml, contains('<Root>'));
+      
+      // Convert back to Markdown
+      final convertedMarkdown = xmlToMarkdown(xml);
+      expect(convertedMarkdown, isNotNull);
+    });
+
+    test('Case styles with metadata', () {
+      final jsonFile = File('${inputDir.path}/json/basic.json');
+      final data = jsonDecode(jsonFile.readAsStringSync()) as Map<String, dynamic>;
+      final metadata = {'title': 'Test Document', 'version': '1.0'};
+      
+      // Test camelCase with metadata
+      final camelXml = mapToXml(data, caseStyle: CaseStyle.camelCase, metaData: metadata);
+      // Note: '_meta' with leading underscore converts to 'Meta' in camelCase
+      expect(camelXml, contains('<Meta>'));
+      expect(camelXml, contains('<title>Test Document</title>'));
+      
+      // Test snakeCase with metadata
+      final snakeXml = mapToXml(data, caseStyle: CaseStyle.snakeCase, metaData: metadata);
+      // Note: '_meta' stays as '_meta' in snakeCase
+      expect(snakeXml, contains('<_meta>'));
+      expect(snakeXml, contains('<title>Test Document</title>'));
+      
+      // Test kebabCase with metadata
+      final kebabXml = mapToXml(data, caseStyle: CaseStyle.kebabCase, metaData: metadata);
+      // Note: '_meta' converts to '-meta' in kebabCase (underscore becomes hyphen)
+      expect(kebabXml, contains('<-meta>'));
+      expect(kebabXml, contains('<title>Test Document</title>'));
     });
 
     test('Markdown no extra newline between frontmatter and content', () {

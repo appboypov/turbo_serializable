@@ -3,58 +3,224 @@ import 'package:turbo_serializable/turbo_serializable.dart';
 import 'package:xml/xml.dart';
 
 void main() {
-  group('convertToPascalCase', () {
+  group('convertCase - PascalCase', () {
     test('converts camelCase', () {
-      expect(convertToPascalCase('userName'), 'UserName');
-      expect(convertToPascalCase('firstName'), 'FirstName');
-      expect(convertToPascalCase('myVariableName'), 'MyVariableName');
+      expect(convertCase('userName', CaseStyle.pascalCase), 'UserName');
+      expect(convertCase('firstName', CaseStyle.pascalCase), 'FirstName');
+      expect(convertCase('myVariableName', CaseStyle.pascalCase), 'MyVariableName');
     });
 
     test('converts snake_case', () {
-      expect(convertToPascalCase('user_name'), 'UserName');
-      expect(convertToPascalCase('first_name'), 'FirstName');
-      expect(convertToPascalCase('my_variable_name'), 'MyVariableName');
+      expect(convertCase('user_name', CaseStyle.pascalCase), 'UserName');
+      expect(convertCase('first_name', CaseStyle.pascalCase), 'FirstName');
+      expect(convertCase('my_variable_name', CaseStyle.pascalCase), 'MyVariableName');
     });
 
     test('converts kebab-case', () {
-      expect(convertToPascalCase('user-name'), 'UserName');
-      expect(convertToPascalCase('first-name'), 'FirstName');
-      expect(convertToPascalCase('my-variable-name'), 'MyVariableName');
+      expect(convertCase('user-name', CaseStyle.pascalCase), 'UserName');
+      expect(convertCase('first-name', CaseStyle.pascalCase), 'FirstName');
+      expect(convertCase('my-variable-name', CaseStyle.pascalCase), 'MyVariableName');
     });
 
     test('handles already PascalCase', () {
-      expect(convertToPascalCase('UserName'), 'UserName');
-      expect(convertToPascalCase('FirstName'), 'FirstName');
+      expect(convertCase('UserName', CaseStyle.pascalCase), 'UserName');
+      expect(convertCase('FirstName', CaseStyle.pascalCase), 'FirstName');
     });
 
     test('handles empty string', () {
-      expect(convertToPascalCase(''), '');
+      expect(convertCase('', CaseStyle.pascalCase), '');
     });
 
     test('handles single character', () {
-      expect(convertToPascalCase('a'), 'A');
-      expect(convertToPascalCase('A'), 'A');
+      expect(convertCase('a', CaseStyle.pascalCase), 'A');
+      expect(convertCase('A', CaseStyle.pascalCase), 'A');
     });
 
     test('handles all caps', () {
-      expect(convertToPascalCase('API'), 'Api');
-      expect(convertToPascalCase('HTML'), 'Html');
+      expect(convertCase('API', CaseStyle.pascalCase), 'Api');
+      expect(convertCase('HTML', CaseStyle.pascalCase), 'Html');
     });
 
     test('handles numbers', () {
-      expect(convertToPascalCase('user123'), 'User123');
-      expect(convertToPascalCase('user_123_name'), 'User123Name');
+      expect(convertCase('user123', CaseStyle.pascalCase), 'User123');
+      expect(convertCase('user_123_name', CaseStyle.pascalCase), 'User123Name');
     });
 
     test('handles multiple separators', () {
-      expect(convertToPascalCase('user__name'), 'UserName');
-      expect(convertToPascalCase('user--name'), 'UserName');
-      expect(convertToPascalCase('user_-name'), 'UserName');
+      expect(convertCase('user__name', CaseStyle.pascalCase), 'UserName');
+      expect(convertCase('user--name', CaseStyle.pascalCase), 'UserName');
+      expect(convertCase('user_-name', CaseStyle.pascalCase), 'UserName');
     });
 
     test('handles mixed case input', () {
-      expect(convertToPascalCase('XMLParser'), 'Xmlparser');
-      expect(convertToPascalCase('parseXML'), 'ParseXml');
+      expect(convertCase('XMLParser', CaseStyle.pascalCase), 'XmlParser');
+      expect(convertCase('parseXML', CaseStyle.pascalCase), 'ParseXml');
+    });
+  });
+
+  group('convertCase - camelCase', () {
+    test('converts PascalCase', () {
+      expect(convertCase('UserName', CaseStyle.camelCase), 'userName');
+      expect(convertCase('FirstName', CaseStyle.camelCase), 'firstName');
+      expect(convertCase('MyVariableName', CaseStyle.camelCase), 'myVariableName');
+    });
+
+    test('converts snake_case', () {
+      expect(convertCase('user_name', CaseStyle.camelCase), 'userName');
+      expect(convertCase('first_name', CaseStyle.camelCase), 'firstName');
+      expect(convertCase('my_variable_name', CaseStyle.camelCase), 'myVariableName');
+    });
+
+    test('converts kebab-case', () {
+      expect(convertCase('user-name', CaseStyle.camelCase), 'userName');
+      expect(convertCase('first-name', CaseStyle.camelCase), 'firstName');
+      expect(convertCase('my-variable-name', CaseStyle.camelCase), 'myVariableName');
+    });
+
+    test('handles already camelCase', () {
+      expect(convertCase('userName', CaseStyle.camelCase), 'userName');
+      expect(convertCase('firstName', CaseStyle.camelCase), 'firstName');
+    });
+
+    test('handles empty string', () {
+      expect(convertCase('', CaseStyle.camelCase), '');
+    });
+
+    test('handles single character', () {
+      expect(convertCase('a', CaseStyle.camelCase), 'a');
+      expect(convertCase('A', CaseStyle.camelCase), 'a');
+    });
+
+    test('handles all caps', () {
+      expect(convertCase('API', CaseStyle.camelCase), 'api');
+      expect(convertCase('HTML', CaseStyle.camelCase), 'html');
+    });
+
+    test('handles numbers', () {
+      expect(convertCase('user123', CaseStyle.camelCase), 'user123');
+      expect(convertCase('user_123_name', CaseStyle.camelCase), 'user123Name');
+    });
+
+    test('handles multiple separators', () {
+      expect(convertCase('user__name', CaseStyle.camelCase), 'userName');
+      expect(convertCase('user--name', CaseStyle.camelCase), 'userName');
+      expect(convertCase('user_-name', CaseStyle.camelCase), 'userName');
+    });
+  });
+
+  group('convertCase - snakeCase', () {
+    test('converts camelCase', () {
+      expect(convertCase('userName', CaseStyle.snakeCase), 'user_name');
+      expect(convertCase('firstName', CaseStyle.snakeCase), 'first_name');
+      expect(convertCase('myVariableName', CaseStyle.snakeCase), 'my_variable_name');
+    });
+
+    test('converts PascalCase', () {
+      expect(convertCase('UserName', CaseStyle.snakeCase), 'user_name');
+      expect(convertCase('FirstName', CaseStyle.snakeCase), 'first_name');
+      expect(convertCase('MyVariableName', CaseStyle.snakeCase), 'my_variable_name');
+    });
+
+    test('converts kebab-case', () {
+      expect(convertCase('user-name', CaseStyle.snakeCase), 'user_name');
+      expect(convertCase('first-name', CaseStyle.snakeCase), 'first_name');
+      expect(convertCase('my-variable-name', CaseStyle.snakeCase), 'my_variable_name');
+    });
+
+    test('handles already snake_case', () {
+      expect(convertCase('user_name', CaseStyle.snakeCase), 'user_name');
+      expect(convertCase('first_name', CaseStyle.snakeCase), 'first_name');
+    });
+
+    test('handles empty string', () {
+      expect(convertCase('', CaseStyle.snakeCase), '');
+    });
+
+    test('handles single character', () {
+      expect(convertCase('a', CaseStyle.snakeCase), 'a');
+      expect(convertCase('A', CaseStyle.snakeCase), 'a');
+    });
+
+    test('handles all caps', () {
+      expect(convertCase('API', CaseStyle.snakeCase), 'api');
+      expect(convertCase('HTML', CaseStyle.snakeCase), 'html');
+    });
+
+    test('handles numbers', () {
+      expect(convertCase('user123', CaseStyle.snakeCase), 'user123');
+      expect(convertCase('userName123', CaseStyle.snakeCase), 'user_name123');
+    });
+
+    test('handles multiple separators', () {
+      expect(convertCase('user__name', CaseStyle.snakeCase), 'user_name');
+      expect(convertCase('user--name', CaseStyle.snakeCase), 'user_name');
+    });
+  });
+
+  group('convertCase - kebabCase', () {
+    test('converts camelCase', () {
+      expect(convertCase('userName', CaseStyle.kebabCase), 'user-name');
+      expect(convertCase('firstName', CaseStyle.kebabCase), 'first-name');
+      expect(convertCase('myVariableName', CaseStyle.kebabCase), 'my-variable-name');
+    });
+
+    test('converts PascalCase', () {
+      expect(convertCase('UserName', CaseStyle.kebabCase), 'user-name');
+      expect(convertCase('FirstName', CaseStyle.kebabCase), 'first-name');
+      expect(convertCase('MyVariableName', CaseStyle.kebabCase), 'my-variable-name');
+    });
+
+    test('converts snake_case', () {
+      expect(convertCase('user_name', CaseStyle.kebabCase), 'user-name');
+      expect(convertCase('first_name', CaseStyle.kebabCase), 'first-name');
+      expect(convertCase('my_variable_name', CaseStyle.kebabCase), 'my-variable-name');
+    });
+
+    test('handles already kebab-case', () {
+      expect(convertCase('user-name', CaseStyle.kebabCase), 'user-name');
+      expect(convertCase('first-name', CaseStyle.kebabCase), 'first-name');
+    });
+
+    test('handles empty string', () {
+      expect(convertCase('', CaseStyle.kebabCase), '');
+    });
+
+    test('handles single character', () {
+      expect(convertCase('a', CaseStyle.kebabCase), 'a');
+      expect(convertCase('A', CaseStyle.kebabCase), 'a');
+    });
+
+    test('handles all caps', () {
+      expect(convertCase('API', CaseStyle.kebabCase), 'api');
+      expect(convertCase('HTML', CaseStyle.kebabCase), 'html');
+    });
+
+    test('handles numbers', () {
+      expect(convertCase('user123', CaseStyle.kebabCase), 'user123');
+      expect(convertCase('userName123', CaseStyle.kebabCase), 'user-name123');
+    });
+
+    test('handles multiple separators', () {
+      expect(convertCase('user__name', CaseStyle.kebabCase), 'user-name');
+      expect(convertCase('user--name', CaseStyle.kebabCase), 'user-name');
+    });
+  });
+
+  group('convertCase - none', () {
+    test('returns original string unchanged', () {
+      expect(convertCase('userName', CaseStyle.none), 'userName');
+      expect(convertCase('user_name', CaseStyle.none), 'user_name');
+      expect(convertCase('user-name', CaseStyle.none), 'user-name');
+      expect(convertCase('UserName', CaseStyle.none), 'UserName');
+    });
+
+    test('handles empty string', () {
+      expect(convertCase('', CaseStyle.none), '');
+    });
+
+    test('handles special characters', () {
+      expect(convertCase('user@name', CaseStyle.none), 'user@name');
+      expect(convertCase('user.name', CaseStyle.none), 'user.name');
     });
   });
 
@@ -129,10 +295,116 @@ void main() {
     test('uses PascalCase when requested', () {
       final builder = XmlBuilder();
       builder.element('root', nest: () {
-        buildXmlElement(builder, {'user_name': 'test'}, usePascalCase: true);
+        buildXmlElement(builder, {'user_name': 'test'}, caseStyle: CaseStyle.pascalCase);
       });
       final doc = builder.buildDocument();
       expect(doc.rootElement.findElements('UserName').length, 1);
+    });
+
+    test('uses camelCase when requested', () {
+      final builder = XmlBuilder();
+      builder.element('root', nest: () {
+        buildXmlElement(builder, {'user_name': 'test'}, caseStyle: CaseStyle.camelCase);
+      });
+      final doc = builder.buildDocument();
+      expect(doc.rootElement.findElements('userName').length, 1);
+    });
+
+    test('uses snakeCase when requested', () {
+      final builder = XmlBuilder();
+      builder.element('root', nest: () {
+        buildXmlElement(builder, {'userName': 'test'}, caseStyle: CaseStyle.snakeCase);
+      });
+      final doc = builder.buildDocument();
+      expect(doc.rootElement.findElements('user_name').length, 1);
+    });
+
+    test('uses kebabCase when requested', () {
+      final builder = XmlBuilder();
+      builder.element('root', nest: () {
+        buildXmlElement(builder, {'userName': 'test'}, caseStyle: CaseStyle.kebabCase);
+      });
+      final doc = builder.buildDocument();
+      expect(doc.rootElement.findElements('user-name').length, 1);
+    });
+
+    test('uses none case style when requested', () {
+      final builder = XmlBuilder();
+      builder.element('root', nest: () {
+        buildXmlElement(builder, {'userName': 'test', 'user_name': 'test2'}, caseStyle: CaseStyle.none);
+      });
+      final doc = builder.buildDocument();
+      expect(doc.rootElement.findElements('userName').length, 1);
+      expect(doc.rootElement.findElements('user_name').length, 1);
+    });
+
+    test('camelCase with nested maps', () {
+      final builder = XmlBuilder();
+      builder.element('root', nest: () {
+        buildXmlElement(builder, {
+          'user_info': {'first_name': 'John'}
+        }, caseStyle: CaseStyle.camelCase);
+      });
+      final doc = builder.buildDocument();
+      final userInfo = doc.rootElement.findElements('userInfo').first;
+      expect(userInfo.findElements('firstName').first.innerText, 'John');
+    });
+
+    test('snakeCase with nested maps', () {
+      final builder = XmlBuilder();
+      builder.element('root', nest: () {
+        buildXmlElement(builder, {
+          'userInfo': {'firstName': 'John'}
+        }, caseStyle: CaseStyle.snakeCase);
+      });
+      final doc = builder.buildDocument();
+      final userInfo = doc.rootElement.findElements('user_info').first;
+      expect(userInfo.findElements('first_name').first.innerText, 'John');
+    });
+
+    test('kebabCase with nested maps', () {
+      final builder = XmlBuilder();
+      builder.element('root', nest: () {
+        buildXmlElement(builder, {
+          'userInfo': {'firstName': 'John'}
+        }, caseStyle: CaseStyle.kebabCase);
+      });
+      final doc = builder.buildDocument();
+      final userInfo = doc.rootElement.findElements('user-info').first;
+      expect(userInfo.findElements('first-name').first.innerText, 'John');
+    });
+
+    test('camelCase with lists', () {
+      final builder = XmlBuilder();
+      builder.element('root', nest: () {
+        buildXmlElement(builder, {
+          'user_items': ['a', 'b']
+        }, caseStyle: CaseStyle.camelCase);
+      });
+      final doc = builder.buildDocument();
+      expect(doc.rootElement.findElements('userItems').length, 2);
+    });
+
+    test('snakeCase with lists', () {
+      final builder = XmlBuilder();
+      builder.element('root', nest: () {
+        buildXmlElement(builder, {
+          'userItems': ['a', 'b']
+        }, caseStyle: CaseStyle.snakeCase);
+      });
+      final doc = builder.buildDocument();
+      expect(doc.rootElement.findElements('user_items').length, 2);
+    });
+
+    test('kebabCase with lists', () {
+      final builder = XmlBuilder();
+      builder.element('root', nest: () {
+        buildXmlElement(builder, {
+          'userItems': ['a', 'b']
+        }, caseStyle: CaseStyle.kebabCase);
+      });
+      final doc = builder.buildDocument();
+      expect(doc.rootElement.findElements('user-items').length, 2);
     });
 
     test('builds empty values', () {
@@ -290,7 +562,7 @@ void main() {
     });
 
     test('uses PascalCase root and elements', () {
-      final result = mapToXml({'user_name': 'test'}, usePascalCase: true);
+      final result = mapToXml({'user_name': 'test'}, caseStyle: CaseStyle.pascalCase);
       expect(result, contains('<Root>'));
       expect(result, contains('<UserName>'));
     });
@@ -307,11 +579,156 @@ void main() {
     test('PascalCase with metadata', () {
       final result = mapToXml(
         {'data': 'value'},
-        usePascalCase: true,
+        caseStyle: CaseStyle.pascalCase,
         metaData: {'version': '1.0'},
       );
-      expect(result, contains('<_Meta>'));
+      // Note: '_meta' converts to 'Meta' in PascalCase (leading underscore removed)
+      expect(result, contains('<Meta>'));
       expect(result, contains('<Version>1.0</Version>'));
+    });
+
+    test('converts to camelCase XML', () {
+      final result = mapToXml(
+        {'user_name': 'test', 'first_name': 'John'},
+        caseStyle: CaseStyle.camelCase,
+      );
+      expect(result, contains('<root>'));
+      expect(result, contains('<userName>test</userName>'));
+      expect(result, contains('<firstName>John</firstName>'));
+    });
+
+    test('camelCase with metadata', () {
+      final result = mapToXml(
+        {'data': 'value'},
+        caseStyle: CaseStyle.camelCase,
+        metaData: {'version': '1.0'},
+      );
+      // Note: '_meta' with leading underscore converts to 'Meta' in camelCase
+      expect(result, contains('<Meta>'));
+      expect(result, contains('<version>1.0</version>'));
+    });
+
+    test('camelCase with nested elements', () {
+      final result = mapToXml(
+        {'user_info': {'first_name': 'John', 'last_name': 'Doe'}},
+        caseStyle: CaseStyle.camelCase,
+      );
+      expect(result, contains('<userInfo>'));
+      expect(result, contains('<firstName>John</firstName>'));
+      expect(result, contains('<lastName>Doe</lastName>'));
+    });
+
+    test('camelCase with custom root element', () {
+      final result = mapToXml(
+        {'user_name': 'test'},
+        rootElementName: 'user_profile',
+        caseStyle: CaseStyle.camelCase,
+      );
+      expect(result, contains('<userProfile>'));
+      expect(result, contains('<userName>test</userName>'));
+    });
+
+    test('converts to snakeCase XML', () {
+      final result = mapToXml(
+        {'userName': 'test', 'firstName': 'John'},
+        caseStyle: CaseStyle.snakeCase,
+      );
+      expect(result, contains('<root>'));
+      expect(result, contains('<user_name>test</user_name>'));
+      expect(result, contains('<first_name>John</first_name>'));
+    });
+
+    test('snakeCase with metadata', () {
+      final result = mapToXml(
+        {'data': 'value'},
+        caseStyle: CaseStyle.snakeCase,
+        metaData: {'version': '1.0'},
+      );
+      // Note: '_meta' stays as '_meta' in snakeCase
+      expect(result, contains('<_meta>'));
+      expect(result, contains('<version>1.0</version>'));
+    });
+
+    test('snakeCase with nested elements', () {
+      final result = mapToXml(
+        {'userInfo': {'firstName': 'John', 'lastName': 'Doe'}},
+        caseStyle: CaseStyle.snakeCase,
+      );
+      expect(result, contains('<user_info>'));
+      expect(result, contains('<first_name>John</first_name>'));
+      expect(result, contains('<last_name>Doe</last_name>'));
+    });
+
+    test('snakeCase with custom root element', () {
+      final result = mapToXml(
+        {'userName': 'test'},
+        rootElementName: 'userProfile',
+        caseStyle: CaseStyle.snakeCase,
+      );
+      expect(result, contains('<user_profile>'));
+      expect(result, contains('<user_name>test</user_name>'));
+    });
+
+    test('converts to kebabCase XML', () {
+      final result = mapToXml(
+        {'userName': 'test', 'firstName': 'John'},
+        caseStyle: CaseStyle.kebabCase,
+      );
+      expect(result, contains('<root>'));
+      expect(result, contains('<user-name>test</user-name>'));
+      expect(result, contains('<first-name>John</first-name>'));
+    });
+
+    test('kebabCase with metadata', () {
+      final result = mapToXml(
+        {'data': 'value'},
+        caseStyle: CaseStyle.kebabCase,
+        metaData: {'version': '1.0'},
+      );
+      // Note: '_meta' converted to kebab-case becomes '-meta' (underscore becomes hyphen)
+      expect(result, contains('<-meta>'));
+      expect(result, contains('<version>1.0</version>'));
+    });
+
+    test('kebabCase with nested elements', () {
+      final result = mapToXml(
+        {'userInfo': {'firstName': 'John', 'lastName': 'Doe'}},
+        caseStyle: CaseStyle.kebabCase,
+      );
+      expect(result, contains('<user-info>'));
+      expect(result, contains('<first-name>John</first-name>'));
+      expect(result, contains('<last-name>Doe</last-name>'));
+    });
+
+    test('kebabCase with custom root element', () {
+      final result = mapToXml(
+        {'userName': 'test'},
+        rootElementName: 'userProfile',
+        caseStyle: CaseStyle.kebabCase,
+      );
+      expect(result, contains('<user-profile>'));
+      expect(result, contains('<user-name>test</user-name>'));
+    });
+
+    test('none case style preserves original keys', () {
+      final result = mapToXml(
+        {'userName': 'test', 'first_name': 'John', 'last-name': 'Doe'},
+        caseStyle: CaseStyle.none,
+      );
+      expect(result, contains('<root>'));
+      expect(result, contains('<userName>test</userName>'));
+      expect(result, contains('<first_name>John</first_name>'));
+      expect(result, contains('<last-name>Doe</last-name>'));
+    });
+
+    test('none case style with metadata', () {
+      final result = mapToXml(
+        {'data': 'value'},
+        caseStyle: CaseStyle.none,
+        metaData: {'version': '1.0'},
+      );
+      expect(result, contains('<_meta>'));
+      expect(result, contains('<version>1.0</version>'));
     });
 
     test('handles null values', () {

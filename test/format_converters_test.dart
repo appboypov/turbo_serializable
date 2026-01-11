@@ -487,6 +487,162 @@ void main() {
     });
   });
 
+  group('yamlToXml with case styles', () {
+    test('converts YAML to XML with camelCase', () {
+      final yaml = 'user_name: test\nfirst_name: John';
+      final result = yamlToXml(yaml, caseStyle: CaseStyle.camelCase);
+      expect(result, contains('<userName>test</userName>'));
+      expect(result, contains('<firstName>John</firstName>'));
+    });
+
+    test('converts YAML to XML with PascalCase', () {
+      final yaml = 'user_name: test\nfirst_name: John';
+      final result = yamlToXml(yaml, caseStyle: CaseStyle.pascalCase);
+      expect(result, contains('<UserName>test</UserName>'));
+      expect(result, contains('<FirstName>John</FirstName>'));
+    });
+
+    test('converts YAML to XML with snakeCase', () {
+      final yaml = 'userName: test\nfirstName: John';
+      final result = yamlToXml(yaml, caseStyle: CaseStyle.snakeCase);
+      expect(result, contains('<user_name>test</user_name>'));
+      expect(result, contains('<first_name>John</first_name>'));
+    });
+
+    test('converts YAML to XML with kebabCase', () {
+      final yaml = 'userName: test\nfirstName: John';
+      final result = yamlToXml(yaml, caseStyle: CaseStyle.kebabCase);
+      expect(result, contains('<user-name>test</user-name>'));
+      expect(result, contains('<first-name>John</first-name>'));
+    });
+
+    test('converts YAML to XML with none case style', () {
+      final yaml = 'userName: test\nuser_name: test2';
+      final result = yamlToXml(yaml, caseStyle: CaseStyle.none);
+      expect(result, contains('<userName>test</userName>'));
+      expect(result, contains('<user_name>test2</user_name>'));
+    });
+
+    test('camelCase with nested YAML', () {
+      final yaml = 'user_info:\n  first_name: John\n  last_name: Doe';
+      final result = yamlToXml(yaml, caseStyle: CaseStyle.camelCase);
+      expect(result, contains('<userInfo>'));
+      expect(result, contains('<firstName>John</firstName>'));
+      expect(result, contains('<lastName>Doe</lastName>'));
+    });
+
+    test('snakeCase with nested YAML', () {
+      final yaml = 'userInfo:\n  firstName: John\n  lastName: Doe';
+      final result = yamlToXml(yaml, caseStyle: CaseStyle.snakeCase);
+      expect(result, contains('<user_info>'));
+      expect(result, contains('<first_name>John</first_name>'));
+      expect(result, contains('<last_name>Doe</last_name>'));
+    });
+
+    test('kebabCase with nested YAML', () {
+      final yaml = 'userInfo:\n  firstName: John\n  lastName: Doe';
+      final result = yamlToXml(yaml, caseStyle: CaseStyle.kebabCase);
+      expect(result, contains('<user-info>'));
+      expect(result, contains('<first-name>John</first-name>'));
+      expect(result, contains('<last-name>Doe</last-name>'));
+    });
+
+    test('camelCase with metadata', () {
+      final yaml = 'data: value';
+      final result = yamlToXml(
+        yaml,
+        caseStyle: CaseStyle.camelCase,
+        metaData: {'version': '1.0'},
+      );
+      // Note: '_meta' with leading underscore converts to 'Meta' in camelCase
+      expect(result, contains('<Meta>'));
+      expect(result, contains('<version>1.0</version>'));
+    });
+
+    test('custom root element with camelCase', () {
+      final yaml = 'user_name: test';
+      final result = yamlToXml(
+        yaml,
+        rootElementName: 'user_profile',
+        caseStyle: CaseStyle.camelCase,
+      );
+      expect(result, contains('<userProfile>'));
+      expect(result, contains('<userName>test</userName>'));
+    });
+  });
+
+  group('markdownToXml with case styles', () {
+    test('converts Markdown to XML with camelCase', () {
+      final markdown = '{"user_name": "test", "first_name": "John"}';
+      final result = markdownToXml(markdown, caseStyle: CaseStyle.camelCase);
+      expect(result, contains('<userName>test</userName>'));
+      expect(result, contains('<firstName>John</firstName>'));
+    });
+
+    test('converts Markdown to XML with PascalCase', () {
+      final markdown = '{"user_name": "test", "first_name": "John"}';
+      final result = markdownToXml(markdown, caseStyle: CaseStyle.pascalCase);
+      expect(result, contains('<UserName>test</UserName>'));
+      expect(result, contains('<FirstName>John</FirstName>'));
+    });
+
+    test('converts Markdown to XML with snakeCase', () {
+      final markdown = '{"userName": "test", "firstName": "John"}';
+      final result = markdownToXml(markdown, caseStyle: CaseStyle.snakeCase);
+      expect(result, contains('<user_name>test</user_name>'));
+      expect(result, contains('<first_name>John</first_name>'));
+    });
+
+    test('converts Markdown to XML with kebabCase', () {
+      final markdown = '{"userName": "test", "firstName": "John"}';
+      final result = markdownToXml(markdown, caseStyle: CaseStyle.kebabCase);
+      expect(result, contains('<user-name>test</user-name>'));
+      expect(result, contains('<first-name>John</first-name>'));
+    });
+
+    test('converts Markdown to XML with none case style', () {
+      final markdown = '{"userName": "test", "user_name": "test2"}';
+      final result = markdownToXml(markdown, caseStyle: CaseStyle.none);
+      expect(result, contains('<userName>test</userName>'));
+      expect(result, contains('<user_name>test2</user_name>'));
+    });
+
+    test('camelCase with nested JSON in Markdown', () {
+      final markdown = '{"user_info": {"first_name": "John", "last_name": "Doe"}}';
+      final result = markdownToXml(markdown, caseStyle: CaseStyle.camelCase);
+      expect(result, contains('<userInfo>'));
+      expect(result, contains('<firstName>John</firstName>'));
+      expect(result, contains('<lastName>Doe</lastName>'));
+    });
+
+    test('snakeCase with nested JSON in Markdown', () {
+      final markdown = '{"userInfo": {"firstName": "John", "lastName": "Doe"}}';
+      final result = markdownToXml(markdown, caseStyle: CaseStyle.snakeCase);
+      expect(result, contains('<user_info>'));
+      expect(result, contains('<first_name>John</first_name>'));
+      expect(result, contains('<last_name>Doe</last_name>'));
+    });
+
+    test('kebabCase with nested JSON in Markdown', () {
+      final markdown = '{"userInfo": {"firstName": "John", "lastName": "Doe"}}';
+      final result = markdownToXml(markdown, caseStyle: CaseStyle.kebabCase);
+      expect(result, contains('<user-info>'));
+      expect(result, contains('<first-name>John</first-name>'));
+      expect(result, contains('<last-name>Doe</last-name>'));
+    });
+
+    test('custom root element with camelCase', () {
+      final markdown = '{"user_name": "test"}';
+      final result = markdownToXml(
+        markdown,
+        rootElementName: 'user_profile',
+        caseStyle: CaseStyle.camelCase,
+      );
+      expect(result, contains('<userProfile>'));
+      expect(result, contains('<userName>test</userName>'));
+    });
+  });
+
   group('xmlToJson', () {
     test('parses simple XML', () {
       final result = xmlToJson('<root><name>test</name></root>');

@@ -12,5 +12,7 @@ export 'abstracts/turbo_serializable_id.dart';
 export 'constants/turbo_constants.dart';
 export 'converters/format_converters.dart';
 export 'converters/xml_converter.dart';
+export 'enums/case_style.dart';
 export 'enums/serialization_format.dart';
 export 'models/turbo_serializable_config.dart';
+export 'src/case_converter.dart' show convertCase;

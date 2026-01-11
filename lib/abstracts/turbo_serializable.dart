@@ -3,6 +3,7 @@ import 'package:turbo_response/turbo_response.dart';
 import 'package:turbo_serializable/abstracts/has_to_json.dart';
 import 'package:turbo_serializable/constants/turbo_constants.dart';
 import 'package:turbo_serializable/converters/format_converters.dart';
+import 'package:turbo_serializable/enums/case_style.dart';
 import 'package:turbo_serializable/enums/serialization_format.dart';
 import 'package:turbo_serializable/converters/xml_converter.dart';
 import 'package:turbo_serializable/models/turbo_serializable_config.dart';
@@ -140,7 +141,7 @@ abstract class TurboSerializable<M> {
   /// The root element name defaults to the class name (runtimeType).
   ///
   /// [includeMetaData] - Whether to include metadata as `_meta` element
-  /// [usePascalCase] - Whether to convert element names to PascalCase
+  /// [caseStyle] - The case style to apply to element names (default: CaseStyle.none)
   ///
   /// Returns null if the callback is not provided or returns null.
   String? toXml({
@@ -148,7 +149,7 @@ abstract class TurboSerializable<M> {
     bool includeNulls = false,
     bool prettyPrint = true,
     bool includeMetaData = true,
-    bool usePascalCase = false,
+    CaseStyle caseStyle = CaseStyle.none,
   }) {
     // Check if XML callback is provided
     final xmlResult = config.toXml?.call(
@@ -157,7 +158,7 @@ abstract class TurboSerializable<M> {
       includeNulls: includeNulls,
       prettyPrint: prettyPrint,
       includeMetaData: includeMetaData,
-      usePascalCase: usePascalCase,
+      caseStyle: caseStyle,
     );
     if (xmlResult != null) {
       return xmlResult;
@@ -171,7 +172,7 @@ abstract class TurboSerializable<M> {
       includeNulls: includeNulls,
       prettyPrint: prettyPrint,
       includeMetaData: includeMetaData,
-      usePascalCase: usePascalCase,
+      caseStyle: caseStyle,
     );
   }
 
@@ -206,7 +207,7 @@ abstract class TurboSerializable<M> {
           includeNulls: false,
           prettyPrint: true,
           includeMetaData: true,
-          usePascalCase: false,
+          caseStyle: CaseStyle.none,
         );
         if (xml == null) return null;
         try {
@@ -239,7 +240,7 @@ abstract class TurboSerializable<M> {
           includeNulls: false,
           prettyPrint: true,
           includeMetaData: includeMetaData,
-          usePascalCase: false,
+          caseStyle: CaseStyle.none,
         );
         if (xml == null) return null;
         return xmlToYaml(xml, metaData: meta);
@@ -270,7 +271,7 @@ abstract class TurboSerializable<M> {
           includeNulls: false,
           prettyPrint: true,
           includeMetaData: includeMetaData,
-          usePascalCase: false,
+          caseStyle: CaseStyle.none,
         );
         if (xml == null) return null;
         return xmlToMarkdown(xml, metaData: meta);
@@ -284,7 +285,7 @@ abstract class TurboSerializable<M> {
     bool includeNulls = false,
     bool prettyPrint = true,
     bool includeMetaData = true,
-    bool usePascalCase = false,
+    CaseStyle caseStyle = CaseStyle.none,
   }) {
     final meta = includeMetaData ? metaDataToJsonMap() : null;
     switch (config.primaryFormat) {
@@ -298,7 +299,7 @@ abstract class TurboSerializable<M> {
           rootElementName: elementName,
           includeNulls: includeNulls,
           prettyPrint: prettyPrint,
-          usePascalCase: usePascalCase,
+          caseStyle: caseStyle,
           metaData: meta,
         );
       case SerializationFormat.yaml:
@@ -311,7 +312,7 @@ abstract class TurboSerializable<M> {
           rootElementName: elementName,
           includeNulls: includeNulls,
           prettyPrint: prettyPrint,
-          usePascalCase: usePascalCase,
+          caseStyle: caseStyle,
           metaData: meta,
         );
       case SerializationFormat.markdown:
@@ -324,7 +325,7 @@ abstract class TurboSerializable<M> {
           rootElementName: elementName,
           includeNulls: includeNulls,
           prettyPrint: prettyPrint,
-          usePascalCase: usePascalCase,
+          caseStyle: caseStyle,
         );
       case SerializationFormat.xml:
         return config.toXml?.call(
@@ -333,7 +334,7 @@ abstract class TurboSerializable<M> {
           includeNulls: includeNulls,
           prettyPrint: prettyPrint,
           includeMetaData: includeMetaData,
-          usePascalCase: usePascalCase,
+          caseStyle: caseStyle,
         );
     }
   }

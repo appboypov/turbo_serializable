@@ -4,6 +4,7 @@ import 'package:meta/meta.dart';
 import 'package:yaml/yaml.dart' as yaml;
 
 import '../constants/turbo_constants.dart';
+import '../enums/case_style.dart';
 import 'xml_converter.dart';
 
 /// Converts JSON to YAML string.
@@ -124,7 +125,7 @@ String yamlToMarkdown(
 /// [rootElementName] - Optional root element name
 /// [includeNulls] - Whether to include null values
 /// [prettyPrint] - Whether to format XML with indentation
-/// [usePascalCase] - Whether to convert element names to PascalCase
+/// [caseStyle] - The case style to apply to element names
 /// [metaData] - Optional metadata to include as `_meta` element
 ///
 /// Returns an XML string representation of the YAML.
@@ -133,7 +134,7 @@ String yamlToXml(
   String? rootElementName,
   bool includeNulls = false,
   bool prettyPrint = true,
-  bool usePascalCase = false,
+  CaseStyle caseStyle = CaseStyle.none,
   Map<String, dynamic>? metaData,
 }) {
   final json = yamlToJson(yamlString);
@@ -142,7 +143,7 @@ String yamlToXml(
     rootElementName: rootElementName,
     includeNulls: includeNulls,
     prettyPrint: prettyPrint,
-    usePascalCase: usePascalCase,
+    caseStyle: caseStyle,
     metaData: metaData,
   );
 }
@@ -225,7 +226,7 @@ String markdownToYaml(String markdown) {
 /// [rootElementName] - Optional root element name
 /// [includeNulls] - Whether to include null values
 /// [prettyPrint] - Whether to format XML with indentation
-/// [usePascalCase] - Whether to convert element names to PascalCase
+/// [caseStyle] - The case style to apply to element names
 ///
 /// Returns an XML string representation of the Markdown.
 String markdownToXml(
@@ -233,7 +234,7 @@ String markdownToXml(
   String? rootElementName,
   bool includeNulls = false,
   bool prettyPrint = true,
-  bool usePascalCase = false,
+  CaseStyle caseStyle = CaseStyle.none,
 }) {
   final json = markdownToJson(markdown);
   return mapToXml(
@@ -241,7 +242,7 @@ String markdownToXml(
     rootElementName: rootElementName,
     includeNulls: includeNulls,
     prettyPrint: prettyPrint,
-    usePascalCase: usePascalCase,
+    caseStyle: caseStyle,
   );
 }
 

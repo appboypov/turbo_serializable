@@ -1,5 +1,6 @@
 import 'package:turbo_serializable/abstracts/turbo_serializable.dart';
 import 'package:turbo_serializable/constants/turbo_constants.dart';
+import 'package:turbo_serializable/enums/case_style.dart';
 import 'package:turbo_serializable/enums/serialization_format.dart';
 
 /// Configuration for [TurboSerializable] instances.
@@ -24,7 +25,7 @@ class TurboSerializableConfig {
       bool includeNulls,
       bool prettyPrint,
       bool includeMetaData,
-      bool usePascalCase,
+      CaseStyle caseStyle,
       })? toXml;
 
   /// The primary serialization format, determined from the provided callbacks.
@@ -69,7 +70,7 @@ class TurboSerializableConfig {
           bool includeNulls,
           bool prettyPrint,
           bool includeMetaData,
-          bool usePascalCase,
+          CaseStyle caseStyle,
           })? toXml,
       ) {
     if (toJson != null) {

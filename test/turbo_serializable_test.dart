@@ -21,7 +21,7 @@ class TestModel extends TurboSerializable<Object?> {
             final self = instance as TestModel;
             return '# ${self.name}';
           },
-          toXml: (instance, {String? rootElementName, bool includeNulls = false, bool prettyPrint = true, bool includeMetaData = true, bool usePascalCase = false}) {
+          toXml: (instance, {String? rootElementName, bool includeNulls = false, bool prettyPrint = true, bool includeMetaData = true, CaseStyle caseStyle = CaseStyle.none}) {
             final self = instance as TestModel;
             return '<name>${self.name}</name>';
           },
@@ -308,6 +308,38 @@ void main() {
         expect(prettyXml, contains('\n'));
       });
 
+      test('toXml with camelCase from JSON primary format', () {
+        final model = _JsonOnlyModel(name: 'Test', age: 25);
+        final xml = model.toXml(caseStyle: CaseStyle.camelCase);
+        expect(xml, isNotNull);
+        expect(xml, contains('<name>Test</name>'));
+        expect(xml, contains('<age>25</age>'));
+      });
+
+      test('toXml with snakeCase from JSON primary format', () {
+        final model = _JsonOnlyModel(name: 'Test', age: 25);
+        final xml = model.toXml(caseStyle: CaseStyle.snakeCase);
+        expect(xml, isNotNull);
+        expect(xml, contains('<name>Test</name>'));
+        expect(xml, contains('<age>25</age>'));
+      });
+
+      test('toXml with kebabCase from JSON primary format', () {
+        final model = _JsonOnlyModel(name: 'Test', age: 25);
+        final xml = model.toXml(caseStyle: CaseStyle.kebabCase);
+        expect(xml, isNotNull);
+        expect(xml, contains('<name>Test</name>'));
+        expect(xml, contains('<age>25</age>'));
+      });
+
+      test('toXml with none case style from JSON primary format', () {
+        final model = _JsonOnlyModel(name: 'Test', age: 25);
+        final xml = model.toXml(caseStyle: CaseStyle.none);
+        expect(xml, isNotNull);
+        expect(xml, contains('<name>Test</name>'));
+        expect(xml, contains('<age>25</age>'));
+      });
+
       test('can override validate to return null for valid state', () {
         final model = TestModel('John');
         expect(model.validate(), isNull);
@@ -508,6 +540,38 @@ void main() {
         expect(xml, contains('<name>Test</name>'));
         expect(xml, contains('<age>25</age>'));
       });
+
+      test('toXml with camelCase from YAML primary format', () {
+        final model = _YamlOnlyModel(name: 'Test', age: 25);
+        final xml = model.toXml(caseStyle: CaseStyle.camelCase);
+        expect(xml, isNotNull);
+        expect(xml, contains('<name>Test</name>'));
+        expect(xml, contains('<age>25</age>'));
+      });
+
+      test('toXml with PascalCase from YAML primary format', () {
+        final model = _YamlOnlyModel(name: 'Test', age: 25);
+        final xml = model.toXml(caseStyle: CaseStyle.pascalCase);
+        expect(xml, isNotNull);
+        expect(xml, contains('<Name>Test</Name>'));
+        expect(xml, contains('<Age>25</Age>'));
+      });
+
+      test('toXml with snakeCase from YAML primary format', () {
+        final model = _YamlOnlyModel(name: 'Test', age: 25);
+        final xml = model.toXml(caseStyle: CaseStyle.snakeCase);
+        expect(xml, isNotNull);
+        expect(xml, contains('<name>Test</name>'));
+        expect(xml, contains('<age>25</age>'));
+      });
+
+      test('toXml with kebabCase from YAML primary format', () {
+        final model = _YamlOnlyModel(name: 'Test', age: 25);
+        final xml = model.toXml(caseStyle: CaseStyle.kebabCase);
+        expect(xml, isNotNull);
+        expect(xml, contains('<name>Test</name>'));
+        expect(xml, contains('<age>25</age>'));
+      });
     });
 
     group('Markdown as primary format', () {
@@ -532,6 +596,38 @@ void main() {
         expect(json['body'], isA<Map<String, dynamic>>());
         expect(json['body']['key'], equals('value'));
       });
+
+      test('toXml with camelCase from Markdown primary format', () {
+        final model = _MarkdownOnlyModel(content: '{"name": "Test", "age": 25}');
+        final xml = model.toXml(caseStyle: CaseStyle.camelCase);
+        expect(xml, isNotNull);
+        expect(xml, contains('<name>Test</name>'));
+        expect(xml, contains('<age>25</age>'));
+      });
+
+      test('toXml with PascalCase from Markdown primary format', () {
+        final model = _MarkdownOnlyModel(content: '{"name": "Test", "age": 25}');
+        final xml = model.toXml(caseStyle: CaseStyle.pascalCase);
+        expect(xml, isNotNull);
+        expect(xml, contains('<Name>Test</Name>'));
+        expect(xml, contains('<Age>25</Age>'));
+      });
+
+      test('toXml with snakeCase from Markdown primary format', () {
+        final model = _MarkdownOnlyModel(content: '{"name": "Test", "age": 25}');
+        final xml = model.toXml(caseStyle: CaseStyle.snakeCase);
+        expect(xml, isNotNull);
+        expect(xml, contains('<name>Test</name>'));
+        expect(xml, contains('<age>25</age>'));
+      });
+
+      test('toXml with kebabCase from Markdown primary format', () {
+        final model = _MarkdownOnlyModel(content: '{"name": "Test", "age": 25}');
+        final xml = model.toXml(caseStyle: CaseStyle.kebabCase);
+        expect(xml, isNotNull);
+        expect(xml, contains('<name>Test</name>'));
+        expect(xml, contains('<age>25</age>'));
+      });
     });
 
     group('XML as primary format', () {
@@ -541,6 +637,22 @@ void main() {
         expect(xml, isNotNull);
         expect(xml, contains('<name>Test</name>'));
         expect(xml, contains('<age>25</age>'));
+      });
+
+      test('toXml with camelCase from XML primary format', () {
+        final model = _XmlOnlyModel(name: 'Test', age: 25);
+        final xml = model.toXml(caseStyle: CaseStyle.camelCase);
+        expect(xml, isNotNull);
+        // XML primary format uses the callback, which may not apply case style
+        // This test verifies the method accepts the parameter
+      });
+
+      test('toXml with PascalCase from XML primary format', () {
+        final model = _XmlOnlyModel(name: 'Test', age: 25);
+        final xml = model.toXml(caseStyle: CaseStyle.pascalCase);
+        expect(xml, isNotNull);
+        // XML primary format uses the callback, which may not apply case style
+        // This test verifies the method accepts the parameter
       });
 
       test('toJson converts from XML', () {
@@ -1002,10 +1114,42 @@ Some regular markdown content
 
       test('uses PascalCase when requested', () {
         final model = _JsonOnlyModel(name: 'Test', age: 25);
-        final result = model.convertToXml(usePascalCase: true);
+        final result = model.convertToXml(caseStyle: CaseStyle.pascalCase);
         expect(result, isNotNull);
         expect(result, contains('<Name>Test</Name>'));
         expect(result, contains('<Age>25</Age>'));
+      });
+
+      test('uses camelCase when requested', () {
+        final model = _JsonOnlyModel(name: 'Test', age: 25);
+        final result = model.convertToXml(caseStyle: CaseStyle.camelCase);
+        expect(result, isNotNull);
+        expect(result, contains('<name>Test</name>'));
+        expect(result, contains('<age>25</age>'));
+      });
+
+      test('uses snakeCase when requested', () {
+        final model = _JsonOnlyModel(name: 'Test', age: 25);
+        final result = model.convertToXml(caseStyle: CaseStyle.snakeCase);
+        expect(result, isNotNull);
+        expect(result, contains('<name>Test</name>'));
+        expect(result, contains('<age>25</age>'));
+      });
+
+      test('uses kebabCase when requested', () {
+        final model = _JsonOnlyModel(name: 'Test', age: 25);
+        final result = model.convertToXml(caseStyle: CaseStyle.kebabCase);
+        expect(result, isNotNull);
+        expect(result, contains('<name>Test</name>'));
+        expect(result, contains('<age>25</age>'));
+      });
+
+      test('uses none case style when requested', () {
+        final model = _JsonOnlyModel(name: 'Test', age: 25);
+        final result = model.convertToXml(caseStyle: CaseStyle.none);
+        expect(result, isNotNull);
+        expect(result, contains('<name>Test</name>'));
+        expect(result, contains('<age>25</age>'));
       });
 
       test('includes null values when requested', () {
@@ -1099,7 +1243,7 @@ class _XmlOnlyModel extends TurboSerializable<Object?> {
   })
       : super(
             config: TurboSerializableConfig(
-          toXml: (instance, {String? rootElementName, bool includeNulls = false, bool prettyPrint = true, bool includeMetaData = true, bool usePascalCase = false}) {
+          toXml: (instance, {String? rootElementName, bool includeNulls = false, bool prettyPrint = true, bool includeMetaData = true, CaseStyle caseStyle = CaseStyle.none}) {
             final self = instance as _XmlOnlyModel;
             final elementName = rootElementName ?? 'XmlOnlyModel';
             return '<?xml version="1.0" encoding="UTF-8"?>\n<$elementName>\n  <name>${self.name}</name>\n  <age>${self.age}</age>\n</$elementName>';

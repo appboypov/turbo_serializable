@@ -2,6 +2,8 @@ import 'package:meta/meta.dart';
 import 'package:xml/xml.dart';
 
 import '../constants/turbo_constants.dart';
+import '../enums/case_style.dart';
+import '../src/case_converter.dart';
 
 /// Converts a JSON map to an XML string.
 ///
@@ -9,7 +11,7 @@ import '../constants/turbo_constants.dart';
 /// [rootElementName] - Optional root element name. If not provided, uses 'root'
 /// [includeNulls] - Whether to include null values in XML (default: false)
 /// [prettyPrint] - Whether to format XML with indentation (default: true)
-/// [usePascalCase] - Whether to convert element names to PascalCase (default: false)
+/// [caseStyle] - The case style to apply to element names (default: CaseStyle.none)
 /// [metaData] - Optional metadata to include as a `_meta` element
 ///
 /// Returns the XML string representation of the JSON map.
@@ -18,23 +20,24 @@ String mapToXml(
   String? rootElementName,
   bool includeNulls = false,
   bool prettyPrint = true,
-  bool usePascalCase = false,
+  CaseStyle caseStyle = CaseStyle.none,
   Map<String, dynamic>? metaData,
 }) {
   final builder = XmlBuilder();
   builder.processing(TurboConstants.xmlProcessingInstruction, TurboConstants.xmlDeclaration);
-  final rootName = usePascalCase
-      ? convertToPascalCase(rootElementName ?? TurboConstants.defaultRootElement)
-      : (rootElementName ?? TurboConstants.defaultRootElement);
+  final rootName = convertCase(
+    rootElementName ?? TurboConstants.defaultRootElement,
+    caseStyle,
+  );
   builder.element(rootName, nest: () {
     if (metaData != null && metaData.isNotEmpty) {
-      final metaElementName = usePascalCase ? TurboConstants.metaKeyPascal : TurboConstants.metaKey;
+      final metaElementName = convertCase(TurboConstants.metaKey, caseStyle);
       builder.element(metaElementName, nest: () {
         buildXmlElement(
           builder,
           metaData,
           includeNulls: includeNulls,
-          usePascalCase: usePascalCase,
+          caseStyle: caseStyle,
         );
       });
     }
@@ -42,7 +45,7 @@ String mapToXml(
       builder,
       json,
       includeNulls: includeNulls,
-      usePascalCase: usePascalCase,
+      caseStyle: caseStyle,
     );
   });
 
@@ -52,54 +55,6 @@ String mapToXml(
       : document.toXmlString();
 }
 
-/// Converts a string to PascalCase.
-///
-/// Handles:
-/// - camelCase → PascalCase (userName → UserName)
-/// - snake_case → PascalCase (user_name → UserName)
-/// - kebab-case → PascalCase (user-name → UserName)
-/// - Already PascalCase → unchanged (UserName → UserName)
-@visibleForTesting
-String convertToPascalCase(String input) {
-  if (input.isEmpty) return input;
-
-  // Split by underscores, hyphens, or uppercase letters (for camelCase)
-  final words = <String>[];
-  final buffer = StringBuffer();
-
-  for (var i = 0; i < input.length; i++) {
-    final char = input[i];
-
-    if (char == '_' || char == '-') {
-      if (buffer.isNotEmpty) {
-        words.add(buffer.toString());
-        buffer.clear();
-      }
-    } else if (i > 0 &&
-        char.toUpperCase() == char &&
-        char.toLowerCase() != char &&
-        input[i - 1].toUpperCase() != input[i - 1]) {
-      // Uppercase letter after lowercase = new word (camelCase split)
-      if (buffer.isNotEmpty) {
-        words.add(buffer.toString());
-        buffer.clear();
-      }
-      buffer.write(char);
-    } else {
-      buffer.write(char);
-    }
-  }
-
-  if (buffer.isNotEmpty) {
-    words.add(buffer.toString());
-  }
-
-  // Capitalize first letter of each word
-  return words.map((word) {
-    if (word.isEmpty) return word;
-    return word[0].toUpperCase() + word.substring(1).toLowerCase();
-  }).join();
-}
 
 /// Converts an XML string to a JSON map.
 ///
@@ -123,7 +78,7 @@ void buildXmlElement(
   XmlBuilder builder,
   dynamic value, {
   bool includeNulls = false,
-  bool usePascalCase = false,
+  CaseStyle caseStyle = CaseStyle.none,
 }) {
   if (value == null) {
     if (includeNulls) {
@@ -137,7 +92,7 @@ void buildXmlElement(
       if (val == null && !includeNulls) {
         return;
       }
-      final elementName = usePascalCase ? convertToPascalCase(key) : key;
+      final elementName = convertCase(key, caseStyle);
       if (val is List) {
         // For lists, create multiple elements with the same key name
         for (final item in val) {
@@ -149,7 +104,7 @@ void buildXmlElement(
               builder,
               item,
               includeNulls: includeNulls,
-              usePascalCase: usePascalCase,
+              caseStyle: caseStyle,
             );
           });
         }
@@ -160,7 +115,7 @@ void buildXmlElement(
             builder,
             val,
             includeNulls: includeNulls,
-            usePascalCase: usePascalCase,
+            caseStyle: caseStyle,
           );
         });
       }
@@ -168,7 +123,7 @@ void buildXmlElement(
   } else if (value is List) {
     // This case handles lists that are direct values (shouldn't happen in normal flow)
     // but we handle it for completeness
-    final itemName = usePascalCase ? TurboConstants.defaultItemElementPascal : TurboConstants.defaultItemElement;
+    final itemName = convertCase(TurboConstants.defaultItemElement, caseStyle);
     for (final item in value) {
       if (item == null && !includeNulls) {
         continue;
@@ -178,7 +133,7 @@ void buildXmlElement(
           builder,
           item,
           includeNulls: includeNulls,
-          usePascalCase: usePascalCase,
+          caseStyle: caseStyle,
         );
       });
     }
