@@ -161,8 +161,8 @@ String formatJsonValue(dynamic value, int indent) {
 ///
 /// [yamlString] - The YAML string to parse
 /// [preserveLayout] - Whether to extract layout metadata for round-trip fidelity
-///   (default: false for backward compatibility). When true, returns
-///   a [LayoutAwareParseResult] containing both data and key-level metadata.
+///   (default: false). When true, returns a [LayoutAwareParseResult] containing
+///   both data and key-level metadata. When false, returns a plain Map.
 ///
 /// Returns a `Map<String, dynamic>` representation of the YAML when
 /// [preserveLayout] is false, or a [LayoutAwareParseResult] when true.
@@ -210,12 +210,16 @@ String yamlToMarkdown(
   final json = preserveLayout
       ? (result as LayoutAwareParseResult).data
       : result as Map<String, dynamic>;
+  final keyMeta = preserveLayout
+      ? (result as LayoutAwareParseResult).keyMeta
+      : null;
   return jsonToMarkdown(
     json,
     metaData: metaData,
+    keyMeta: keyMeta,
     includeNulls: includeNulls,
     prettyPrint: prettyPrint,
-    preserveLayout: false,
+    preserveLayout: preserveLayout,
   );
 }
 
@@ -243,6 +247,9 @@ String yamlToXml(
   final json = preserveLayout
       ? (result as LayoutAwareParseResult).data
       : result as Map<String, dynamic>;
+  final keyMeta = preserveLayout
+      ? (result as LayoutAwareParseResult).keyMeta
+      : null;
   return jsonToXml(
     json,
     rootElementName: rootElementName,
@@ -250,7 +257,8 @@ String yamlToXml(
     prettyPrint: prettyPrint,
     caseStyle: caseStyle,
     metaData: metaData,
-    preserveLayout: false,
+    keyMeta: keyMeta,
+    preserveLayout: preserveLayout,
   );
 }
 
@@ -272,8 +280,8 @@ String yamlToXml(
 ///
 /// [markdown] - The Markdown string to parse
 /// [preserveLayout] - Whether to extract layout metadata for round-trip fidelity
-///   (default: false for backward compatibility). When true, returns
-///   a [LayoutAwareParseResult] containing both data and key-level metadata.
+///   (default: false). When true, returns a [LayoutAwareParseResult] containing
+///   both data and key-level metadata. When false, returns a plain Map.
 ///
 /// Returns a `Map<String, dynamic>` representation of the Markdown when
 /// [preserveLayout] is false, or a [LayoutAwareParseResult] when true.
@@ -354,12 +362,16 @@ String markdownToYaml(
   final json = preserveLayout
       ? (result as LayoutAwareParseResult).data
       : result as Map<String, dynamic>;
+  final keyMeta = preserveLayout
+      ? (result as LayoutAwareParseResult).keyMeta
+      : null;
   return jsonToYaml(
     json,
     metaData: metaData,
+    keyMeta: keyMeta,
     includeNulls: includeNulls,
     prettyPrint: prettyPrint,
-    preserveLayout: false,
+    preserveLayout: preserveLayout,
   );
 }
 
@@ -387,6 +399,9 @@ String markdownToXml(
   final json = preserveLayout
       ? (result as LayoutAwareParseResult).data
       : result as Map<String, dynamic>;
+  final keyMeta = preserveLayout
+      ? (result as LayoutAwareParseResult).keyMeta
+      : null;
   return jsonToXml(
     json,
     rootElementName: rootElementName,
@@ -394,7 +409,8 @@ String markdownToXml(
     prettyPrint: prettyPrint,
     caseStyle: caseStyle,
     metaData: metaData,
-    preserveLayout: false,
+    keyMeta: keyMeta,
+    preserveLayout: preserveLayout,
   );
 }
 
@@ -404,8 +420,8 @@ String markdownToXml(
 ///
 /// [xml] - The XML string to convert
 /// [preserveLayout] - Whether to extract layout metadata for round-trip fidelity
-///   (default: false for backward compatibility). When true, returns
-///   a [LayoutAwareParseResult] containing both data and key-level metadata.
+///   (default: false). When true, returns a [LayoutAwareParseResult] containing
+///   both data and key-level metadata. When false, returns a plain Map.
 ///
 /// Returns a `Map<String, dynamic>` representation of the XML when
 /// [preserveLayout] is false, or a [LayoutAwareParseResult] when true.
@@ -442,12 +458,16 @@ String xmlToYaml(
   final json = preserveLayout
       ? (result as LayoutAwareParseResult).data
       : result as Map<String, dynamic>;
+  final keyMeta = preserveLayout
+      ? (result as LayoutAwareParseResult).keyMeta
+      : null;
   return jsonToYaml(
     json,
     metaData: metaData,
+    keyMeta: keyMeta,
     includeNulls: includeNulls,
     prettyPrint: prettyPrint,
-    preserveLayout: false,
+    preserveLayout: preserveLayout,
   );
 }
 
@@ -471,12 +491,16 @@ String xmlToMarkdown(
   final json = preserveLayout
       ? (result as LayoutAwareParseResult).data
       : result as Map<String, dynamic>;
+  final keyMeta = preserveLayout
+      ? (result as LayoutAwareParseResult).keyMeta
+      : null;
   return jsonToMarkdown(
     json,
     metaData: metaData,
+    keyMeta: keyMeta,
     includeNulls: includeNulls,
     prettyPrint: prettyPrint,
-    preserveLayout: false,
+    preserveLayout: preserveLayout,
   );
 }
 
