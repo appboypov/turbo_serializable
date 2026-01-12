@@ -195,7 +195,8 @@ class XmlLayoutParser {
 
       return _ContentParseResult(
         value: parsedValue,
-        metadata: xmlMeta != null ? KeyMetadata(xmlMeta: xmlMeta).toJson() : null,
+        metadata:
+            xmlMeta != null ? KeyMetadata(xmlMeta: xmlMeta).toJson() : null,
       );
     } else {
       // Nested complex element

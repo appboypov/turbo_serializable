@@ -83,7 +83,7 @@ Map<String, dynamic> xmlToMap(String xml) {
   try {
     final document = XmlDocument.parse(xml);
     final rootElement = document.rootElement;
-    return parseXmlElement(rootElement);
+    return parseXmlElement(rootElement) as Map<String, dynamic>;
   } catch (e) {
     throw FormatException(TurboConstants.failedToParseXml(e));
   }

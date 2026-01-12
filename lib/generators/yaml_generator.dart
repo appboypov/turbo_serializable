@@ -30,7 +30,9 @@ class YamlLayoutGenerator {
     final docMeta = keyMeta?['_document'];
     final isMultiDocument = docMeta != null &&
         docMeta is Map<String, dynamic> &&
-        docMeta['yamlMeta']?['comment']?.toString().contains('Multi-document') ==
+        docMeta['yamlMeta']?['comment']
+                ?.toString()
+                .contains('Multi-document') ==
             true;
 
     if (isMultiDocument) {
@@ -58,8 +60,8 @@ class YamlLayoutGenerator {
     Map<String, dynamic>? keyMeta,
   ) {
     final buffer = StringBuffer();
-    final docKeys =
-        data.keys.where((k) => k.startsWith('_document_')).toList()..sort();
+    final docKeys = data.keys.where((k) => k.startsWith('_document_')).toList()
+      ..sort();
 
     for (var i = 0; i < docKeys.length; i++) {
       final docKey = docKeys[i];

@@ -47,7 +47,8 @@ Body text
       });
 
       test('with attributes round-trip', () {
-        const original = '<user id="123" active="true"><name>John</name></user>';
+        const original =
+            '<user id="123" active="true"><name>John</name></user>';
         final parsed =
             xmlToJson(original, preserveLayout: true) as LayoutAwareParseResult;
         final regenerated = jsonToXml(parsed.data, keyMeta: parsed.keyMeta);
@@ -61,8 +62,8 @@ Body text
         const original = '''name: John
 age: 30
 ''';
-        final parsed =
-            yamlToJson(original, preserveLayout: true) as LayoutAwareParseResult;
+        final parsed = yamlToJson(original, preserveLayout: true)
+            as LayoutAwareParseResult;
         final regenerated = jsonToYaml(parsed.data, keyMeta: parsed.keyMeta);
         expect(regenerated.contains('name:'), true);
         expect(regenerated.contains('John'), true);
@@ -77,8 +78,8 @@ development:
   database: dev
   <<: *defaults
 ''';
-        final parsed =
-            yamlToJson(original, preserveLayout: true) as LayoutAwareParseResult;
+        final parsed = yamlToJson(original, preserveLayout: true)
+            as LayoutAwareParseResult;
         expect(parsed.data['defaults'], isNotNull);
       });
     });
@@ -89,7 +90,8 @@ development:
         const parser = JsonLayoutParser();
         const generator = JsonLayoutGenerator();
         final parsed = parser.parse(original);
-        final regenerated = generator.generate(parsed.data, keyMeta: parsed.keyMeta);
+        final regenerated =
+            generator.generate(parsed.data, keyMeta: parsed.keyMeta);
         expect(regenerated, '{"name":"John","age":30}');
       });
 
@@ -101,7 +103,8 @@ development:
         const parser = JsonLayoutParser();
         const generator = JsonLayoutGenerator();
         final parsed = parser.parse(original);
-        final regenerated = generator.generate(parsed.data, keyMeta: parsed.keyMeta);
+        final regenerated =
+            generator.generate(parsed.data, keyMeta: parsed.keyMeta);
         expect(regenerated.contains('  "name"'), true);
       });
     });

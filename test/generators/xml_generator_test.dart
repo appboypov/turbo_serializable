@@ -637,7 +637,8 @@ void main() {
     });
 
     test('boolean values round-trip', () {
-      const original = '<settings><enabled>true</enabled><debug>false</debug></settings>';
+      const original =
+          '<settings><enabled>true</enabled><debug>false</debug></settings>';
       final parseResult = parser.parse(original);
       final generated = generator.generate(
         parseResult.data,

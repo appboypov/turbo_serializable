@@ -39,8 +39,7 @@ class LayoutAwareParseResult {
     return LayoutAwareParseResult(
       data: Map<String, dynamic>.from(json['data'] as Map<String, dynamic>),
       keyMeta: json['keyMeta'] != null
-          ? Map<String, dynamic>.from(
-              json['keyMeta'] as Map<String, dynamic>)
+          ? Map<String, dynamic>.from(json['keyMeta'] as Map<String, dynamic>)
           : null,
     );
   }

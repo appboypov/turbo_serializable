@@ -112,7 +112,8 @@ name: John # This is a comment
         final result = parser.parse(yaml);
         expect(result.data['name'], 'John');
         expect(result.keyMeta, isNotNull);
-        expect(result.keyMeta!['name']['yamlMeta']['comment'], 'This is a comment');
+        expect(result.keyMeta!['name']['yamlMeta']['comment'],
+            'This is a comment');
       });
 
       test('extracts comment from line before', () {
@@ -133,7 +134,8 @@ value: test # Comment with special chars: @#\$%
         final result = parser.parse(yaml);
         expect(result.data['value'], 'test');
         expect(result.keyMeta, isNotNull);
-        expect(result.keyMeta!['value']['yamlMeta']['comment'], contains('Comment'));
+        expect(result.keyMeta!['value']['yamlMeta']['comment'],
+            contains('Comment'));
       });
     });
 
@@ -193,7 +195,8 @@ description: |
         final result = parser.parse(yaml);
         expect(result.data['description'], contains('This is a'));
         expect(result.keyMeta, isNotNull);
-        expect(result.keyMeta!['description']['yamlMeta']['scalarStyle'], 'literal');
+        expect(result.keyMeta!['description']['yamlMeta']['scalarStyle'],
+            'literal');
       });
 
       test('detects folded block scalar', () {
@@ -205,7 +208,8 @@ description: >
         final result = parser.parse(yaml);
         expect(result.data['description'], isNotNull);
         expect(result.keyMeta, isNotNull);
-        expect(result.keyMeta!['description']['yamlMeta']['scalarStyle'], 'folded');
+        expect(result.keyMeta!['description']['yamlMeta']['scalarStyle'],
+            'folded');
       });
 
       test('detects single-quoted scalar', () {
@@ -215,7 +219,8 @@ name: 'John Doe'
         final result = parser.parse(yaml);
         expect(result.data['name'], 'John Doe');
         expect(result.keyMeta, isNotNull);
-        expect(result.keyMeta!['name']['yamlMeta']['scalarStyle'], 'single-quoted');
+        expect(result.keyMeta!['name']['yamlMeta']['scalarStyle'],
+            'single-quoted');
       });
 
       test('detects double-quoted scalar', () {
@@ -225,7 +230,8 @@ name: "John Doe"
         final result = parser.parse(yaml);
         expect(result.data['name'], 'John Doe');
         expect(result.keyMeta, isNotNull);
-        expect(result.keyMeta!['name']['yamlMeta']['scalarStyle'], 'double-quoted');
+        expect(result.keyMeta!['name']['yamlMeta']['scalarStyle'],
+            'double-quoted');
       });
 
       test('plain scalar has no style metadata', () {
@@ -398,7 +404,8 @@ production:
         // Metadata extraction
         expect(result.keyMeta, isNotNull);
         expect(result.keyMeta!['defaults']['yamlMeta']['anchor'], 'defaults');
-        expect(result.keyMeta!['defaults']['yamlMeta']['comment'], 'Main config');
+        expect(
+            result.keyMeta!['defaults']['yamlMeta']['comment'], 'Main config');
       });
 
       test('parses mixed flow and block styles', () {
@@ -503,8 +510,8 @@ items:
 defaults: &defaults
   adapter: postgres
 ''';
-      final result = yamlToJson(yaml, preserveLayout: true)
-          as LayoutAwareParseResult;
+      final result =
+          yamlToJson(yaml, preserveLayout: true) as LayoutAwareParseResult;
       expect(result.data['defaults']['adapter'], 'postgres');
       expect(result.keyMeta!['defaults']['yamlMeta']['anchor'], 'defaults');
     });
@@ -513,8 +520,8 @@ defaults: &defaults
       const yaml = '''
 name: John # User name
 ''';
-      final result = yamlToJson(yaml, preserveLayout: true)
-          as LayoutAwareParseResult;
+      final result =
+          yamlToJson(yaml, preserveLayout: true) as LayoutAwareParseResult;
       expect(result.data['name'], 'John');
       expect(result.keyMeta!['name']['yamlMeta']['comment'], 'User name');
     });
@@ -525,17 +532,18 @@ description: |
   Multiline
   text
 ''';
-      final result = yamlToJson(yaml, preserveLayout: true)
-          as LayoutAwareParseResult;
-      expect(result.keyMeta!['description']['yamlMeta']['scalarStyle'], 'literal');
+      final result =
+          yamlToJson(yaml, preserveLayout: true) as LayoutAwareParseResult;
+      expect(
+          result.keyMeta!['description']['yamlMeta']['scalarStyle'], 'literal');
     });
 
     test('preserveLayout extracts flow style metadata', () {
       const yaml = '''
 config: {a: 1, b: 2}
 ''';
-      final result = yamlToJson(yaml, preserveLayout: true)
-          as LayoutAwareParseResult;
+      final result =
+          yamlToJson(yaml, preserveLayout: true) as LayoutAwareParseResult;
       expect(result.data['config']['a'], 1);
       expect(result.keyMeta!['config']['yamlMeta']['style'], 'flow');
     });
@@ -551,8 +559,8 @@ defaults: &defaults
 development:
   database: dev_db
 ''';
-      final result = yamlToJson(original, preserveLayout: true)
-          as LayoutAwareParseResult;
+      final result =
+          yamlToJson(original, preserveLayout: true) as LayoutAwareParseResult;
       expect(result.keyMeta!['defaults']['yamlMeta']['anchor'], 'defaults');
     });
 
@@ -562,9 +570,10 @@ development:
 config:
   value: test
 ''';
-      final result = yamlToJson(original, preserveLayout: true)
-          as LayoutAwareParseResult;
-      expect(result.keyMeta!['config']['yamlMeta']['comment'], 'Main configuration');
+      final result =
+          yamlToJson(original, preserveLayout: true) as LayoutAwareParseResult;
+      expect(result.keyMeta!['config']['yamlMeta']['comment'],
+          'Main configuration');
     });
 
     test('scalar style round-trip', () {
@@ -580,12 +589,14 @@ folded: >
 single: 'quoted'
 double: "also quoted"
 ''';
-      final result = yamlToJson(original, preserveLayout: true)
-          as LayoutAwareParseResult;
+      final result =
+          yamlToJson(original, preserveLayout: true) as LayoutAwareParseResult;
       expect(result.keyMeta!['literal']['yamlMeta']['scalarStyle'], 'literal');
       expect(result.keyMeta!['folded']['yamlMeta']['scalarStyle'], 'folded');
-      expect(result.keyMeta!['single']['yamlMeta']['scalarStyle'], 'single-quoted');
-      expect(result.keyMeta!['double']['yamlMeta']['scalarStyle'], 'double-quoted');
+      expect(result.keyMeta!['single']['yamlMeta']['scalarStyle'],
+          'single-quoted');
+      expect(result.keyMeta!['double']['yamlMeta']['scalarStyle'],
+          'double-quoted');
     });
 
     test('flow style round-trip', () {
@@ -593,8 +604,8 @@ double: "also quoted"
 flow_map: {a: 1, b: 2}
 flow_list: [1, 2, 3]
 ''';
-      final result = yamlToJson(original, preserveLayout: true)
-          as LayoutAwareParseResult;
+      final result =
+          yamlToJson(original, preserveLayout: true) as LayoutAwareParseResult;
       expect(result.keyMeta!['flow_map']['yamlMeta']['style'], 'flow');
       expect(result.keyMeta!['flow_list']['yamlMeta']['style'], 'flow');
     });
@@ -615,13 +626,16 @@ production:
     secret
     multiline
 ''';
-      final result = yamlToJson(original, preserveLayout: true)
-          as LayoutAwareParseResult;
+      final result =
+          yamlToJson(original, preserveLayout: true) as LayoutAwareParseResult;
 
       // Verify all metadata is captured
       expect(result.keyMeta!['defaults']['yamlMeta']['anchor'], 'defaults');
       expect(result.keyMeta!['defaults']['yamlMeta']['comment'], 'Main config');
-      expect(result.keyMeta!['production']['children']['password']['yamlMeta']['scalarStyle'], 'literal');
+      expect(
+          result.keyMeta!['production']['children']['password']['yamlMeta']
+              ['scalarStyle'],
+          'literal');
     });
   });
 }

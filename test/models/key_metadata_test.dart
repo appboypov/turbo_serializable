@@ -358,7 +358,9 @@ void main() {
     test('creates instance correctly', () {
       const result = LayoutAwareParseResult(
         data: {'key': 'value'},
-        keyMeta: {'key': {'headerLevel': 2}},
+        keyMeta: {
+          'key': {'headerLevel': 2}
+        },
       );
       expect(result.data['key'], 'value');
       expect(result.keyMeta?['key']['headerLevel'], 2);
@@ -383,7 +385,9 @@ void main() {
     test('fromJson creates instance correctly', () {
       final json = {
         'data': {'key': 'value'},
-        'keyMeta': {'key': {'headerLevel': 2}},
+        'keyMeta': {
+          'key': {'headerLevel': 2}
+        },
       };
       final result = LayoutAwareParseResult.fromJson(json);
       expect(result.data['key'], 'value');

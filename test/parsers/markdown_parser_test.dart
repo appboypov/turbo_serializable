@@ -303,7 +303,8 @@ void main() {}
         final codeKey =
             result.data.keys.firstWhere((k) => k.startsWith('_code'));
         expect(result.keyMeta![codeKey]['codeBlock']['language'], 'dart');
-        expect(result.keyMeta![codeKey]['codeBlock']['filename'], 'example.dart');
+        expect(
+            result.keyMeta![codeKey]['codeBlock']['filename'], 'example.dart');
       });
 
       test('parses multiline code block', () {
@@ -385,7 +386,8 @@ code here
         final result = parser.parse(markdown);
         final listKey =
             result.data.keys.firstWhere((k) => k.startsWith('_list'));
-        expect(result.data[listKey], ['First item', 'Second item', 'Third item']);
+        expect(
+            result.data[listKey], ['First item', 'Second item', 'Third item']);
         expect(result.keyMeta![listKey]['listMeta']['type'], 'ordered');
         expect(result.keyMeta![listKey]['listMeta']['startNumber'], 1);
       });
@@ -565,7 +567,8 @@ code here
       test('detects line ending style CRLF', () {
         final markdown = '# Title\r\nContent';
         final result = parser.parse(markdown);
-        expect(result.keyMeta!['_document']['whitespace']['lineEnding'], '\r\n');
+        expect(
+            result.keyMeta!['_document']['whitespace']['lineEnding'], '\r\n');
       });
 
       test('tracks leading newlines', () {
@@ -704,9 +707,8 @@ No closing fence
     });
 
     test('preserveLayout extracts header metadata', () {
-      final result =
-          markdownToJson('## User Name\nJohn', preserveLayout: true)
-              as LayoutAwareParseResult;
+      final result = markdownToJson('## User Name\nJohn', preserveLayout: true)
+          as LayoutAwareParseResult;
       expect(result.data['userName'], 'John');
       expect(result.keyMeta!['userName']['headerLevel'], 2);
     });
@@ -714,8 +716,7 @@ No closing fence
     test('preserveLayout extracts list metadata', () {
       final result = markdownToJson('- Item 1\n- Item 2', preserveLayout: true)
           as LayoutAwareParseResult;
-      final listKey =
-          result.data.keys.firstWhere((k) => k.startsWith('_list'));
+      final listKey = result.data.keys.firstWhere((k) => k.startsWith('_list'));
       expect(result.keyMeta![listKey]['listMeta']['type'], 'unordered');
     });
 
@@ -723,15 +724,13 @@ No closing fence
       final result =
           markdownToJson('```dart\nvoid main() {}\n```', preserveLayout: true)
               as LayoutAwareParseResult;
-      final codeKey =
-          result.data.keys.firstWhere((k) => k.startsWith('_code'));
+      final codeKey = result.data.keys.firstWhere((k) => k.startsWith('_code'));
       expect(result.keyMeta![codeKey]['codeBlock']['language'], 'dart');
     });
 
     test('preserveLayout extracts table metadata', () {
-      final result =
-          markdownToJson('| A | B |\n|---|---|\n| 1 | 2 |', preserveLayout: true)
-              as LayoutAwareParseResult;
+      final result = markdownToJson('| A | B |\n|---|---|\n| 1 | 2 |',
+          preserveLayout: true) as LayoutAwareParseResult;
       final tableKey =
           result.data.keys.firstWhere((k) => k.startsWith('_table'));
       expect(result.keyMeta![tableKey]['tableMeta']['hasHeader'], true);
@@ -756,56 +755,47 @@ No closing fence
     test('preserveLayout preserves whitespace metadata', () {
       final result = markdownToJson('\n\n# Title', preserveLayout: true)
           as LayoutAwareParseResult;
-      expect(
-          result.keyMeta!['_document']['whitespace']['leadingNewlines'], 2);
+      expect(result.keyMeta!['_document']['whitespace']['leadingNewlines'], 2);
     });
   });
 
   group('round-trip tests', () {
     test('header round-trip preserves level', () {
       const original = '## Section Title';
-      final result =
-          markdownToJson(original, preserveLayout: true)
-              as LayoutAwareParseResult;
+      final result = markdownToJson(original, preserveLayout: true)
+          as LayoutAwareParseResult;
       expect(result.keyMeta!['sectionTitle']['headerLevel'], 2);
     });
 
     test('list round-trip preserves marker style', () {
       const original = '* Item 1\n* Item 2';
-      final result =
-          markdownToJson(original, preserveLayout: true)
-              as LayoutAwareParseResult;
-      final listKey =
-          result.data.keys.firstWhere((k) => k.startsWith('_list'));
+      final result = markdownToJson(original, preserveLayout: true)
+          as LayoutAwareParseResult;
+      final listKey = result.data.keys.firstWhere((k) => k.startsWith('_list'));
       expect(result.keyMeta![listKey]['listMeta']['marker'], '*');
     });
 
     test('ordered list round-trip preserves start number', () {
       const original = '5. Fifth\n6. Sixth';
-      final result =
-          markdownToJson(original, preserveLayout: true)
-              as LayoutAwareParseResult;
-      final listKey =
-          result.data.keys.firstWhere((k) => k.startsWith('_list'));
+      final result = markdownToJson(original, preserveLayout: true)
+          as LayoutAwareParseResult;
+      final listKey = result.data.keys.firstWhere((k) => k.startsWith('_list'));
       expect(result.keyMeta![listKey]['listMeta']['startNumber'], 5);
     });
 
     test('code block round-trip preserves language', () {
       const original = '```typescript\nconst x: number = 1;\n```';
-      final result =
-          markdownToJson(original, preserveLayout: true)
-              as LayoutAwareParseResult;
-      final codeKey =
-          result.data.keys.firstWhere((k) => k.startsWith('_code'));
-      expect(
-          result.keyMeta![codeKey]['codeBlock']['language'], 'typescript');
+      final result = markdownToJson(original, preserveLayout: true)
+          as LayoutAwareParseResult;
+      final codeKey = result.data.keys.firstWhere((k) => k.startsWith('_code'));
+      expect(result.keyMeta![codeKey]['codeBlock']['language'], 'typescript');
     });
 
     test('table round-trip preserves alignment', () {
-      const original = '| Left | Center | Right |\n|:-----|:------:|------:|\n| A | B | C |';
-      final result =
-          markdownToJson(original, preserveLayout: true)
-              as LayoutAwareParseResult;
+      const original =
+          '| Left | Center | Right |\n|:-----|:------:|------:|\n| A | B | C |';
+      final result = markdownToJson(original, preserveLayout: true)
+          as LayoutAwareParseResult;
       final tableKey =
           result.data.keys.firstWhere((k) => k.startsWith('_table'));
       expect(result.keyMeta![tableKey]['tableMeta']['alignment'],
@@ -814,17 +804,15 @@ No closing fence
 
     test('callout round-trip preserves type', () {
       const original = '> [!IMPORTANT]\n> Critical info';
-      final result =
-          markdownToJson(original, preserveLayout: true)
-              as LayoutAwareParseResult;
+      final result = markdownToJson(original, preserveLayout: true)
+          as LayoutAwareParseResult;
       expect(result.keyMeta!['important']['callout']['type'], 'important');
     });
 
     test('divider round-trip preserves style', () {
       const original = '***';
-      final result =
-          markdownToJson(original, preserveLayout: true)
-              as LayoutAwareParseResult;
+      final result = markdownToJson(original, preserveLayout: true)
+          as LayoutAwareParseResult;
       final dividerKey =
           result.keyMeta!.keys.firstWhere((k) => k.startsWith('_divider'));
       expect(result.keyMeta![dividerKey]['divider']['style'], '***');
@@ -832,9 +820,8 @@ No closing fence
 
     test('line ending round-trip preserves CRLF', () {
       const original = '# Title\r\nContent';
-      final result =
-          markdownToJson(original, preserveLayout: true)
-              as LayoutAwareParseResult;
+      final result = markdownToJson(original, preserveLayout: true)
+          as LayoutAwareParseResult;
       expect(result.keyMeta!['_document']['whitespace']['lineEnding'], '\r\n');
     });
   });

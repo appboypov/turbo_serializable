@@ -175,11 +175,14 @@ class YamlLayoutParser {
       data.add(childResult.data);
 
       // Build metadata for list items
-      if (childResult.keyMeta.isNotEmpty || _hasNodeMetadata(itemNode) || isFlowStyle) {
+      if (childResult.keyMeta.isNotEmpty ||
+          _hasNodeMetadata(itemNode) ||
+          isFlowStyle) {
         final itemMeta = _buildListItemMetadata(
           node: itemNode,
           originalYaml: originalYaml,
-          childMeta: childResult.keyMeta.isNotEmpty ? childResult.keyMeta : null,
+          childMeta:
+              childResult.keyMeta.isNotEmpty ? childResult.keyMeta : null,
           isFlowStyle: isFlowStyle,
         );
         if (itemMeta != null) {
@@ -207,7 +210,10 @@ class YamlLayoutParser {
     // Check for comment
     final comment = _extractComment(node, originalYaml);
 
-    if (scalarStyle != null || anchor != null || alias != null || comment != null) {
+    if (scalarStyle != null ||
+        anchor != null ||
+        alias != null ||
+        comment != null) {
       final metadata = KeyMetadata(
         yamlMeta: YamlMeta(
           anchor: anchor,

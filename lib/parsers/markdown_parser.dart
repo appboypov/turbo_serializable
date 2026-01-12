@@ -89,8 +89,10 @@ class MarkdownLayoutParser {
     var currentIndex = 0;
 
     // Parse YAML frontmatter if present
-    if (lines.isNotEmpty && lines[0].trim() == _MarkdownPatterns.frontmatterDelimiter) {
-      final frontmatterResult = _parseFrontmatter(lines, currentIndex, lineEnding);
+    if (lines.isNotEmpty &&
+        lines[0].trim() == _MarkdownPatterns.frontmatterDelimiter) {
+      final frontmatterResult =
+          _parseFrontmatter(lines, currentIndex, lineEnding);
       currentIndex = frontmatterResult.nextIndex;
       data.addAll(frontmatterResult.data);
       if (frontmatterResult.meta.isNotEmpty) {
@@ -149,7 +151,8 @@ class MarkdownLayoutParser {
   }
 
   /// Parses YAML frontmatter.
-  _ParseResult _parseFrontmatter(List<String> lines, int startIndex, String lineEnding) {
+  _ParseResult _parseFrontmatter(
+      List<String> lines, int startIndex, String lineEnding) {
     final data = <String, dynamic>{};
     final meta = <String, dynamic>{};
 
@@ -213,7 +216,8 @@ class MarkdownLayoutParser {
   }
 
   /// Parses the main body content of the Markdown document.
-  _ParseResult _parseBody(List<String> lines, int startIndex, String lineEnding) {
+  _ParseResult _parseBody(
+      List<String> lines, int startIndex, String lineEnding) {
     final data = <String, dynamic>{};
     final meta = <String, dynamic>{};
 
@@ -233,7 +237,8 @@ class MarkdownLayoutParser {
       // Try to parse different Markdown elements
       final headerResult = _tryParseHeader(lines, currentIndex, lineEnding);
       if (headerResult != null) {
-        _addToHierarchy(data, meta, headerStack, headerResult.key, headerResult.value, headerResult.metadata);
+        _addToHierarchy(data, meta, headerStack, headerResult.key,
+            headerResult.value, headerResult.metadata);
         currentIndex = headerResult.nextIndex;
         continue;
       }
@@ -250,15 +255,18 @@ class MarkdownLayoutParser {
       final calloutResult = _tryParseCallout(lines, currentIndex, lineEnding);
       if (calloutResult != null) {
         final key = _toCamelCaseKey(calloutResult.type);
-        _addToHierarchy(data, meta, headerStack, key, calloutResult.content, calloutResult.metadata);
+        _addToHierarchy(data, meta, headerStack, key, calloutResult.content,
+            calloutResult.metadata);
         currentIndex = calloutResult.nextIndex;
         continue;
       }
 
-      final codeBlockResult = _tryParseCodeBlock(lines, currentIndex, lineEnding);
+      final codeBlockResult =
+          _tryParseCodeBlock(lines, currentIndex, lineEnding);
       if (codeBlockResult != null) {
         final key = '_code_$currentIndex';
-        _addToHierarchy(data, meta, headerStack, key, codeBlockResult.content, codeBlockResult.metadata);
+        _addToHierarchy(data, meta, headerStack, key, codeBlockResult.content,
+            codeBlockResult.metadata);
         currentIndex = codeBlockResult.nextIndex;
         continue;
       }
@@ -266,7 +274,8 @@ class MarkdownLayoutParser {
       final tableResult = _tryParseTable(lines, currentIndex, lineEnding);
       if (tableResult != null) {
         final key = '_table_$currentIndex';
-        _addToHierarchy(data, meta, headerStack, key, tableResult.tableData, tableResult.metadata);
+        _addToHierarchy(data, meta, headerStack, key, tableResult.tableData,
+            tableResult.metadata);
         currentIndex = tableResult.nextIndex;
         continue;
       }
@@ -274,7 +283,8 @@ class MarkdownLayoutParser {
       final listResult = _tryParseList(lines, currentIndex, lineEnding);
       if (listResult != null) {
         final key = '_list_$currentIndex';
-        _addToHierarchy(data, meta, headerStack, key, listResult.items, listResult.metadata);
+        _addToHierarchy(data, meta, headerStack, key, listResult.items,
+            listResult.metadata);
         currentIndex = listResult.nextIndex;
         continue;
       }
@@ -283,14 +293,19 @@ class MarkdownLayoutParser {
       final paragraphResult = _parseParagraph(lines, currentIndex, lineEnding);
       if (headerStack.isNotEmpty) {
         final currentHeader = headerStack.last;
-        final existingValue = _getFromHierarchy(data, headerStack, currentHeader.key);
+        final existingValue =
+            _getFromHierarchy(data, headerStack, currentHeader.key);
         if (existingValue == null || existingValue.toString().isEmpty) {
-          _setInHierarchy(data, headerStack, currentHeader.key, paragraphResult.content);
+          _setInHierarchy(
+              data, headerStack, currentHeader.key, paragraphResult.content);
         } else {
-          _setInHierarchy(data, headerStack, currentHeader.key, '$existingValue\n${paragraphResult.content}');
+          _setInHierarchy(data, headerStack, currentHeader.key,
+              '$existingValue\n${paragraphResult.content}');
         }
       } else {
-        data['body'] = (data['body'] ?? '') + (data['body'] != null ? '\n' : '') + paragraphResult.content;
+        data['body'] = (data['body'] ?? '') +
+            (data['body'] != null ? '\n' : '') +
+            paragraphResult.content;
       }
 
       if (paragraphResult.metadata != null) {
@@ -305,7 +320,8 @@ class MarkdownLayoutParser {
   }
 
   /// Attempts to parse a header line.
-  _HeaderResult? _tryParseHeader(List<String> lines, int index, String lineEnding) {
+  _HeaderResult? _tryParseHeader(
+      List<String> lines, int index, String lineEnding) {
     final match = _MarkdownPatterns.header.firstMatch(lines[index]);
     if (match == null) return null;
 
@@ -338,7 +354,9 @@ class MarkdownLayoutParser {
       key: key,
       value: '',
       level: level,
-      metadata: emphasisMeta != null ? metadata.copyWith(emphasis: emphasisMeta) : metadata,
+      metadata: emphasisMeta != null
+          ? metadata.copyWith(emphasis: emphasisMeta)
+          : metadata,
       nextIndex: nextIndex,
     );
   }
@@ -356,7 +374,8 @@ class MarkdownLayoutParser {
   }
 
   /// Attempts to parse a callout block.
-  _CalloutResult? _tryParseCallout(List<String> lines, int index, String lineEnding) {
+  _CalloutResult? _tryParseCallout(
+      List<String> lines, int index, String lineEnding) {
     final startMatch = _MarkdownPatterns.calloutStart.firstMatch(lines[index]);
     if (startMatch == null) return null;
 
@@ -371,7 +390,8 @@ class MarkdownLayoutParser {
 
     var nextIndex = index + 1;
     while (nextIndex < lines.length) {
-      final contMatch = _MarkdownPatterns.calloutContinuation.firstMatch(lines[nextIndex]);
+      final contMatch =
+          _MarkdownPatterns.calloutContinuation.firstMatch(lines[nextIndex]);
       if (contMatch == null) break;
       final lineContent = contMatch.group(1)?.trim() ?? '';
       contentLines.add(lineContent);
@@ -395,8 +415,10 @@ class MarkdownLayoutParser {
   }
 
   /// Attempts to parse a fenced code block.
-  _CodeBlockResult? _tryParseCodeBlock(List<String> lines, int index, String lineEnding) {
-    final startMatch = _MarkdownPatterns.codeBlockFence.firstMatch(lines[index]);
+  _CodeBlockResult? _tryParseCodeBlock(
+      List<String> lines, int index, String lineEnding) {
+    final startMatch =
+        _MarkdownPatterns.codeBlockFence.firstMatch(lines[index]);
     if (startMatch == null) return null;
 
     final fence = startMatch.group(1)!;
@@ -420,7 +442,8 @@ class MarkdownLayoutParser {
     while (nextIndex < lines.length) {
       final line = lines[nextIndex];
       if (line.trim().startsWith(fence.substring(0, 1)) &&
-          RegExp('^${fence.substring(0, 1)}{${fence.length},}\$').hasMatch(line.trim())) {
+          RegExp('^${fence.substring(0, 1)}{${fence.length},}\$')
+              .hasMatch(line.trim())) {
         nextIndex++;
         break;
       }
@@ -444,7 +467,8 @@ class MarkdownLayoutParser {
   }
 
   /// Attempts to parse a table.
-  _TableResult? _tryParseTable(List<String> lines, int index, String lineEnding) {
+  _TableResult? _tryParseTable(
+      List<String> lines, int index, String lineEnding) {
     // Check if this looks like a table row
     if (!_MarkdownPatterns.tableRow.hasMatch(lines[index])) {
       return null;
@@ -462,14 +486,16 @@ class MarkdownLayoutParser {
     nextIndex++;
 
     // Check for separator row
-    if (nextIndex < lines.length && _MarkdownPatterns.tableSeparator.hasMatch(lines[nextIndex])) {
+    if (nextIndex < lines.length &&
+        _MarkdownPatterns.tableSeparator.hasMatch(lines[nextIndex])) {
       hasHeader = true;
       alignments = _parseTableAlignments(lines[nextIndex]);
       nextIndex++;
     }
 
     // Parse remaining rows
-    while (nextIndex < lines.length && _MarkdownPatterns.tableRow.hasMatch(lines[nextIndex])) {
+    while (nextIndex < lines.length &&
+        _MarkdownPatterns.tableRow.hasMatch(lines[nextIndex])) {
       final row = _parseTableRow(lines[nextIndex]);
       if (row != null) {
         tableRows.add(row);
@@ -491,7 +517,9 @@ class MarkdownLayoutParser {
       tableData: tableData,
       metadata: KeyMetadata(
         tableMeta: TableMeta(
-          alignment: alignments.isEmpty ? List.filled(tableRows.first.length, 'left') : alignments,
+          alignment: alignments.isEmpty
+              ? List.filled(tableRows.first.length, 'left')
+              : alignments,
           hasHeader: hasHeader,
         ),
       ),
@@ -530,13 +558,15 @@ class MarkdownLayoutParser {
     }
 
     // Check for ordered list
-    var orderedMatch = _MarkdownPatterns.orderedListItem.firstMatch(lines[index]);
+    var orderedMatch =
+        _MarkdownPatterns.orderedListItem.firstMatch(lines[index]);
     if (orderedMatch != null) {
       return _parseOrderedList(lines, index, lineEnding);
     }
 
     // Check for unordered list
-    var unorderedMatch = _MarkdownPatterns.unorderedListItem.firstMatch(lines[index]);
+    var unorderedMatch =
+        _MarkdownPatterns.unorderedListItem.firstMatch(lines[index]);
     if (unorderedMatch != null) {
       return _parseUnorderedList(lines, index, lineEnding);
     }
@@ -545,13 +575,15 @@ class MarkdownLayoutParser {
   }
 
   /// Parses an unordered list.
-  _ListResult _parseUnorderedList(List<String> lines, int index, String lineEnding) {
+  _ListResult _parseUnorderedList(
+      List<String> lines, int index, String lineEnding) {
     final items = <String>[];
     String? marker;
     var nextIndex = index;
 
     while (nextIndex < lines.length) {
-      final match = _MarkdownPatterns.unorderedListItem.firstMatch(lines[nextIndex]);
+      final match =
+          _MarkdownPatterns.unorderedListItem.firstMatch(lines[nextIndex]);
       if (match == null) {
         // Check if it's a continuation or nested list
         if (lines[nextIndex].trim().isEmpty) {
@@ -578,14 +610,16 @@ class MarkdownLayoutParser {
   }
 
   /// Parses an ordered list.
-  _ListResult _parseOrderedList(List<String> lines, int index, String lineEnding) {
+  _ListResult _parseOrderedList(
+      List<String> lines, int index, String lineEnding) {
     final items = <String>[];
     int? startNumber;
     String? markerStyle;
     var nextIndex = index;
 
     while (nextIndex < lines.length) {
-      final match = _MarkdownPatterns.orderedListItem.firstMatch(lines[nextIndex]);
+      final match =
+          _MarkdownPatterns.orderedListItem.firstMatch(lines[nextIndex]);
       if (match == null) {
         if (lines[nextIndex].trim().isEmpty) {
           nextIndex++;
@@ -649,7 +683,8 @@ class MarkdownLayoutParser {
   }
 
   /// Parses a plain text paragraph.
-  _ParagraphResult _parseParagraph(List<String> lines, int index, String lineEnding) {
+  _ParagraphResult _parseParagraph(
+      List<String> lines, int index, String lineEnding) {
     final contentLines = <String>[];
     var nextIndex = index;
 
@@ -677,17 +712,20 @@ class MarkdownLayoutParser {
 
     return _ParagraphResult(
       content: content,
-      metadata: emphasisMeta != null ? KeyMetadata(emphasis: emphasisMeta) : null,
+      metadata:
+          emphasisMeta != null ? KeyMetadata(emphasis: emphasisMeta) : null,
       nextIndex: nextIndex,
     );
   }
 
   /// Detects emphasis styles in text.
   EmphasisMeta? _detectEmphasis(String text) {
-    if (_MarkdownPatterns.boldDouble.hasMatch(text) || _MarkdownPatterns.boldUnderscore.hasMatch(text)) {
+    if (_MarkdownPatterns.boldDouble.hasMatch(text) ||
+        _MarkdownPatterns.boldUnderscore.hasMatch(text)) {
       return const EmphasisMeta(style: 'bold');
     }
-    if (_MarkdownPatterns.italicSingle.hasMatch(text) || _MarkdownPatterns.italicUnderscore.hasMatch(text)) {
+    if (_MarkdownPatterns.italicSingle.hasMatch(text) ||
+        _MarkdownPatterns.italicUnderscore.hasMatch(text)) {
       return const EmphasisMeta(style: 'italic');
     }
     if (_MarkdownPatterns.strikethrough.hasMatch(text)) {
@@ -729,7 +767,8 @@ class MarkdownLayoutParser {
     var currentData = data;
     var metaPath = key;
 
-    for (final header in headerStack.take(headerStack.isNotEmpty ? headerStack.length - 1 : 0)) {
+    for (final header in headerStack
+        .take(headerStack.isNotEmpty ? headerStack.length - 1 : 0)) {
       final existing = currentData[header.key];
       if (existing is Map<String, dynamic>) {
         currentData = existing;
@@ -753,7 +792,8 @@ class MarkdownLayoutParser {
   }
 
   /// Gets a value from the data hierarchy.
-  dynamic _getFromHierarchy(Map<String, dynamic> data, List<_HeaderContext> headerStack, String key) {
+  dynamic _getFromHierarchy(
+      Map<String, dynamic> data, List<_HeaderContext> headerStack, String key) {
     var current = data;
     for (var i = 0; i < headerStack.length - 1; i++) {
       final nested = current[headerStack[i].key];
@@ -764,7 +804,8 @@ class MarkdownLayoutParser {
   }
 
   /// Sets a value in the data hierarchy.
-  void _setInHierarchy(Map<String, dynamic> data, List<_HeaderContext> headerStack, String key, dynamic value) {
+  void _setInHierarchy(Map<String, dynamic> data,
+      List<_HeaderContext> headerStack, String key, dynamic value) {
     var current = data;
     for (var i = 0; i < headerStack.length - 1; i++) {
       final headerKey = headerStack[i].key;
