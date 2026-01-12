@@ -128,8 +128,7 @@ class KeyMetadata {
           ? CalloutMeta.fromJson(json['callout'] as Map<String, dynamic>)
           : null,
       codeBlock: json['codeBlock'] != null
-          ? CodeBlockMeta.fromJson(
-              json['codeBlock'] as Map<String, dynamic>)
+          ? CodeBlockMeta.fromJson(json['codeBlock'] as Map<String, dynamic>)
           : null,
       listMeta: json['listMeta'] != null
           ? ListMeta.fromJson(json['listMeta'] as Map<String, dynamic>)
@@ -150,13 +149,12 @@ class KeyMetadata {
           ? JsonMeta.fromJson(json['jsonMeta'] as Map<String, dynamic>)
           : null,
       whitespace: json['whitespace'] != null
-          ? WhitespaceMeta.fromJson(
-              json['whitespace'] as Map<String, dynamic>)
+          ? WhitespaceMeta.fromJson(json['whitespace'] as Map<String, dynamic>)
           : null,
       children: json['children'] != null
           ? (json['children'] as Map<String, dynamic>).map(
-              (k, v) => MapEntry(
-                  k, KeyMetadata.fromJson(v as Map<String, dynamic>)),
+              (k, v) =>
+                  MapEntry(k, KeyMetadata.fromJson(v as Map<String, dynamic>)),
             )
           : null,
     );

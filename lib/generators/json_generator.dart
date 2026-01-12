@@ -77,7 +77,8 @@ class JsonLayoutGenerator {
     } else if (value is List) {
       if (value.isEmpty) return '[]';
       final items = value
-          .map((e) => '$nextIndent${_generatePretty(e, indentSpaces, depth + 1)}')
+          .map((e) =>
+              '$nextIndent${_generatePretty(e, indentSpaces, depth + 1)}')
           .join(',\n');
       return '[\n$items\n$indent]';
     } else if (value is Map<String, dynamic>) {

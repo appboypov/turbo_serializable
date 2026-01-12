@@ -215,7 +215,7 @@ abstract class TurboSerializable<M> {
         final yaml = config.toYaml?.call(this);
         if (yaml == null) return null;
         try {
-          result = yamlToJson(yaml);
+          result = yamlToJson(yaml) as Map<String, dynamic>?;
         } catch (e) {
           return null;
         }
@@ -224,7 +224,7 @@ abstract class TurboSerializable<M> {
         final markdown = config.toMarkdown?.call(this);
         if (markdown == null) return null;
         try {
-          result = markdownToJson(markdown);
+          result = markdownToJson(markdown) as Map<String, dynamic>?;
         } catch (e) {
           return null;
         }
@@ -240,7 +240,7 @@ abstract class TurboSerializable<M> {
         );
         if (xml == null) return null;
         try {
-          result = xmlToJson(xml);
+          result = xmlToJson(xml) as Map<String, dynamic>?;
         } catch (e) {
           return null;
         }

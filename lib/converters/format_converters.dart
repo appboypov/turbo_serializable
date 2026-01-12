@@ -178,7 +178,7 @@ dynamic yamlToJson(String yamlString, {bool preserveLayout = false}) {
 Map<String, dynamic> _yamlToJsonBasic(String yamlString) {
   try {
     final doc = yaml.loadYaml(yamlString);
-    return convertYamlToMap(doc);
+    return convertYamlToMap(doc) as Map<String, dynamic>;
   } catch (e) {
     throw FormatException(TurboConstants.failedToParseYaml(e));
   }
@@ -210,9 +210,8 @@ String yamlToMarkdown(
   final json = preserveLayout
       ? (result as LayoutAwareParseResult).data
       : result as Map<String, dynamic>;
-  final keyMeta = preserveLayout
-      ? (result as LayoutAwareParseResult).keyMeta
-      : null;
+  final keyMeta =
+      preserveLayout ? (result as LayoutAwareParseResult).keyMeta : null;
   return jsonToMarkdown(
     json,
     metaData: metaData,
@@ -247,9 +246,8 @@ String yamlToXml(
   final json = preserveLayout
       ? (result as LayoutAwareParseResult).data
       : result as Map<String, dynamic>;
-  final keyMeta = preserveLayout
-      ? (result as LayoutAwareParseResult).keyMeta
-      : null;
+  final keyMeta =
+      preserveLayout ? (result as LayoutAwareParseResult).keyMeta : null;
   return jsonToXml(
     json,
     rootElementName: rootElementName,
@@ -307,7 +305,7 @@ Map<String, dynamic> _markdownToJsonBasic(String markdown) {
       final frontmatterYaml = trimmed.substring(3, endIndex).trim();
       if (frontmatterYaml.isNotEmpty) {
         try {
-          final frontmatter = yamlToJson(frontmatterYaml);
+          final frontmatter = yamlToJson(frontmatterYaml) as Map<String, dynamic>;
           result.addAll(frontmatter);
         } catch (_) {
           // Ignore frontmatter parsing errors
@@ -362,9 +360,8 @@ String markdownToYaml(
   final json = preserveLayout
       ? (result as LayoutAwareParseResult).data
       : result as Map<String, dynamic>;
-  final keyMeta = preserveLayout
-      ? (result as LayoutAwareParseResult).keyMeta
-      : null;
+  final keyMeta =
+      preserveLayout ? (result as LayoutAwareParseResult).keyMeta : null;
   return jsonToYaml(
     json,
     metaData: metaData,
@@ -399,9 +396,8 @@ String markdownToXml(
   final json = preserveLayout
       ? (result as LayoutAwareParseResult).data
       : result as Map<String, dynamic>;
-  final keyMeta = preserveLayout
-      ? (result as LayoutAwareParseResult).keyMeta
-      : null;
+  final keyMeta =
+      preserveLayout ? (result as LayoutAwareParseResult).keyMeta : null;
   return jsonToXml(
     json,
     rootElementName: rootElementName,
@@ -458,9 +454,8 @@ String xmlToYaml(
   final json = preserveLayout
       ? (result as LayoutAwareParseResult).data
       : result as Map<String, dynamic>;
-  final keyMeta = preserveLayout
-      ? (result as LayoutAwareParseResult).keyMeta
-      : null;
+  final keyMeta =
+      preserveLayout ? (result as LayoutAwareParseResult).keyMeta : null;
   return jsonToYaml(
     json,
     metaData: metaData,
@@ -491,9 +486,8 @@ String xmlToMarkdown(
   final json = preserveLayout
       ? (result as LayoutAwareParseResult).data
       : result as Map<String, dynamic>;
-  final keyMeta = preserveLayout
-      ? (result as LayoutAwareParseResult).keyMeta
-      : null;
+  final keyMeta =
+      preserveLayout ? (result as LayoutAwareParseResult).keyMeta : null;
   return jsonToMarkdown(
     json,
     metaData: metaData,

@@ -81,8 +81,9 @@
 ### Fixed
 - XML converter uses `XmlText.value` instead of deprecated `XmlData.text`
 
-## 0.0.1
+## 0.0.1 - 2026-01-11
 
+### Added
 - Initial release
 - `TurboSerializable<M>` abstract class with optional serialization methods and typed metadata support
 - `TurboSerializableId<T, M>` with typed identifier and metadata support

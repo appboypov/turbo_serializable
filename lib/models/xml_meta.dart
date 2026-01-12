@@ -59,8 +59,7 @@ class XmlMeta {
   factory XmlMeta.fromJson(Map<String, dynamic> json) {
     return XmlMeta(
       attributes: json['attributes'] != null
-          ? Map<String, String>.from(
-              json['attributes'] as Map<String, dynamic>)
+          ? Map<String, String>.from(json['attributes'] as Map<String, dynamic>)
           : null,
       isCdata: json['isCdata'] as bool? ?? false,
       comment: json['comment'] as String?,

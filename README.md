@@ -316,6 +316,12 @@ try {
 }
 ```
 
+## Additional Information
+
+- [API Documentation](https://pub.dev/documentation/turbo_serializable/latest/)
+- [GitHub Repository](https://github.com/appboypov/turbo_serializable)
+- [Issue Tracker](https://github.com/appboypov/turbo_serializable/issues)
+
 ## License
 
 MIT
