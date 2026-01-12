@@ -3,6 +3,22 @@
 /// Represents callouts (NOTE, WARNING, TIP, IMPORTANT, CAUTION) that appear
 /// before or after a key's content in Markdown documents.
 class CalloutMeta {
+  /// Creates a [CalloutMeta] instance.
+  const CalloutMeta({
+    required this.type,
+    required this.content,
+    required this.position,
+  });
+
+  /// Creates from JSON map.
+  factory CalloutMeta.fromJson(Map<String, dynamic> json) {
+    return CalloutMeta(
+      type: json['type'] as String,
+      content: json['content'] as String,
+      position: json['position'] as String,
+    );
+  }
+
   /// The type of callout: 'note', 'warning', 'tip', 'important', 'caution'.
   final String type;
 
@@ -11,13 +27,6 @@ class CalloutMeta {
 
   /// The position of the callout: 'before' or 'after'.
   final String position;
-
-  /// Creates a [CalloutMeta] instance.
-  const CalloutMeta({
-    required this.type,
-    required this.content,
-    required this.position,
-  });
 
   /// Creates a copy with updated values.
   CalloutMeta copyWith({
@@ -39,15 +48,6 @@ class CalloutMeta {
       'content': content,
       'position': position,
     };
-  }
-
-  /// Creates from JSON map.
-  factory CalloutMeta.fromJson(Map<String, dynamic> json) {
-    return CalloutMeta(
-      type: json['type'] as String,
-      content: json['content'] as String,
-      position: json['position'] as String,
-    );
   }
 
   @override

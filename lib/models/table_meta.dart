@@ -3,17 +3,28 @@
 /// Represents table formatting information including column alignment
 /// and header row presence in Markdown documents.
 class TableMeta {
-  /// The alignment for each column: 'left', 'center', or 'right'.
-  final List<String> alignment;
-
-  /// Whether the table has a header row.
-  final bool hasHeader;
-
   /// Creates a [TableMeta] instance.
   const TableMeta({
     required this.alignment,
     this.hasHeader = true,
   });
+
+  /// Creates from JSON map.
+  factory TableMeta.fromJson(Map<String, dynamic> json) {
+    return TableMeta(
+      alignment: (json['alignment'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+      hasHeader: json['hasHeader'] as bool? ?? true,
+    );
+  }
+
+  /// The alignment for each column: 'left', 'center', or 'right'.
+  final List<String> alignment;
+
+  /// Whether the table has a header row.
+  final bool hasHeader;
 
   /// Creates a copy with updated values.
   TableMeta copyWith({
@@ -32,17 +43,6 @@ class TableMeta {
       'alignment': alignment,
       'hasHeader': hasHeader,
     };
-  }
-
-  /// Creates from JSON map.
-  factory TableMeta.fromJson(Map<String, dynamic> json) {
-    return TableMeta(
-      alignment: (json['alignment'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          [],
-      hasHeader: json['hasHeader'] as bool? ?? true,
-    );
   }
 
   @override

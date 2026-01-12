@@ -3,6 +3,22 @@
 /// Represents list formatting information for unordered, ordered, or
 /// task lists in Markdown documents.
 class ListMeta {
+  /// Creates a [ListMeta] instance.
+  const ListMeta({
+    required this.type,
+    this.marker,
+    this.startNumber,
+  });
+
+  /// Creates from JSON map.
+  factory ListMeta.fromJson(Map<String, dynamic> json) {
+    return ListMeta(
+      type: json['type'] as String,
+      marker: json['marker'] as String?,
+      startNumber: json['startNumber'] as int?,
+    );
+  }
+
   /// The type of list: 'unordered', 'ordered', or 'task'.
   final String type;
 
@@ -11,13 +27,6 @@ class ListMeta {
 
   /// The starting number for ordered lists.
   final int? startNumber;
-
-  /// Creates a [ListMeta] instance.
-  const ListMeta({
-    required this.type,
-    this.marker,
-    this.startNumber,
-  });
 
   /// Creates a copy with updated values.
   ListMeta copyWith({
@@ -39,15 +48,6 @@ class ListMeta {
       if (marker != null) 'marker': marker,
       if (startNumber != null) 'startNumber': startNumber,
     };
-  }
-
-  /// Creates from JSON map.
-  factory ListMeta.fromJson(Map<String, dynamic> json) {
-    return ListMeta(
-      type: json['type'] as String,
-      marker: json['marker'] as String?,
-      startNumber: json['startNumber'] as int?,
-    );
   }
 
   @override

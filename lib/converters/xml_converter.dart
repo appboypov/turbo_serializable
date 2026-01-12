@@ -183,7 +183,7 @@ dynamic parseXmlElement(XmlElement element) {
 
   if (elementChildren.isEmpty && textChildren.isNotEmpty) {
     // Simple text content
-    final text = textChildren.map((e) => e.value).join('');
+    final text = textChildren.map((e) => e.value).join();
     return parseXmlValue(text);
   }
 

@@ -77,7 +77,6 @@ class YamlLayoutParser {
     keyMeta['_document'] = KeyMetadata(
       yamlMeta: YamlMeta(
         comment: 'Multi-document YAML with ${documents.length} documents',
-        style: 'block',
       ),
     ).toJson();
 
@@ -219,7 +218,6 @@ class YamlLayoutParser {
           anchor: anchor,
           alias: alias,
           comment: comment,
-          style: 'block',
           scalarStyle: scalarStyle,
         ),
       );
@@ -468,11 +466,11 @@ class YamlLayoutParser {
 
 /// Internal result class for node parsing.
 class _NodeParseResult {
-  final dynamic data;
-  final Map<String, dynamic> keyMeta;
-
   const _NodeParseResult({
     required this.data,
     required this.keyMeta,
   });
+
+  final dynamic data;
+  final Map<String, dynamic> keyMeta;
 }

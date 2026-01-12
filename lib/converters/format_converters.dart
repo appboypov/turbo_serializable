@@ -110,7 +110,7 @@ String jsonToMarkdown(
   // Add frontmatter if metadata is provided
   if (metaData != null && metaData.isNotEmpty) {
     buffer.writeln(TurboConstants.frontmatterDelimiter);
-    buffer.write(convertMapToYaml(metaData, 0, prettyPrint: true));
+    buffer.write(convertMapToYaml(metaData, 0));
     buffer.writeln(TurboConstants.frontmatterDelimiter);
   }
 
@@ -305,7 +305,8 @@ Map<String, dynamic> _markdownToJsonBasic(String markdown) {
       final frontmatterYaml = trimmed.substring(3, endIndex).trim();
       if (frontmatterYaml.isNotEmpty) {
         try {
-          final frontmatter = yamlToJson(frontmatterYaml) as Map<String, dynamic>;
+          final frontmatter =
+              yamlToJson(frontmatterYaml) as Map<String, dynamic>;
           result.addAll(frontmatter);
         } catch (_) {
           // Ignore frontmatter parsing errors

@@ -3,6 +3,26 @@
 /// Represents exact whitespace information including leading/trailing
 /// newlines and raw whitespace strings for 100% round-trip fidelity.
 class WhitespaceMeta {
+  /// Creates a [WhitespaceMeta] instance.
+  const WhitespaceMeta({
+    this.leadingNewlines = 0,
+    this.trailingNewlines = 0,
+    this.rawLeading,
+    this.rawTrailing,
+    this.lineEnding = '\n',
+  });
+
+  /// Creates from JSON map.
+  factory WhitespaceMeta.fromJson(Map<String, dynamic> json) {
+    return WhitespaceMeta(
+      leadingNewlines: json['leadingNewlines'] as int? ?? 0,
+      trailingNewlines: json['trailingNewlines'] as int? ?? 0,
+      rawLeading: json['rawLeading'] as String?,
+      rawTrailing: json['rawTrailing'] as String?,
+      lineEnding: json['lineEnding'] as String? ?? '\n',
+    );
+  }
+
   /// Number of leading newlines before this key's content.
   final int leadingNewlines;
 
@@ -17,15 +37,6 @@ class WhitespaceMeta {
 
   /// Line ending style: '\n' or '\r\n'.
   final String lineEnding;
-
-  /// Creates a [WhitespaceMeta] instance.
-  const WhitespaceMeta({
-    this.leadingNewlines = 0,
-    this.trailingNewlines = 0,
-    this.rawLeading,
-    this.rawTrailing,
-    this.lineEnding = '\n',
-  });
 
   /// Creates a copy with updated values.
   WhitespaceMeta copyWith({
@@ -53,17 +64,6 @@ class WhitespaceMeta {
       if (rawTrailing != null) 'rawTrailing': rawTrailing,
       'lineEnding': lineEnding,
     };
-  }
-
-  /// Creates from JSON map.
-  factory WhitespaceMeta.fromJson(Map<String, dynamic> json) {
-    return WhitespaceMeta(
-      leadingNewlines: json['leadingNewlines'] as int? ?? 0,
-      trailingNewlines: json['trailingNewlines'] as int? ?? 0,
-      rawLeading: json['rawLeading'] as String?,
-      rawTrailing: json['rawTrailing'] as String?,
-      lineEnding: json['lineEnding'] as String? ?? '\n',
-    );
   }
 
   @override

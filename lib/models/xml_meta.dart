@@ -3,6 +3,28 @@
 /// Represents XML-specific formatting information including attributes,
 /// CDATA sections, comments, and namespace declarations.
 class XmlMeta {
+  /// Creates an [XmlMeta] instance.
+  const XmlMeta({
+    this.attributes,
+    this.isCdata = false,
+    this.comment,
+    this.namespace,
+    this.prefix,
+  });
+
+  /// Creates from JSON map.
+  factory XmlMeta.fromJson(Map<String, dynamic> json) {
+    return XmlMeta(
+      attributes: json['attributes'] != null
+          ? Map<String, String>.from(json['attributes'] as Map<String, dynamic>)
+          : null,
+      isCdata: json['isCdata'] as bool? ?? false,
+      comment: json['comment'] as String?,
+      namespace: json['namespace'] as String?,
+      prefix: json['prefix'] as String?,
+    );
+  }
+
   /// XML attributes as key-value pairs.
   final Map<String, String>? attributes;
 
@@ -17,15 +39,6 @@ class XmlMeta {
 
   /// The namespace prefix.
   final String? prefix;
-
-  /// Creates an [XmlMeta] instance.
-  const XmlMeta({
-    this.attributes,
-    this.isCdata = false,
-    this.comment,
-    this.namespace,
-    this.prefix,
-  });
 
   /// Creates a copy with updated values.
   XmlMeta copyWith({
@@ -53,19 +66,6 @@ class XmlMeta {
       if (namespace != null) 'namespace': namespace,
       if (prefix != null) 'prefix': prefix,
     };
-  }
-
-  /// Creates from JSON map.
-  factory XmlMeta.fromJson(Map<String, dynamic> json) {
-    return XmlMeta(
-      attributes: json['attributes'] != null
-          ? Map<String, String>.from(json['attributes'] as Map<String, dynamic>)
-          : null,
-      isCdata: json['isCdata'] as bool? ?? false,
-      comment: json['comment'] as String?,
-      namespace: json['namespace'] as String?,
-      prefix: json['prefix'] as String?,
-    );
   }
 
   @override

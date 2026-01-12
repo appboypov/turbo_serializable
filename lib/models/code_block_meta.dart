@@ -3,6 +3,22 @@
 /// Represents code blocks (fenced or inline) that appear in Markdown
 /// documents, including language specification and optional filename.
 class CodeBlockMeta {
+  /// Creates a [CodeBlockMeta] instance.
+  const CodeBlockMeta({
+    this.language,
+    this.filename,
+    this.isInline = false,
+  });
+
+  /// Creates from JSON map.
+  factory CodeBlockMeta.fromJson(Map<String, dynamic> json) {
+    return CodeBlockMeta(
+      language: json['language'] as String?,
+      filename: json['filename'] as String?,
+      isInline: json['isInline'] as bool? ?? false,
+    );
+  }
+
   /// The programming language of the code block.
   final String? language;
 
@@ -11,13 +27,6 @@ class CodeBlockMeta {
 
   /// Whether this is an inline code block (as opposed to a fenced block).
   final bool isInline;
-
-  /// Creates a [CodeBlockMeta] instance.
-  const CodeBlockMeta({
-    this.language,
-    this.filename,
-    this.isInline = false,
-  });
 
   /// Creates a copy with updated values.
   CodeBlockMeta copyWith({
@@ -39,15 +48,6 @@ class CodeBlockMeta {
       if (filename != null) 'filename': filename,
       'isInline': isInline,
     };
-  }
-
-  /// Creates from JSON map.
-  factory CodeBlockMeta.fromJson(Map<String, dynamic> json) {
-    return CodeBlockMeta(
-      language: json['language'] as String?,
-      filename: json['filename'] as String?,
-      isInline: json['isInline'] as bool? ?? false,
-    );
   }
 
   @override

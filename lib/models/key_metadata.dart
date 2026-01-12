@@ -15,6 +15,65 @@ import 'package:turbo_serializable/models/yaml_meta.dart';
 /// enabling 100% round-trip fidelity across format conversions. Supports
 /// nested key metadata through the [children] map.
 class KeyMetadata {
+  /// Creates a [KeyMetadata] instance.
+  const KeyMetadata({
+    this.headerLevel,
+    this.divider,
+    this.callout,
+    this.codeBlock,
+    this.listMeta,
+    this.tableMeta,
+    this.emphasis,
+    this.xmlMeta,
+    this.yamlMeta,
+    this.jsonMeta,
+    this.whitespace,
+    this.children,
+  });
+
+  /// Creates from JSON map.
+  factory KeyMetadata.fromJson(Map<String, dynamic> json) {
+    return KeyMetadata(
+      headerLevel: json['headerLevel'] as int?,
+      divider: json['divider'] != null
+          ? DividerMeta.fromJson(json['divider'] as Map<String, dynamic>)
+          : null,
+      callout: json['callout'] != null
+          ? CalloutMeta.fromJson(json['callout'] as Map<String, dynamic>)
+          : null,
+      codeBlock: json['codeBlock'] != null
+          ? CodeBlockMeta.fromJson(json['codeBlock'] as Map<String, dynamic>)
+          : null,
+      listMeta: json['listMeta'] != null
+          ? ListMeta.fromJson(json['listMeta'] as Map<String, dynamic>)
+          : null,
+      tableMeta: json['tableMeta'] != null
+          ? TableMeta.fromJson(json['tableMeta'] as Map<String, dynamic>)
+          : null,
+      emphasis: json['emphasis'] != null
+          ? EmphasisMeta.fromJson(json['emphasis'] as Map<String, dynamic>)
+          : null,
+      xmlMeta: json['xmlMeta'] != null
+          ? XmlMeta.fromJson(json['xmlMeta'] as Map<String, dynamic>)
+          : null,
+      yamlMeta: json['yamlMeta'] != null
+          ? YamlMeta.fromJson(json['yamlMeta'] as Map<String, dynamic>)
+          : null,
+      jsonMeta: json['jsonMeta'] != null
+          ? JsonMeta.fromJson(json['jsonMeta'] as Map<String, dynamic>)
+          : null,
+      whitespace: json['whitespace'] != null
+          ? WhitespaceMeta.fromJson(json['whitespace'] as Map<String, dynamic>)
+          : null,
+      children: json['children'] != null
+          ? (json['children'] as Map<String, dynamic>).map(
+              (k, v) =>
+                  MapEntry(k, KeyMetadata.fromJson(v as Map<String, dynamic>)),
+            )
+          : null,
+    );
+  }
+
   /// Header level (1-6) for Markdown headers.
   final int? headerLevel;
 
@@ -50,22 +109,6 @@ class KeyMetadata {
 
   /// Nested key metadata for child keys.
   final Map<String, KeyMetadata>? children;
-
-  /// Creates a [KeyMetadata] instance.
-  const KeyMetadata({
-    this.headerLevel,
-    this.divider,
-    this.callout,
-    this.codeBlock,
-    this.listMeta,
-    this.tableMeta,
-    this.emphasis,
-    this.xmlMeta,
-    this.yamlMeta,
-    this.jsonMeta,
-    this.whitespace,
-    this.children,
-  });
 
   /// Creates a copy with updated values.
   KeyMetadata copyWith({
@@ -115,49 +158,6 @@ class KeyMetadata {
       if (children != null)
         'children': children!.map((k, v) => MapEntry(k, v.toJson())),
     };
-  }
-
-  /// Creates from JSON map.
-  factory KeyMetadata.fromJson(Map<String, dynamic> json) {
-    return KeyMetadata(
-      headerLevel: json['headerLevel'] as int?,
-      divider: json['divider'] != null
-          ? DividerMeta.fromJson(json['divider'] as Map<String, dynamic>)
-          : null,
-      callout: json['callout'] != null
-          ? CalloutMeta.fromJson(json['callout'] as Map<String, dynamic>)
-          : null,
-      codeBlock: json['codeBlock'] != null
-          ? CodeBlockMeta.fromJson(json['codeBlock'] as Map<String, dynamic>)
-          : null,
-      listMeta: json['listMeta'] != null
-          ? ListMeta.fromJson(json['listMeta'] as Map<String, dynamic>)
-          : null,
-      tableMeta: json['tableMeta'] != null
-          ? TableMeta.fromJson(json['tableMeta'] as Map<String, dynamic>)
-          : null,
-      emphasis: json['emphasis'] != null
-          ? EmphasisMeta.fromJson(json['emphasis'] as Map<String, dynamic>)
-          : null,
-      xmlMeta: json['xmlMeta'] != null
-          ? XmlMeta.fromJson(json['xmlMeta'] as Map<String, dynamic>)
-          : null,
-      yamlMeta: json['yamlMeta'] != null
-          ? YamlMeta.fromJson(json['yamlMeta'] as Map<String, dynamic>)
-          : null,
-      jsonMeta: json['jsonMeta'] != null
-          ? JsonMeta.fromJson(json['jsonMeta'] as Map<String, dynamic>)
-          : null,
-      whitespace: json['whitespace'] != null
-          ? WhitespaceMeta.fromJson(json['whitespace'] as Map<String, dynamic>)
-          : null,
-      children: json['children'] != null
-          ? (json['children'] as Map<String, dynamic>).map(
-              (k, v) =>
-                  MapEntry(k, KeyMetadata.fromJson(v as Map<String, dynamic>)),
-            )
-          : null,
-    );
   }
 
   @override

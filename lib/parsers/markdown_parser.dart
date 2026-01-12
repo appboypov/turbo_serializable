@@ -157,7 +157,7 @@ class MarkdownLayoutParser {
     final meta = <String, dynamic>{};
 
     // Skip opening delimiter
-    var currentIndex = startIndex + 1;
+    final currentIndex = startIndex + 1;
 
     // Find closing delimiter
     var endIndex = -1;
@@ -459,7 +459,6 @@ class MarkdownLayoutParser {
         codeBlock: CodeBlockMeta(
           language: language,
           filename: filename,
-          isInline: false,
         ),
       ),
       nextIndex: nextIndex,
@@ -480,7 +479,7 @@ class MarkdownLayoutParser {
     var nextIndex = index;
 
     // Parse first row
-    var firstRow = _parseTableRow(lines[nextIndex]);
+    final firstRow = _parseTableRow(lines[nextIndex]);
     if (firstRow == null) return null;
     tableRows.add(firstRow);
     nextIndex++;
@@ -552,20 +551,20 @@ class MarkdownLayoutParser {
   /// Attempts to parse a list.
   _ListResult? _tryParseList(List<String> lines, int index, String lineEnding) {
     // Check for task list first
-    var taskMatch = _MarkdownPatterns.taskListItem.firstMatch(lines[index]);
+    final taskMatch = _MarkdownPatterns.taskListItem.firstMatch(lines[index]);
     if (taskMatch != null) {
       return _parseTaskList(lines, index, lineEnding);
     }
 
     // Check for ordered list
-    var orderedMatch =
+    final orderedMatch =
         _MarkdownPatterns.orderedListItem.firstMatch(lines[index]);
     if (orderedMatch != null) {
       return _parseOrderedList(lines, index, lineEnding);
     }
 
     // Check for unordered list
-    var unorderedMatch =
+    final unorderedMatch =
         _MarkdownPatterns.unorderedListItem.firstMatch(lines[index]);
     if (unorderedMatch != null) {
       return _parseUnorderedList(lines, index, lineEnding);
@@ -827,33 +826,27 @@ class MarkdownLayoutParser {
 
 /// Internal class for tracking header context.
 class _HeaderContext {
+  const _HeaderContext({required this.key, required this.level});
+
   final String key;
   final int level;
-
-  const _HeaderContext({required this.key, required this.level});
 }
 
 /// Internal result class for parsing operations.
 class _ParseResult {
-  final Map<String, dynamic> data;
-  final Map<String, dynamic> meta;
-  final int nextIndex;
-
   const _ParseResult({
     required this.data,
     required this.meta,
     required this.nextIndex,
   });
+
+  final Map<String, dynamic> data;
+  final Map<String, dynamic> meta;
+  final int nextIndex;
 }
 
 /// Internal result class for header parsing.
 class _HeaderResult {
-  final String key;
-  final dynamic value;
-  final int level;
-  final KeyMetadata metadata;
-  final int nextIndex;
-
   const _HeaderResult({
     required this.key,
     required this.value,
@@ -861,82 +854,88 @@ class _HeaderResult {
     required this.metadata,
     required this.nextIndex,
   });
+
+  final String key;
+  final dynamic value;
+  final int level;
+  final KeyMetadata metadata;
+  final int nextIndex;
 }
 
 /// Internal result class for divider parsing.
 class _DividerResult {
-  final DividerMeta dividerMeta;
-  final int nextIndex;
-
   const _DividerResult({
     required this.dividerMeta,
     required this.nextIndex,
   });
+
+  final DividerMeta dividerMeta;
+  final int nextIndex;
 }
 
 /// Internal result class for callout parsing.
 class _CalloutResult {
-  final String type;
-  final String content;
-  final KeyMetadata metadata;
-  final int nextIndex;
-
   const _CalloutResult({
     required this.type,
     required this.content,
     required this.metadata,
     required this.nextIndex,
   });
+
+  final String type;
+  final String content;
+  final KeyMetadata metadata;
+  final int nextIndex;
 }
 
 /// Internal result class for code block parsing.
 class _CodeBlockResult {
-  final String content;
-  final KeyMetadata metadata;
-  final int nextIndex;
-
   const _CodeBlockResult({
     required this.content,
     required this.metadata,
     required this.nextIndex,
   });
+
+  final String content;
+  final KeyMetadata metadata;
+  final int nextIndex;
 }
 
 /// Internal result class for table parsing.
 class _TableResult {
-  final Map<String, dynamic> tableData;
-  final KeyMetadata metadata;
-  final int nextIndex;
-
   const _TableResult({
     required this.tableData,
     required this.metadata,
     required this.nextIndex,
   });
+
+  final Map<String, dynamic> tableData;
+  final KeyMetadata metadata;
+  final int nextIndex;
 }
 
 /// Internal result class for list parsing.
 class _ListResult {
-  final List<dynamic> items;
-  final KeyMetadata metadata;
-  final int nextIndex;
-
   const _ListResult({
     required this.items,
     required this.metadata,
     required this.nextIndex,
   });
+
+  final List<dynamic> items;
+  final KeyMetadata metadata;
+  final int nextIndex;
 }
 
 /// Internal result class for paragraph parsing.
 class _ParagraphResult {
-  final String content;
-  final KeyMetadata? metadata;
-  final int nextIndex;
-
   const _ParagraphResult({
     required this.content,
     required this.metadata,
     required this.nextIndex,
   });
+
+  final String content;
+  final KeyMetadata? metadata;
+  final int nextIndex;
 }

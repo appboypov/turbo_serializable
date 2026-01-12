@@ -3,6 +3,22 @@
 /// Represents horizontal rules (`---`, `***`, `___`) that appear before
 /// or after a key's content in Markdown documents.
 class DividerMeta {
+  /// Creates a [DividerMeta] instance.
+  const DividerMeta({
+    this.before = false,
+    this.after = false,
+    this.style,
+  });
+
+  /// Creates from JSON map.
+  factory DividerMeta.fromJson(Map<String, dynamic> json) {
+    return DividerMeta(
+      before: json['before'] as bool? ?? false,
+      after: json['after'] as bool? ?? false,
+      style: json['style'] as String?,
+    );
+  }
+
   /// Whether a divider appears before this key's content.
   final bool before;
 
@@ -11,13 +27,6 @@ class DividerMeta {
 
   /// The style of the divider: `---`, `***`, or `___`.
   final String? style;
-
-  /// Creates a [DividerMeta] instance.
-  const DividerMeta({
-    this.before = false,
-    this.after = false,
-    this.style,
-  });
 
   /// Creates a copy with updated values.
   DividerMeta copyWith({
@@ -39,15 +48,6 @@ class DividerMeta {
       'after': after,
       if (style != null) 'style': style,
     };
-  }
-
-  /// Creates from JSON map.
-  factory DividerMeta.fromJson(Map<String, dynamic> json) {
-    return DividerMeta(
-      before: json['before'] as bool? ?? false,
-      after: json['after'] as bool? ?? false,
-      style: json['style'] as String?,
-    );
   }
 
   @override

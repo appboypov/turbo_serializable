@@ -3,13 +3,20 @@
 /// Represents text formatting such as bold, italic, strikethrough,
 /// or inline code in Markdown documents.
 class EmphasisMeta {
-  /// The emphasis style: 'bold', 'italic', 'strikethrough', or 'code'.
-  final String? style;
-
   /// Creates an [EmphasisMeta] instance.
   const EmphasisMeta({
     this.style,
   });
+
+  /// Creates from JSON map.
+  factory EmphasisMeta.fromJson(Map<String, dynamic> json) {
+    return EmphasisMeta(
+      style: json['style'] as String?,
+    );
+  }
+
+  /// The emphasis style: 'bold', 'italic', 'strikethrough', or 'code'.
+  final String? style;
 
   /// Creates a copy with updated values.
   EmphasisMeta copyWith({
@@ -25,13 +32,6 @@ class EmphasisMeta {
     return {
       if (style != null) 'style': style,
     };
-  }
-
-  /// Creates from JSON map.
-  factory EmphasisMeta.fromJson(Map<String, dynamic> json) {
-    return EmphasisMeta(
-      style: json['style'] as String?,
-    );
   }
 
   @override

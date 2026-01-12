@@ -3,6 +3,22 @@
 /// Represents JSON-specific formatting information such as indentation
 /// and trailing comma preferences.
 class JsonMeta {
+  /// Creates a [JsonMeta] instance.
+  const JsonMeta({
+    this.indentSpaces,
+    this.useTabs,
+    this.trailingComma,
+  });
+
+  /// Creates from JSON map.
+  factory JsonMeta.fromJson(Map<String, dynamic> json) {
+    return JsonMeta(
+      indentSpaces: json['indentSpaces'] as int?,
+      useTabs: json['useTabs'] as bool?,
+      trailingComma: json['trailingComma'] as bool?,
+    );
+  }
+
   /// Number of spaces used for indentation.
   final int? indentSpaces;
 
@@ -11,13 +27,6 @@ class JsonMeta {
 
   /// Whether trailing commas are allowed.
   final bool? trailingComma;
-
-  /// Creates a [JsonMeta] instance.
-  const JsonMeta({
-    this.indentSpaces,
-    this.useTabs,
-    this.trailingComma,
-  });
 
   /// Creates a copy with updated values.
   JsonMeta copyWith({
@@ -39,15 +48,6 @@ class JsonMeta {
       if (useTabs != null) 'useTabs': useTabs,
       if (trailingComma != null) 'trailingComma': trailingComma,
     };
-  }
-
-  /// Creates from JSON map.
-  factory JsonMeta.fromJson(Map<String, dynamic> json) {
-    return JsonMeta(
-      indentSpaces: json['indentSpaces'] as int?,
-      useTabs: json['useTabs'] as bool?,
-      trailingComma: json['trailingComma'] as bool?,
-    );
   }
 
   @override

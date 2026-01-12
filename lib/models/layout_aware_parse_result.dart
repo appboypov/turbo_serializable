@@ -3,17 +3,27 @@
 /// Contains both the parsed data and the extracted key-level metadata
 /// for preserving layout information during format conversions.
 class LayoutAwareParseResult {
-  /// The parsed data map.
-  final Map<String, dynamic> data;
-
-  /// The extracted key-level metadata.
-  final Map<String, dynamic>? keyMeta;
-
   /// Creates a [LayoutAwareParseResult] instance.
   const LayoutAwareParseResult({
     required this.data,
     this.keyMeta,
   });
+
+  /// Creates from JSON map.
+  factory LayoutAwareParseResult.fromJson(Map<String, dynamic> json) {
+    return LayoutAwareParseResult(
+      data: Map<String, dynamic>.from(json['data'] as Map<String, dynamic>),
+      keyMeta: json['keyMeta'] != null
+          ? Map<String, dynamic>.from(json['keyMeta'] as Map<String, dynamic>)
+          : null,
+    );
+  }
+
+  /// The parsed data map.
+  final Map<String, dynamic> data;
+
+  /// The extracted key-level metadata.
+  final Map<String, dynamic>? keyMeta;
 
   /// Creates a copy with updated values.
   LayoutAwareParseResult copyWith({
@@ -32,16 +42,6 @@ class LayoutAwareParseResult {
       'data': data,
       if (keyMeta != null) 'keyMeta': keyMeta,
     };
-  }
-
-  /// Creates from JSON map.
-  factory LayoutAwareParseResult.fromJson(Map<String, dynamic> json) {
-    return LayoutAwareParseResult(
-      data: Map<String, dynamic>.from(json['data'] as Map<String, dynamic>),
-      keyMeta: json['keyMeta'] != null
-          ? Map<String, dynamic>.from(json['keyMeta'] as Map<String, dynamic>)
-          : null,
-    );
   }
 
   @override

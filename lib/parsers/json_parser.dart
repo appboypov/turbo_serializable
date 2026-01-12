@@ -25,7 +25,6 @@ class JsonLayoutParser {
     if (data is! Map<String, dynamic>) {
       return LayoutAwareParseResult(
         data: {'_value': data},
-        keyMeta: null,
       );
     }
 

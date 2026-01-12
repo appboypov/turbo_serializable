@@ -4,7 +4,7 @@
 /// [TurboSerializable] class and its typed variant [TurboSerializableId].
 /// Uses [TurboSerializableConfig] to specify callbacks for serialization methods,
 /// with automatic conversion to all other supported formats.
-library turbo_serializable;
+library;
 
 export 'abstracts/has_to_json.dart';
 export 'abstracts/turbo_serializable.dart';

@@ -77,9 +77,9 @@ class XmlLayoutParser {
       // Leaf element - text or CDATA content only
       String textContent;
       if (isCdata) {
-        textContent = cdataChildren.map((c) => c.value).join('');
+        textContent = cdataChildren.map((c) => c.value).join();
       } else {
-        textContent = textChildren.map((t) => t.value).join('').trim();
+        textContent = textChildren.map((t) => t.value).join().trim();
       }
 
       final parsedValue = _parseValue(textContent);
@@ -186,9 +186,9 @@ class XmlLayoutParser {
       // Leaf element
       String textContent;
       if (isCdata) {
-        textContent = cdataChildren.map((c) => c.value).join('');
+        textContent = cdataChildren.map((c) => c.value).join();
       } else {
-        textContent = textChildren.map((t) => t.value).join('').trim();
+        textContent = textChildren.map((t) => t.value).join().trim();
       }
 
       final parsedValue = _parseValue(textContent);
@@ -356,22 +356,22 @@ class XmlLayoutParser {
 
 /// Internal result class for element parsing.
 class _ElementParseResult {
-  final Map<String, dynamic> data;
-  final Map<String, dynamic> keyMeta;
-
   const _ElementParseResult({
     required this.data,
     required this.keyMeta,
   });
+
+  final Map<String, dynamic> data;
+  final Map<String, dynamic> keyMeta;
 }
 
 /// Internal result class for content parsing.
 class _ContentParseResult {
-  final dynamic value;
-  final Map<String, dynamic>? metadata;
-
   const _ContentParseResult({
     required this.value,
     this.metadata,
   });
+
+  final dynamic value;
+  final Map<String, dynamic>? metadata;
 }
