@@ -16,12 +16,13 @@ A serialization abstraction for the turbo ecosystem with multi-format support (J
 - **Local state tracking** - Track whether instances are synced to remote via `isLocalDefault` flag
 - **Validation integration** - Built-in validation using TurboResponse
 - **Case transformation** - Support for camelCase, PascalCase, snake_case, and kebab-case in XML serialization
+- **Layout preservation** - Round-trip fidelity with `preserveLayout` parameter preserves formatting metadata (YAML anchors, comments, XML attributes, Markdown header levels)
 
 ## Installation
 
 ```yaml
 dependencies:
-  turbo_serializable: ^0.1.2
+  turbo_serializable: ^0.2.0
 ```
 
 ## Quick Start
@@ -107,6 +108,7 @@ void main() {
 - `prettyPrint` (default: `true`) - Whether to format output
 - `rootElementName` (optional) - Root element name for XML (defaults to `'root'`)
 - `caseStyle` (default: `CaseStyle.none`) - Case transformation for XML element names
+- `preserveLayout` (default: `false` for parsing) - Extract layout metadata for round-trip fidelity
 
 ### Utility Functions
 

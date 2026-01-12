@@ -42,8 +42,24 @@ turbo_serializable/
 │   ├── enums/
 │   │   ├── case_style.dart            # CaseStyle enumeration
 │   │   └── serialization_format.dart  # SerializationFormat enumeration
+│   ├── generators/             # Layout-aware output generators
+│   │   ├── json_generator.dart        # JSON generation with formatting
+│   │   ├── markdown_generator.dart    # Markdown generation with layout
+│   │   ├── xml_generator.dart         # XML generation with metadata
+│   │   └── yaml_generator.dart        # YAML generation with style preservation
 │   ├── models/
-│   │   └── turbo_serializable_config.dart # Configuration class
+│   │   ├── turbo_serializable_config.dart # Configuration class
+│   │   ├── key_metadata.dart          # Per-key layout metadata
+│   │   ├── layout_aware_parse_result.dart # Parse result with metadata
+│   │   ├── json_meta.dart             # JSON formatting metadata
+│   │   ├── yaml_meta.dart             # YAML style metadata
+│   │   ├── xml_meta.dart              # XML attribute/namespace metadata
+│   │   └── ...                        # Additional metadata models
+│   ├── parsers/                # Layout-aware input parsers
+│   │   ├── json_parser.dart           # JSON parsing with format detection
+│   │   ├── markdown_parser.dart       # Markdown parsing with structure
+│   │   ├── xml_parser.dart            # XML parsing with attribute extraction
+│   │   └── yaml_parser.dart           # YAML parsing with anchor/style detection
 │   └── turbo_serializable.dart        # Main library export file
 ├── test/
 │   ├── format_converters_test.dart    # Unit tests for converters
@@ -78,6 +94,11 @@ turbo_serializable/
 | Name | Path | Purpose | Properties |
 |------|------|---------|------------|
 | `TurboSerializableConfig` | `lib/models/turbo_serializable_config.dart` | Configuration class that holds callbacks for serialization methods. Automatically determines primary format from provided callbacks. | `toJson`, `toYaml`, `toMarkdown`, `toXml` (callbacks), `primaryFormat` (computed) |
+| `LayoutAwareParseResult` | `lib/models/layout_aware_parse_result.dart` | Parse result containing both data and layout metadata for round-trip fidelity. | `data`, `keyMeta` |
+| `KeyMetadata` | `lib/models/key_metadata.dart` | Per-key layout metadata containing format-specific information. | `yamlMeta`, `markdownMeta`, `xmlMeta`, `jsonMeta`, `children` |
+| `YamlMeta` | `lib/models/yaml_meta.dart` | YAML-specific metadata for style preservation. | `anchor`, `alias`, `style`, `scalarStyle`, `comment` |
+| `XmlMeta` | `lib/models/xml_meta.dart` | XML-specific metadata for attribute/namespace preservation. | `attributes`, `isCdata`, `comment`, `namespace`, `prefix` |
+| `JsonMeta` | `lib/models/json_meta.dart` | JSON formatting metadata. | `indentSpaces`, `useTabs`, `trailingComma` |
 
 **Primary Format Priority:** json > yaml > markdown > xml
 
@@ -101,6 +122,24 @@ turbo_serializable/
 - YAML → JSON, Markdown, XML
 - Markdown → JSON, YAML, XML
 - XML → JSON, YAML, Markdown
+
+### Parsers
+
+| Name | Path | Purpose | Extracts |
+|------|------|---------|----------|
+| `YamlLayoutParser` | `lib/parsers/yaml_parser.dart` | Parses YAML with layout metadata extraction | Anchors, aliases, comments, scalar styles, block/flow indicators |
+| `MarkdownLayoutParser` | `lib/parsers/markdown_parser.dart` | Parses Markdown with structure metadata | Header levels, list styles, frontmatter boundaries |
+| `XmlLayoutParser` | `lib/parsers/xml_parser.dart` | Parses XML with attribute/namespace extraction | Attributes, CDATA, namespaces, prefixes, comments |
+| `JsonLayoutParser` | `lib/parsers/json_parser.dart` | Parses JSON with formatting detection | Indentation style, minification detection |
+
+### Generators
+
+| Name | Path | Purpose | Preserves |
+|------|------|---------|-----------|
+| `YamlLayoutGenerator` | `lib/generators/yaml_generator.dart` | Generates YAML using layout metadata | Anchors, aliases, comments, scalar/collection styles |
+| `MarkdownLayoutGenerator` | `lib/generators/markdown_generator.dart` | Generates Markdown using layout metadata | Header levels, list styles, frontmatter |
+| `XmlLayoutGenerator` | `lib/generators/xml_generator.dart` | Generates XML using layout metadata | Attributes, CDATA, namespaces |
+| `JsonLayoutGenerator` | `lib/generators/json_generator.dart` | Generates JSON with formatting options | Indentation, spacing |
 
 ### Constants
 

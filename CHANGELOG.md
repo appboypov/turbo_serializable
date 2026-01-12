@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.2.0 - 2026-01-12
+
+### Added
+- Layout-aware parsers for YAML, Markdown, XML, and JSON with metadata extraction
+- Layout generators for YAML and Markdown that preserve original formatting
+- `LayoutAwareParseResult` model for returning both data and key-level metadata
+- `KeyMetadata` model for storing per-key layout information
+- Format-specific metadata models: `YamlMeta`, `MarkdownMeta`, `XmlMeta`, `JsonMeta`
+- `preserveLayout` parameter to all format conversion functions for round-trip fidelity
+- Support for YAML anchors, aliases, comments, and scalar styles preservation
+- Support for XML attributes, CDATA, namespaces, and comments preservation
+- Support for Markdown header levels, list styles, and formatting preservation
+
+### Changed
+- Format converter functions now properly extract and pass `keyMeta` from `LayoutAwareParseResult`
+- Conversion functions pass `preserveLayout` through to output generators instead of forcing `false`
+- Improved documentation for `preserveLayout` parameter behavior
+
+### Technical Details
+- Layout parsers extract metadata during parsing without modifying data structure
+- Layout generators use metadata to reconstruct original formatting
+- Enables byte-for-byte round-trip fidelity when converting between formats
+- Backward compatible: `preserveLayout` defaults to `false` for parsing, `true` for generation
+
 ## 0.1.2 - 2026-01-11
 
 ### Added
