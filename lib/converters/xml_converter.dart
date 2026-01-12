@@ -4,6 +4,7 @@ import 'package:xml/xml.dart';
 import 'package:turbo_serializable/constants/turbo_constants.dart';
 import 'package:turbo_serializable/enums/case_style.dart';
 import 'package:turbo_serializable/converters/case_converter.dart';
+import 'package:turbo_serializable/generators/xml_generator.dart';
 
 /// Converts a JSON map to an XML string.
 ///
@@ -13,6 +14,10 @@ import 'package:turbo_serializable/converters/case_converter.dart';
 /// [prettyPrint] - Whether to format XML with indentation (default: true)
 /// [caseStyle] - The case style to apply to element names (default: CaseStyle.none)
 /// [metaData] - Optional metadata to include as a `_meta` element
+/// [keyMeta] - Optional key-level metadata for layout preservation
+/// [preserveLayout] - Whether to use key metadata for layout preservation
+///   (default: true). When true and [keyMeta] is provided, uses the
+///   [XmlLayoutGenerator] for byte-for-byte fidelity.
 ///
 /// Returns the XML string representation of the JSON map.
 String jsonToXml(
@@ -22,7 +27,19 @@ String jsonToXml(
   bool prettyPrint = true,
   CaseStyle caseStyle = CaseStyle.none,
   Map<String, dynamic>? metaData,
+  Map<String, dynamic>? keyMeta,
+  bool preserveLayout = true,
 }) {
+  // Use layout generator when metadata is available and layout preservation is enabled
+  if (preserveLayout && keyMeta != null) {
+    const generator = XmlLayoutGenerator();
+    return generator.generate(
+      json,
+      keyMeta: keyMeta,
+      prettyPrint: prettyPrint,
+    );
+  }
+
   final builder = XmlBuilder();
   builder.processing(
       TurboConstants.xmlProcessingInstruction, TurboConstants.xmlDeclaration);

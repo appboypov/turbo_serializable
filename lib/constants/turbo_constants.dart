@@ -15,6 +15,9 @@ abstract class TurboConstants {
   /// PascalCase version of metadata key for XML serialization.
   static const String metaKeyPascal = '_Meta';
 
+  /// Key used for key-level metadata in JSON/YAML serialization.
+  static const String keyMetaKey = '_keyMeta';
+
   /// Key used for mixed text content in XML parsing.
   static const String textKey = '_text';
 
